@@ -64,9 +64,11 @@ h1{font:700 clamp(26px,2.1vw,30px)/1.08 var(--disp);letter-spacing:-.03em;margin
 .anim svg{width:16px;height:16px}
 
 /* ---------- exercise navigation ---------- */
-.journey{margin-bottom:22px}
-.journey .lead{margin-bottom:10px}
+.journey{margin-bottom:20px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
+.journey .lead{margin:0;max-width:none;font-size:14.5px;line-height:1.45;text-wrap:balance}
+.journey .btn{padding:8px 11px}
 body.ueb .journey{display:none}
+body.ueb.to-sch .journey{display:grid}
 .kg{display:grid;gap:10px}
 .kg button{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;text-align:left;padding:10px 12px;border:1.5px solid var(--ink);border-radius:14px;background:var(--card);box-shadow:0 4px 0 var(--ink);cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s}
 .kg button:hover{background:var(--mark-soft);transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
@@ -185,7 +187,7 @@ body.instant-view #ueb,body.instant-view #labels,body.instant-view #fx,body.inst
     <div class="views">
       <h1>Ein Computer,<br>Schicht für Schicht.</h1>
       <div class="journey">
-        <p class="lead">Folge einem Programm von der Shell bis zur CPU.</p>
+        <p class="lead">Sieh zu, wie ein Programm beim Start durch alle drei Schichten läuft.</p>
         <button class="btn" id="replay" type="button"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a5 5 0 1 0 1.6-3.7M2 2v3h3"/></svg>Nochmal <kbd>W</kbd></button>
       </div>
       <p class="kg-caption">Kleingruppenübungen</p>
@@ -404,7 +406,7 @@ for (var k = 1; k <= 5; k++) (function (k) {
 })(k);
 function activeRow() {
   var nearest = -1, distance = Infinity;
-  if (isUeb) rows.forEach(function (row, i) {
+  if (isUeb && !document.body.classList.contains('to-sch')) rows.forEach(function (row, i) {
     var d = Math.abs(row.offsetTop - ueb.scrollTop - 10);
     if (d < distance) { distance = d; nearest = i; }
   });
@@ -497,7 +499,7 @@ function switchView(to, k, id, immediate) {
     return;
   }
   transitioning = true; document.body.classList.add('flying');
-  if (!to) { document.body.classList.add('to-sch'); $('schBtn').setAttribute('aria-pressed', 'true'); $('uebBtn').setAttribute('aria-pressed', 'false'); }
+  if (!to) { document.body.classList.add('to-sch'); $('schBtn').setAttribute('aria-pressed', 'true'); $('uebBtn').setAttribute('aria-pressed', 'false'); activeRow(); }
   ueb.inert = true;
   ueb.scrollTo({ top: ueb.scrollTop, behavior: 'instant' });
   if (to) { holdStack(); scrollRow(k, false); viewState(true); }
