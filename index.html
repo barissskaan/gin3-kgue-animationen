@@ -36,6 +36,7 @@ a{color:inherit}button{font:inherit;color:inherit}
 .switch{position:absolute;left:50%;transform:translateX(-50%);display:flex;background:var(--card);border:1.5px solid var(--ink);border-radius:999px;padding:4px;box-shadow:0 4px 0 var(--ink)}
 .switch::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:136px;border-radius:999px;background:var(--mark);transition:transform .45s var(--ease)}
 body.ueb .switch::before{transform:translateX(136px)}
+body.ueb.to-sch .switch::before{transform:none}
 .switch button{position:relative;min-width:136px;border:0;background:transparent;border-radius:999px;padding:10px 12px;font:600 14px var(--sans);display:flex;justify-content:center;align-items:center;gap:8px;cursor:pointer}
 .switch svg{width:17px;height:17px}
 
@@ -480,7 +481,7 @@ function finishFlight(to, id, flights) {
   if (to) resetStack();
   else { originals(false); viewState(false); }
   flights.forEach(function (a) { a.cancel(); });
-  transitioning = false; document.body.classList.remove('flying'); ueb.inert = !isUeb;
+  transitioning = false; document.body.classList.remove('flying', 'to-sch'); ueb.inert = !isUeb;
   if (to && id) markCard(id);
   if (replayPending && !isUeb) { replayPending = false; beginStory(); }
 }
@@ -496,6 +497,7 @@ function switchView(to, k, id, immediate) {
     return;
   }
   transitioning = true; document.body.classList.add('flying');
+  if (!to) { document.body.classList.add('to-sch'); $('schBtn').setAttribute('aria-pressed', 'true'); $('uebBtn').setAttribute('aria-pressed', 'false'); }
   ueb.inert = true;
   ueb.scrollTo({ top: ueb.scrollTop, behavior: 'instant' });
   if (to) { holdStack(); scrollRow(k, false); viewState(true); }
