@@ -99,11 +99,12 @@ body.ueb #ueb{visibility:visible;opacity:1}
 .wide .kart{height:100%;min-height:170px;border-bottom:0;border-right:1.5px solid var(--ink);border-radius:14px 0 0 14px}
 .wide .klinks a:first-child{border-top-right-radius:14px}
 .wide .klinks a:last-child{border-bottom-left-radius:0}
-body.flying #ueb{pointer-events:none}
-body.flying .kart{will-change:transform}
+body.flying #ueb{pointer-events:none;transition:none}
+body.flying .kart{transform-origin:0 0;will-change:transform}
 
 /* ---------- stage ---------- */
 .stage{position:relative;width:100%;height:100%;perspective:3400px;perspective-origin:50% 45%;min-width:0}
+.stage.away{opacity:0}
 .stack{position:absolute;left:50%;top:50%;width:760px;height:440px;margin:-220px 0 0 -380px;transform-style:preserve-3d;
   transform:translate(var(--ox,70px),var(--oy,0px)) scale(var(--s,.85)) rotateX(57deg) rotateZ(-10deg);transition:transform 1s var(--ease)}
 .stack.flat{transform:translate(0px,6px) scale(var(--sf,1.2)) rotateX(0deg) rotateZ(0deg)}
@@ -117,15 +118,14 @@ body.flying .kart{will-change:transform}
 .face svg{display:block;width:100%;height:100%}
 .ex{background:var(--edge,#b9b4a6)}
 .shadow{position:absolute;inset:-4% -2%;border-radius:40%;background:radial-gradient(closest-side,rgba(22,24,29,.36),rgba(22,24,29,0));transform:translateZ(-460px);filter:blur(22px);transition:opacity .5s;pointer-events:none}
-.stack.flat .shadow,.stack.away .shadow{opacity:0}
-.stack.away .slab{opacity:0;transform:translateZ(var(--z)) translateY(240px);pointer-events:none}
+.stack.flat .shadow{opacity:0}
 .stack.notrans,.stack.notrans .slab,.stack.notrans .shadow{transition:none!important}
 .an{position:absolute;width:0;height:0;pointer-events:none}
 .face [data-stop]{cursor:pointer}
 
 /* ---------- overlay: labels + signal ---------- */
-#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:14;transition:opacity .4s}
-#labels{position:fixed;inset:0;pointer-events:none;z-index:16;transition:opacity .4s}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:14;transition:opacity .2s}
+#labels{position:fixed;inset:0;pointer-events:none;z-index:16;transition:opacity .2s}
 body.ueb #labels,body.ueb #fx{opacity:0;pointer-events:none}
 body.ueb #labels .lb{pointer-events:none}
 .lb{position:absolute;left:0;top:0;pointer-events:auto;white-space:nowrap;will-change:transform;transition:opacity .35s}
@@ -143,7 +143,8 @@ body.ueb #labels .lb{pointer-events:none}
 .lb.layer b{display:block;font:700 19px/1.15 var(--disp);letter-spacing:-.02em;margin:4px 0 2px}
 .lb.layer span{display:block;font:400 12.5px/1.35 var(--sans);color:var(--muted);white-space:normal;width:170px;margin-left:auto}
 .lb.layer:hover b,.lb.layer.on b{background:linear-gradient(var(--mark),var(--mark)) no-repeat 0 88%/100% 42%}
-.foc-bar{position:fixed;left:calc(var(--col) + (100vw - var(--col)) / 2);top:82px;transform:translateX(-50%);z-index:18}
+.foc-bar{position:fixed;left:calc(var(--col) + (100vw - var(--col)) / 2);top:82px;transform:translateX(-50%);z-index:18;transition:opacity .2s}
+body.ueb .foc-bar{opacity:0;pointer-events:none}
 
 .who{font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px}
 .who b{color:var(--ink)}
@@ -159,7 +160,8 @@ body.ueb #labels .lb{pointer-events:none}
   .mobile p.ld{color:var(--muted);margin:0 0 12px}
   .top nav .opt{display:none}
 }
-@media (prefers-reduced-motion:reduce){.stack,.slab,#ueb,#labels,#fx,.switch::before{transition:none}}
+body.instant-view #ueb,body.instant-view #labels,body.instant-view #fx,body.instant-view .foc-bar,body.instant-view .switch::before{transition:none}
+@media (prefers-reduced-motion:reduce){.stack,.slab,#ueb,#labels,#fx,.foc-bar,.switch::before{transition:none}}
 </style>
 </head>
 <body>
@@ -266,7 +268,7 @@ var WP = [
 ];
 var ARROW = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg>';
 var $ = function (id) { return document.getElementById(id); };
-var RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+var motion = matchMedia('(prefers-reduced-motion: reduce)');
 var small = matchMedia('(max-width:980px)');
 
 function animRow(key, tag) {
@@ -378,7 +380,7 @@ for (var k = 1; k <= 5; k++) (function (k) {
   var row = document.createElement('section'); row.className = 'krow'; row.id = 'kgue-' + k; row.style.setProperty('--c', K[k].c);
   row.innerHTML = '<div class="khead"><span class="knum">' + k + '</span><h2>' + K[k].n + '</h2></div><div class="kcards"></div>';
   ueb.appendChild(row); rows.push(row);
-  KG_STOPS[k].forEach(function (id) {
+  KG_STOPS[k].forEach(function (id, indexInRow) {
     var s = STOPS[id], r = s.r, card = document.createElement('article');
     card.className = 'kcard' + (s.a.length >= 3 ? ' wide' : ''); card.id = 'card-' + id;
     card.setAttribute('aria-label', s.t);
@@ -396,7 +398,7 @@ for (var k = 1; k <= 5; k++) (function (k) {
     svg.appendChild(clone); card.querySelector('.kart').appendChild(svg);
     card.onmouseenter = function () { clone.classList.add('act'); }; card.onmouseleave = function () { clone.classList.remove('act'); };
     row.querySelector('.kcards').appendChild(card);
-    cards.push({ id: id, el: card, art: card.querySelector('.kart') });
+    cards.push({ id: id, el: card, art: card.querySelector('.kart'), indexInRow: indexInRow });
   });
 })(k);
 function activeRow() {
@@ -411,7 +413,7 @@ ueb.addEventListener('scroll', activeRow);
 ueb.addEventListener('wheel', function (e) { if (transitioning) e.preventDefault(); }, { passive: false });
 ueb.addEventListener('touchmove', function (e) { if (transitioning) e.preventDefault(); }, { passive: false });
 function scrollRow(k, smooth) {
-  if (k) ueb.scrollTo({ top: rows[k - 1].offsetTop - 10, behavior: smooth && !RM ? 'smooth' : 'instant' });
+  if (k) ueb.scrollTo({ top: rows[k - 1].offsetTop - 10, behavior: smooth && !motion.matches ? 'smooth' : 'instant' });
   activeRow();
 }
 var pickTimer = 0;
@@ -423,84 +425,119 @@ function markCard(id) {
 function openStop(id) { requestView(true, STOPS[id].k, id); }
 
 // ---------- fly between the computer and the exercise cards ----------
-var isUeb = false, wantedUeb = false, transitioning = false, flights = [];
-var pendingKg = 0, pendingPick = null, replayPending = false;
+var isUeb = false, transitioning = false, replayPending = false;
 function rememberView(to) { try { localStorage['gin3-view'] = to ? 'ueb' : 'sch'; } catch (e) {} }
 function viewState(to) {
   isUeb = to; document.body.classList.toggle('ueb', to);
   $('schBtn').setAttribute('aria-pressed', String(!to)); $('uebBtn').setAttribute('aria-pressed', String(to));
-  ueb.inert = !to || transitioning; labels.inert = to; stage.inert = to;
+  ueb.inert = !to || transitioning; labels.inert = to; stage.inert = to; $('focBar').inert = to;
   activeRow();
 }
 function originals(hidden) {
   Object.keys(STOPS).forEach(function (id) { if (STOPS[id].g) STOPS[id].g.style.visibility = hidden ? 'hidden' : ''; });
 }
-function sourceBoxes() {
-  var boxes = {}, scale = parseFloat(stack.style.getPropertyValue('--s'));
-  Object.keys(STOPS).forEach(function (id) {
-    var s = STOPS[id], p = s.corners.map(pt), cx = 0, cy = 0;
-    p.forEach(function (q) { cx += q[0] / 4; cy += q[1] / 4; });
-    boxes[id] = { cx: cx, cy: cy, w: s.r[2] * scale, h: s.r[3] * scale * .545 };
+function holdStack() {
+  // Keep the pose that was visible at takeoff, including a focus or hover in progress.
+  var pose = [stack].concat(Array.from(stack.children)).map(function (el) {
+    var style = getComputedStyle(el);
+    return { el: el, transform: style.transform, opacity: style.opacity };
   });
-  return boxes;
+  stack.classList.add('notrans');
+  pose.forEach(function (p) { p.el.style.transform = p.transform; p.el.style.opacity = p.opacity; });
 }
-function sourceTransform(S, T) {
-  return 'translate(' + (S.cx - T.left - T.width / 2) + 'px,' + (S.cy - T.top - T.height / 2) + 'px) rotate(-5.5deg) scale(' + S.w / T.width + ',' + S.h / T.height + ')';
-}
-function finishFlight(to) {
-  if (!to) { viewState(false); originals(false); }
-  flights.forEach(function (a) { a.cancel(); }); flights = [];
-  transitioning = false; document.body.classList.remove('flying'); ueb.inert = !isUeb;
-  if (wantedUeb !== isUeb) { switchView(wantedUeb); return; }
-  if (isUeb) {
-    if (pendingKg) scrollRow(pendingKg, false);
-    if (pendingPick) markCard(pendingPick);
-  }
-  pendingKg = 0; pendingPick = null;
-  if (replayPending && !isUeb) { replayPending = false; beginStory(); }
-}
-function switchView(to, immediate) {
-  transitioning = true; document.body.classList.add('flying');
-  endStory();
-  // Measure the settled, tilted stack, including after a resize or a dive.
+function resetStack() {
   stack.classList.add('notrans');
   if (focus) unfocus();
   LAYERS.forEach(function (L) { L.el.classList.remove('pre', 'hov'); });
-  stack.classList.remove('away');
+  [stack].concat(Array.from(stack.children)).forEach(function (el) {
+    el.style.removeProperty('transform'); el.style.removeProperty('opacity');
+  });
   stack.getBoundingClientRect();
-  var sources = sourceBoxes();
-  if (!to) { stack.classList.add('away'); stack.getBoundingClientRect(); }
-  if (to) scrollRow(pendingKg, false);
-  var targets = cards.map(function (c) { return c.art.getBoundingClientRect(); });
+  stack.classList.remove('notrans');
+}
+function sourceTransform(stop, art) {
+  var target = art.getBoundingClientRect(), svg = art.querySelector('svg').getBoundingClientRect();
+  var scale = Math.min(svg.width / (stop.r[2] + 16), svg.height / (stop.r[3] + 16));
+  var width = stop.r[2] * scale, height = stop.r[3] * scale;
+  var x = svg.left - target.left + (svg.width - width) / 2;
+  var y = svg.top - target.top + (svg.height - height) / 2;
+  // Map the SVG's fitted stop rectangle to the four projected slab corners.
+  var points = stop.corners.map(pt);
+  var px = points.map(function (p) { return p[0] - target.left; });
+  var py = points.map(function (p) { return p[1] - target.top; });
+  var dx1 = px[1] - px[2], dx2 = px[3] - px[2], dx3 = px[0] - px[1] + px[2] - px[3];
+  var dy1 = py[1] - py[2], dy2 = py[3] - py[2], dy3 = py[0] - py[1] + py[2] - py[3];
+  var det = dx1 * dy2 - dx2 * dy1;
+  var gx = (dx3 * dy2 - dx2 * dy3) / det, gy = (dx1 * dy3 - dx3 * dy1) / det;
+  var projection = new DOMMatrix([
+    px[1] - px[0] + gx * px[1], py[1] - py[0] + gx * py[1], 0, gx,
+    px[3] - px[0] + gy * px[3], py[3] - py[0] + gy * py[3], 0, gy,
+    0, 0, 1, 0, px[0], py[0], 0, 1
+  ]);
+  return projection.scale(1 / width, 1 / height).translate(-x, -y).toString();
+}
+function finishFlight(to, id, flights) {
+  if (to) resetStack();
+  else { originals(false); viewState(false); }
+  flights.forEach(function (a) { a.cancel(); });
+  transitioning = false; document.body.classList.remove('flying'); ueb.inert = !isUeb;
+  if (to && id) markCard(id);
+  if (replayPending && !isUeb) { replayPending = false; beginStory(); }
+}
+function switchView(to, k, id, immediate) {
+  endStory();
+  if (immediate || motion.matches || small.matches || !stage.animate || typeof DOMMatrix === 'undefined') {
+    document.body.classList.add('instant-view');
+    stage.classList.toggle('away', to);
+    if (to) { originals(true); scrollRow(k, false); viewState(true); }
+    finishFlight(to, id, []);
+    document.body.getBoundingClientRect();
+    document.body.classList.remove('instant-view');
+    return;
+  }
+  transitioning = true; document.body.classList.add('flying');
+  ueb.inert = true;
+  ueb.scrollTo({ top: ueb.scrollTop, behavior: 'instant' });
+  if (to) { holdStack(); scrollRow(k, false); viewState(true); }
   originals(true);
-  if (to) viewState(true);
-  if (immediate || RM || small.matches || !cards[0].art.animate) {
-    stack.classList.add('notrans'); stack.classList.toggle('away', to); stack.getBoundingClientRect(); stack.classList.remove('notrans');
-    finishFlight(to); return;
+  stage.classList.toggle('away', to);
+
+  var flights = [stage.animate([{ opacity: to ? 1 : 0 }, { opacity: to ? 0 : 1 }], {
+    duration: to ? 300 : 400, delay: to ? 0 : 500, easing: 'ease-out', fill: 'backwards'
+  })];
+  var fade = { duration: to ? 400 : 220, delay: to ? 550 : 0, easing: 'ease-out', fill: to ? 'backwards' : 'forwards' };
+  function fadePart(el, hidden, shown) {
+    flights.push(el.animate(to ? [hidden, shown] : [shown, hidden], fade));
   }
-  function fly() {
-    // Commit the restored away pose before allowing the slabs to fly home.
-    stack.classList.remove('notrans'); stack.getBoundingClientRect();
-    stack.classList.toggle('away', to);
-    cards.forEach(function (c, i) {
-      var from = sourceTransform(sources[c.id], targets[i]);
-      flights.push(c.art.animate([{ transform: to ? from : 'none' }, { transform: to ? 'none' : from }], {
-        duration: to ? 950 : 700, delay: i * 35, easing: 'cubic-bezier(.3,.7,.2,1)', fill: to ? 'backwards' : 'forwards'
-      }));
+  rows.forEach(function (row) {
+    fadePart(row, { borderTopColor: 'transparent' }, { borderTopColor: getComputedStyle(row).borderTopColor });
+    fadePart(row.querySelector('.khead'), { opacity: 0 }, { opacity: 1 });
+  });
+  cards.forEach(function (c) {
+    var cardStyle = getComputedStyle(c.el);
+    fadePart(c.el, { backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none' }, {
+      backgroundColor: cardStyle.backgroundColor, borderColor: cardStyle.borderTopColor, boxShadow: cardStyle.boxShadow
     });
-    Promise.all(flights.map(function (a) { return a.finished; })).then(function () { finishFlight(to); });
-  }
-  if (to) fly(); else requestAnimationFrame(fly);
+    fadePart(c.el.querySelector('.klinks'), { opacity: 0 }, { opacity: 1 });
+
+    var artStyle = getComputedStyle(c.art), stop = STOPS[c.id];
+    var source = {
+      transform: sourceTransform(stop, c.art), opacity: getComputedStyle(slabs[stop.l]).opacity,
+      backgroundColor: 'transparent', borderColor: 'transparent'
+    };
+    var target = { transform: 'none', opacity: 1, backgroundColor: artStyle.backgroundColor, borderColor: artStyle.color };
+    flights.push(c.art.animate(to ? [source, target] : [target, source], {
+      duration: to ? 750 : 700, delay: to ? 250 + c.indexInRow * 25 : 150,
+      easing: 'cubic-bezier(.3,.7,.2,1)', fill: to ? 'backwards' : 'forwards'
+    }));
+  });
+  Promise.all(flights.map(function (a) { return a.finished; })).then(function () { finishFlight(to, id, flights); });
 }
 function requestView(to, k, id) {
-  endStory(); replayPending = false; wantedUeb = to;
-  pendingKg = k || 0; pendingPick = id || null; rememberView(to);
   if (transitioning) return;
-  if (isUeb !== to) switchView(to);
-  else {
-    if (to) { scrollRow(k, true); if (id) markCard(id); }
-    pendingKg = 0; pendingPick = null;
-  }
+  endStory(); replayPending = false; rememberView(to);
+  if (isUeb !== to) switchView(to, k, id);
+  else if (to) { scrollRow(k, true); if (id) markCard(id); }
 }
 $('schBtn').onclick = function () { requestView(false); };
 $('uebBtn').onclick = function () { requestView(true); };
@@ -551,6 +588,7 @@ function beginStory() {
   $('route').setAttribute('stroke-opacity', '.28'); $('trail').style.opacity = 1; $('trail2').style.opacity = 1;
 }
 function play() {
+  if (transitioning) return;
   requestView(false); replayPending = true;
   if (!transitioning && !isUeb) { replayPending = false; beginStory(); }
 }
@@ -563,13 +601,13 @@ function endStory() {
   $('trail').style.opacity = 0; $('trail2').style.opacity = 0;
 }
 // Capture ends the old story before a replay button can start a new one.
-document.addEventListener('click', function () { endStory(); replayPending = false; }, true);
+document.addEventListener('click', function () { if (!transitioning) { endStory(); replayPending = false; } }, true);
 $('replay').onclick = play;
 addEventListener('keydown', function (e) {
   if (e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable) return;
   if (e.key === 'w' || e.key === 'W') { e.preventDefault(); play(); }
   if (/^[1-5]$/.test(e.key)) { e.preventDefault(); requestView(true, +e.key); }
-  if (e.key === 'Escape') { replayPending = false; if (focus) unfocus(); else endStory(); }
+  if (e.key === 'Escape' && !transitioning) { replayPending = false; if (focus) unfocus(); else endStory(); }
 });
 
 // ---------- frame loop: project anchors, place labels, draw signal ----------
@@ -616,10 +654,10 @@ requestAnimationFrame(frame);
 // ---------- entrance ----------
 var savedView = 'sch';
 try { savedView = localStorage['gin3-view']; } catch (e) {}
-if (savedView === 'ueb') { wantedUeb = true; switchView(true, true); }
+if (savedView === 'ueb') switchView(true, 0, null, true);
 else {
-  LAYERS.slice().reverse().forEach(function (L, i) { setTimeout(function () { L.el.classList.remove('pre'); }, RM ? 0 : 120 + i * 190); });
-  if (RM || small.matches) endStory(); else startTimer = setTimeout(beginStory, 1500);
+  LAYERS.slice().reverse().forEach(function (L, i) { setTimeout(function () { L.el.classList.remove('pre'); }, motion.matches ? 0 : 120 + i * 190); });
+  if (motion.matches || small.matches) endStory(); else startTimer = setTimeout(beginStory, 1500);
 }
 })();
 </script>
