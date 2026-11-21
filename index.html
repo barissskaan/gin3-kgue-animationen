@@ -126,26 +126,26 @@ body.flying .kart{transform-origin:0 0;will-change:transform}
 .face [data-stop]{cursor:pointer}
 
 /* ---------- laptop intro ---------- */
-.laptop,.lap-base,.lap-lid{position:absolute;inset:0;transform-style:preserve-3d}
+.laptop,.lap-keyboard,.lap-bottom,.lap-lid{position:absolute;inset:0;transform-style:preserve-3d}
 .laptop{pointer-events:none}
-.lap-lid{transform-origin:50% 0}
-.lap-deck,.lap-cover,.lap-screen,.lap-edge{position:absolute;inset:0;border-radius:22px}
-.lap-deck,.lap-cover{background:#d9d6cf;border:1.5px solid #88847d}
+.lap-lid,body.intro .slab[data-layer="apps"]{transform-origin:50% 100%}
+.lap-deck,.lap-cover,.lap-screen,.lap-sole{position:absolute;inset:0;border-radius:22px}
+.lap-deck,.lap-cover,.lap-sole{background:linear-gradient(155deg,#e6e3dc,#c9c5bb);border:1px solid #a9a59b;
+  box-shadow:inset 0 1px rgba(255,255,255,.7),inset 0 -1px rgba(80,76,65,.16)}
 .lap-deck svg{display:block;width:100%;height:100%}
-.lap-cover{transform:translateZ(4px);backface-visibility:hidden;box-shadow:inset 0 0 0 3px #e3e0d9}
-.lap-screen{transform:rotateX(180deg);backface-visibility:hidden;background:#15171c;border:16px solid #2d2f34}
-.lap-screen::before{content:"";position:absolute;top:-11px;left:calc(50% - 3px);width:6px;height:6px;border-radius:50%;background:#676a72}
-.lap-edge{background:#8e8a83;transform:translateZ(var(--edge-z))}
-.lap-terminal{position:absolute;backface-visibility:hidden;background:#15171c;border:1.5px solid #4b4e55;border-radius:10px;
-  overflow:hidden;color:#e9e7e0;font:500 20px/1.4 var(--mono)}
-.lap-terminal-bar{height:23px;background:#262a32;display:flex;align-items:center;padding-left:12px}
-.lap-terminal-bar::before{content:"";width:6px;height:6px;border-radius:50%;background:#6b7078;box-shadow:10px 0 #6b7078,20px 0 #6b7078}
-.lap-terminal-line{margin:26px 15px}
-.lap-cursor{display:inline-block;width:10px;height:19px;margin-left:6px;vertical-align:-3px;border-radius:1px;
-  background:#ffd400;animation:lap-blink .7s steps(1,end) infinite}
+.lap-cover{transform:translateZ(-6px) rotateX(180deg);backface-visibility:hidden}
+.lap-screen{transform:translateZ(-.6px);backface-visibility:hidden;background:#15171c;box-shadow:inset 0 0 0 10px #2d2f34}
+.lap-screen::after{content:"";position:absolute;inset:10px;border-radius:14px;
+  background:linear-gradient(122deg,transparent 44%,rgba(215,229,255,.085) 44%,transparent 68%)}
+.lap-edge{--edge:#a9a59b;transform:translateZ(var(--edge-z))}
+.lap-keyboard .lap-edge,.lap-sole,.lap-bottom .lap-edge{inset:-2px}
+.lap-glow{position:absolute;top:24px;left:90px;right:90px;height:195px;border-radius:28px;background:#c8d9ff;
+  filter:blur(26px);mix-blend-mode:screen}
+.lap-terminal{position:absolute;overflow:hidden;border-radius:10px;transform-origin:0 0;
+  background:#15171c;box-shadow:0 0 0 1px #4b4e55,0 8px 30px rgba(0,0,0,.25);font:500 18px var(--mono)}
+.lap-cursor{animation:lap-blink .7s steps(1,end) infinite}
 @keyframes lap-blink{50%{opacity:0}}
-body.intro .slab,body.intro #labels,body.intro #fx{transition:none}
-body.intro #labels,body.intro #fx{opacity:0}
+body.intro .stack,body.intro .slab,body.intro #labels,body.intro #fx{transition:none}
 
 /* ---------- overlay: labels + signal ---------- */
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:14;transition:opacity .2s}
@@ -710,90 +710,146 @@ function laptopKeyboard() {
     }).join('');
   }).join('');
   return '<svg viewBox="0 0 760 440" aria-hidden="true">' +
-    '<rect x="90" y="48" width="580" height="217" rx="12" fill="#aaa69e" stroke="#9a968e"/>' +
-    '<g fill="#282a30">' + keys + '</g>' +
-    '<rect x="251" y="285" width="258" height="120" rx="10" fill="#ccc9c2" stroke="#99958d" stroke-width="2"/>' +
-    '<path d="M328 436h104" stroke="#aaa69e" stroke-width="3" stroke-linecap="round"/>' +
+    '<rect x="90" y="48" width="580" height="217" rx="12" fill="#b9b5ab" stroke="#a9a59b"/>' +
+    '<g fill="#282a30" stroke="#575860" stroke-width=".7">' + keys + '</g>' +
+    '<rect x="251" y="285" width="258" height="120" rx="10" fill="#d5d1c8" stroke="#a9a59b"/>' +
+    '<path d="M328 436h104" stroke="#b4afa4" stroke-width="2" stroke-linecap="round"/>' +
     '</svg>';
+}
+function laptopEdges(depths) {
+  return depths.map(function (depth) {
+    return '<div class="ex lap-edge" style="--edge-z:' + depth + 'px"></div>';
+  }).join('');
+}
+function laptopTerminal(command) {
+  var shell = STOPS.shell.r;
+  return '<svg class="lap-terminal" style="left:' + shell[0] + 'px;top:' + shell[1] + 'px"' +
+    ' width="' + shell[2] + '" height="' + shell[3] + '" viewBox="0 0 300 210">' +
+    '<path d="M0,24 V10 A10,10 0 0 1 10,0 H290 A10,10 0 0 1 300,10 V24 Z" fill="#262a32"/>' +
+    '<g fill="#6b7078"><circle cx="16" cy="12" r="3"/><circle cx="26" cy="12" r="3"/><circle cx="36" cy="12" r="3"/></g>' +
+    '<text x="16" y="62" fill="#5ab4d4">$</text><text x="38" y="62" fill="#e9e7e0" textLength="206">gcc main.c -o hallo</text>' +
+    '<text x="16" y="96" fill="#5ab4d4">$</text><text class="lap-command" x="38" y="96" fill="#e9e7e0" textLength="76">' +
+    Array.from(command, function (letter) { return '<tspan>' + letter + '</tspan>'; }).join('') + '</text>' +
+    '<g class="lap-enter" fill="#ffd400"><text x="16" y="96">$</text>' +
+    '<text x="38" y="96" textLength="76">' + command + '</text></g>' +
+    '<g class="lap-typing"><rect class="lap-cursor" x="38" y="80" width="10" height="20" rx="1" fill="#ffd400"/></g>' +
+    '<g class="lap-prompt"><text x="16" y="164" fill="#5ab4d4">$</text>' +
+    '<rect class="lap-cursor" x="38" y="148" width="10" height="20" rx="1" fill="#ffd400"/></g></svg>';
 }
 function makeLaptop() {
   var laptop = document.createElement('div');
   laptop.className = 'laptop';
   laptop.setAttribute('aria-hidden', 'true');
   laptop.innerHTML =
-    '<div class="lap-base">' +
-      '<div class="lap-edge" style="--edge-z:-9px"></div><div class="lap-edge" style="--edge-z:-6px"></div>' +
-      '<div class="lap-edge" style="--edge-z:-3px"></div><div class="lap-deck">' + laptopKeyboard() + '</div>' +
+    '<div class="lap-bottom">' + laptopEdges([-3.6, -2.4, -1.2]) + '<div class="lap-sole"></div></div>' +
+    '<div class="lap-keyboard">' + laptopEdges([-9, -7.5, -6, -4.5, -3, -1.5]) +
+      '<div class="lap-deck">' + laptopKeyboard() + '<div class="lap-glow"></div></div>' +
     '</div>' +
-    '<div class="lap-lid">' +
-      '<div class="lap-edge" style="--edge-z:1px"></div><div class="lap-edge" style="--edge-z:2.5px"></div>' +
-      '<div class="lap-cover"></div><div class="lap-screen"></div>' +
-      '<div class="lap-terminal"><div class="lap-terminal-bar"></div>' +
-        '<p class="lap-terminal-line">$ ./hallo<span class="lap-cursor"></span></p>' +
-      '</div>' +
-    '</div>';
+    '<div class="lap-lid">' + laptopEdges([-4.8, -3.6, -2.4, -1.2]) +
+      '<div class="lap-cover"></div><div class="lap-screen">' + laptopTerminal('./hallo') + '</div></div>';
   return laptop;
 }
 function startIntro() {
-  if (small.matches || motion.matches || !stack.animate) return false;
+  if (isUeb || small.matches || motion.matches || !stack.animate) return false;
+  endStory();
   resetStack();
 
   var laptop = makeLaptop(), animations = [];
-  var lid = laptop.querySelector('.lap-lid'), terminal = laptop.querySelector('.lap-terminal');
-  var baseZ = -36, hingeZ = baseZ + 6, angle = 105, radians = angle * Math.PI / 180;
-  var centerX = 380, centerY = 220, shell = STOPS.shell;
-  var appsZ = LAYERS[0].z;
-  laptop.querySelector('.lap-base').style.transform = 'translateZ(' + baseZ + 'px)';
-  terminal.style.width = shell.r[2] + 'px';
-  terminal.style.height = shell.r[3] + 'px';
-  terminal.style.left = (centerX - shell.r[2] / 2) + 'px';
-  terminal.style.top = (centerY - shell.r[3] / 2) + 'px';
-
-  function hinge(degrees) {
-    return 'translateZ(' + hingeZ + 'px) rotateX(' + degrees + 'deg)';
-  }
-  function terminalPose(x, y, z, degrees) {
-    return 'translate3d(' + (x - centerX) + 'px,' + (y - centerY) + 'px,' + z + 'px) rotateX(' + degrees + 'deg)';
-  }
-  function terminalInStack(x, y, z, degrees) {
-    // Map a point in the stack back through the open lid's hinge.
-    var dy = y * Math.cos(radians) + (z - hingeZ) * Math.sin(radians);
-    var dz = -y * Math.sin(radians) + (z - hingeZ) * Math.cos(radians);
-    return terminalPose(x, dy, dz, degrees - angle);
-  }
-  function animatePart(el, keyframes, from, to) {
-    var animation = el.animate(keyframes, {
-      delay: from, duration: to - from, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both'
-    });
-    animations.push(animation);
-    return animation;
-  }
-
+  var lid = laptop.querySelector('.lap-lid'), keyboard = laptop.querySelector('.lap-keyboard');
+  var bottom = laptop.querySelector('.lap-bottom'), terminal = laptop.querySelector('.lap-terminal');
+  var baseZ = -36, hingeZ = baseZ + 8, open = 1000, enter = 1700, rest = 2900, finish = 3200;
+  var ease = 'cubic-bezier(.2,.8,.2,1)', lift = 'cubic-bezier(.35,0,.24,1)';
   intro = { laptop: laptop, animations: animations };
   document.body.classList.add('intro');
   labels.inert = stage.inert = true;
   stack.appendChild(laptop);
 
-  animatePart(lid, [{ transform: hinge(0) }, { transform: hinge(angle) }], 500, 1190);
-  animatePart(terminal, [
-    { transform: terminalPose(centerX, centerY, -2, 180) },
-    { transform: terminalInStack(325, -40, 259, 307), offset: .38 },
-    { transform: terminalInStack(shell.cx, shell.cy, appsZ + 2, 360) }
-  ], 1190, 2180);
-  animatePart(terminal, [{ opacity: 1 }, { opacity: 0 }], 2180, 2400);
+  var start = document.timeline.currentTime;
+  function animatePart(el, keyframes, from, to, easing) {
+    var animation = el.animate(keyframes, { delay: from, duration: to - from, easing: easing || ease, fill: 'both' });
+    if (start !== null) animation.startTime = start;
+    animations.push(animation);
+    return animation;
+  }
+  function fade(el, a, b, from, to, easing) {
+    return animatePart(el, [{ opacity: a }, { opacity: b }], from, to, easing);
+  }
+  function z(value) { return 'translateZ(' + value + 'px)'; }
+  function moveZ(el, a, b, from, to) {
+    animatePart(el, [{ transform: z(a) }, { transform: z(b) }], from, to, lift);
+  }
 
-  laptop.querySelectorAll('.lap-base > *, .lap-lid > :not(.lap-terminal)').forEach(function (part) {
-    animatePart(part, [{ opacity: 1 }, { opacity: 0 }], 1320, 2050);
+  // Both surfaces share the moving bottom hinge. At rest the hinge is at the apps slab's front edge.
+  function displayPose(y, height, angle) {
+    return 'translate3d(0,' + (y - 440) + 'px,' + height + 'px) rotateX(' + angle + 'deg)';
+  }
+  var closed = displayPose(0, hingeZ, -180), opened = displayPose(0, hingeZ, -75);
+  var panelMotion = [
+    { transform: closed }, { transform: closed, offset: 400 / rest, easing: ease },
+    { transform: opened, offset: open / rest }, { transform: opened, offset: enter / rest, easing: lift },
+    { transform: displayPose(440, LAYERS[0].z, 0) }
+  ];
+  animatePart(lid, panelMotion, 0, rest, 'linear');
+  animatePart(slabs.apps, panelMotion, 0, rest, 'linear');
+
+  var shell = STOPS.shell.r;
+  animatePart(terminal, [
+    { transform: 'translate(' + (65 - shell[0]) + 'px,' + (20 - shell[1]) + 'px) scale(2.1,1.9)' },
+    { transform: 'translate(0px,0px) scale(1)' }
+  ], 2070, 2730, lift);
+  var letters = Array.from(terminal.querySelectorAll('.lap-command tspan'));
+  var flash = terminal.querySelector('.lap-enter'), typing = terminal.querySelector('.lap-typing');
+  var prompt = terminal.querySelector('.lap-prompt'), typeStart = 930, typeBeat = 92;
+  letters.forEach(function (letter, i) {
+    var at = typeStart + i * typeBeat;
+    fade(letter, 0, 1, at - 1, at, 'steps(1,end)');
   });
+  var typed = letters.length;
+  var cursorSteps = Array.from({ length: typed + 1 }, function (_, i) {
+    return { transform: 'translateX(' + (i * 76 / typed) + 'px)' };
+  });
+  animatePart(typing, cursorSteps, typeStart - typeBeat, typeStart + (typed - 1) * typeBeat, 'steps(' + typed + ',end)');
+  fade(typing, 1, 0, enter - 1, enter, 'steps(1,end)');
+  animatePart(flash, [
+    { opacity: 0, easing: 'steps(1,end)' }, { opacity: 1, offset: .01 }, { opacity: 0 }
+  ], enter - 1, enter + 105, 'linear');
+  fade(prompt, 0, 1, enter + 72, enter + 112, 'linear');
+  var glow = laptop.querySelector('.lap-glow');
+  animatePart(glow, [
+    { opacity: 0 }, { opacity: .2, offset: (open - 510) / (enter - 510) }, { opacity: .16 }
+  ], 510, enter, 'linear');
+
+  var handoff = enter + (rest - enter) * .6;
+  slabs.apps.querySelectorAll('.face, .ex').forEach(function (part) {
+    fade(part, 0, 1, handoff, rest - 20, 'ease-in-out');
+  });
+  Array.from(lid.children).forEach(function (part) { fade(part, 1, 0, handoff + 210, rest, 'ease-in'); });
+
+  moveZ(keyboard, baseZ, baseZ + 32, enter, 2240);
+  Array.from(keyboard.children).forEach(function (part) { fade(part, 1, 0, 1890, 2240, 'ease-in-out'); });
   LAYERS.slice(1).forEach(function (layer, i) {
-    animatePart(layer.el, [
-      { transform: 'translateZ(' + (baseZ - 2) + 'px)', opacity: 0 },
-      { transform: 'translateZ(' + layer.z + 'px)', opacity: 1 }
-    ], 1160 + i * 85, 2160 + i * 140);
+    var from = 1810 + i * 55, to = 2700 + i * 180;
+    moveZ(layer.el, baseZ - 2 - i * 4, layer.z, from, to);
+    // Compress the existing extrusion under the deck, then restore its full thickness as it separates.
+    layer.el.querySelectorAll('.ex').forEach(function (edge) {
+      var depth = edge.style.transform;
+      animatePart(edge, [{ transform: 'scaleZ(.14) ' + depth }, { transform: 'scaleZ(1) ' + depth }], from, to, lift);
+    });
   });
-  animatePart(slabs.apps, [{ opacity: 0 }, { opacity: 1 }], 2120, 2400).onfinish = function () {
+  moveZ(bottom, baseZ - 11, LAYERS[2].z - 26, 1865, 2880);
+  Array.from(bottom.children).forEach(function (part) { fade(part, 1, 0, 2510, 2890, 'ease-in-out'); });
+
+  animatePart(stack.querySelector('.shadow'), [
+    { transform: z(baseZ - 62) + ' scale(.86,.8)' }, { transform: z(-460) + ' scale(1)' }
+  ], enter, rest, lift);
+  animatePart(stack, [
+    { transform: 'translate(var(--ox,70px),calc(var(--oy,0px) + 36px)) scale(calc(var(--s,.85) * .82)) rotateX(57deg) rotateZ(-10deg)' },
+    { transform: 'translate(var(--ox,70px),var(--oy,0px)) scale(var(--s,.85)) rotateX(57deg) rotateZ(-10deg)' }
+  ], 0, finish, 'cubic-bezier(.25,.45,.3,1)');
+  fade($('fx'), 0, 1, rest, finish, 'ease-in-out');
+  fade(labels, 0, 1, rest, finish, 'ease-in-out').onfinish = function () {
     stopIntro();
-    queueStory();
+    beginStory();
   };
   return true;
 }
@@ -805,7 +861,7 @@ function stopIntro() {
   });
   intro.laptop.remove();
   intro = null;
-  stack.getBoundingClientRect(); // Apply the rest pose before restoring slab transitions.
+  stack.getBoundingClientRect(); // Apply the rest pose while transitions are still disabled.
   document.body.classList.remove('intro');
   labels.inert = stage.inert = false;
 }
