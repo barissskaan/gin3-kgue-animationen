@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GIN3 · KGÜ-Animationen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --fg:#1b2330; --muted:#5b6676; --line:#dde2ea;
+  --accent:#2f6fd6; --accent-bg:#e8f0fc; --num:#1b2330;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0f141c; --card:#161d28; --fg:#e6ebf2; --muted:#93a0b3; --line:#263042;
+         --accent:#7fb0ff; --accent-bg:#1c2a40; --num:#e6ebf2; color-scheme:dark }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font:16px/1.55 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:40px 20px 56px}
+header h1{font-size:30px;line-height:1.2;margin:0 0 6px;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:62ch}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 30px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:8px;
+  border:1px solid var(--line);background:var(--card);color:var(--fg);text-decoration:none;font-weight:600;font-size:14px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+@media (prefers-color-scheme: dark){ .btn.primary{color:#0f141c} }
+.btn svg{width:16px;height:16px}
+.list{display:grid;gap:14px}
+.kgu{display:grid;grid-template-columns:64px 1fr;gap:16px;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.n{font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:600;font-size:13px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.06em}
+.n b{display:block;font-size:30px;color:var(--num);letter-spacing:0;line-height:1.1}
+.kgu h2{font-size:18px;margin:0 0 10px}
+.kgu ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.kgu li{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.kgu a{color:var(--accent);font-weight:600;text-decoration:none}
+.kgu a:hover{text-decoration:underline}
+.tag{font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;background:var(--accent-bg);color:var(--accent)}
+.d{color:var(--muted);font-size:14px}
+footer{margin-top:34px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:16px}
+footer p{margin:0 0 6px;max-width:70ch}
+@media (max-width:520px){ .kgu{grid-template-columns:1fr;gap:6px} .n b{display:inline;font-size:20px;margin-left:6px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>KGÜ-Animationen · Grundgebiete der Informatik 3</h1>
+  <p>Interaktive Seiten zu den Kleingruppenübungen im WS 2026/27. Jede Seite läuft direkt im Browser, ohne Installation. Mit „Weiter“ geht es Schritt für Schritt.</p>
+</header>
+
+<div class="meta">
+  <a class="btn primary" href="KGUE-Animationen.zip" download>
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13h10"/></svg>
+    Alles als Zip
+  </a>
+  <a class="btn" href="https://github.com/barissskaan/gin3-kgue-animationen">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 4 2 8l3.5 4M10.5 4 14 8l-3.5 4"/></svg>
+    Quellcode auf GitHub
+  </a>
+</div>
+
+<main class="list">
+  <section class="kgu">
+    <div class="n">KGÜ<b>1</b></div>
+    <div>
+      <h2>Einführung in C und Linux</h2>
+      <ul>
+        <li><a href="kgue-1/shell.html">Die Shell</a><span class="tag">Theorie</span><span class="d">Was im Terminal bei einem Befehl passiert</span></li>
+        <li><a href="kgue-1/gcc.html">Von C zum Programm</a><span class="tag">Theorie</span><span class="d">Präprozessor, Compiler, Assembler, Linker</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="kgu">
+    <div class="n">KGÜ<b>2</b></div>
+    <div>
+      <h2>Assembler</h2>
+      <ul>
+        <li><a href="kgue-2/ram.html">RAM und Adressen</a><span class="tag">Theorie</span></li>
+        <li><a href="kgue-2/nasm.html">NASM-Grundlagen</a><span class="tag">Theorie</span></li>
+        <li><a href="kgue-2/aufgaben.html">Aufgaben</a><span class="tag">Lösung</span><span class="d">Programm Schritt für Schritt auf der CPU</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="kgu">
+    <div class="n">KGÜ<b>3</b></div>
+    <div>
+      <h2>Rust, Git und Betriebssystem</h2>
+      <ul>
+        <li><a href="kgue-3/git.html">Git-Grundlagen</a><span class="tag">Theorie</span></li>
+        <li><a href="kgue-3/aufgabe-1.html">Aufgabe 1</a><span class="tag">Lösung</span><span class="d">Fakultät in Rust</span></li>
+        <li><a href="kgue-3/aufgabe-2.html">Aufgabe 2</a><span class="tag">Lösung</span><span class="d">Ownership, Stack und Heap</span></li>
+        <li><a href="kgue-3/aufgabe-3.html">Aufgabe 3</a><span class="tag">Lösung</span><span class="d">Freiliste des Betriebssystems</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="kgu">
+    <div class="n">KGÜ<b>4</b></div>
+    <div>
+      <h2>Allokationsstrategien und Speicherverwaltung</h2>
+      <ul>
+        <li><a href="kgue-4/speicher.html">Speicher für Programme</a><span class="tag">Theorie</span></li>
+        <li><a href="kgue-4/aufgabe-3.html">Aufgabe 3</a><span class="tag">Lösung</span><span class="d">Allokationsstrategien</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="kgu">
+    <div class="n">KGÜ<b>5</b></div>
+    <div>
+      <h2>Scheduling</h2>
+      <ul>
+        <li><a href="kgue-5/scheduling.html">Scheduling</a><span class="tag">Theorie</span><span class="d">Prozesse, Warteschlange, die vier Regeln</span></li>
+        <li><a href="kgue-5/aufgabe-1.html">Aufgabe 1</a><span class="tag">Lösung</span><span class="d">FCFS, SJF, Priority, Round Robin</span></li>
+        <li><a href="kgue-5/aufgabe-2.html">Aufgabe 2</a><span class="tag">Lösung</span><span class="d">Prioritäten mit Strafe</span></li>
+        <li><a href="kgue-5/aufgabe-3.html">Aufgabe 3</a><span class="tag">Lösung</span><span class="d">Welche Strategie für welches Ziel?</span></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>Erstellt von Barış Kaan Datlı, Tutor der Kleingruppenübungen. Inoffizielle Begleitmaterialien, maßgeblich sind Vorlesung, Übung und die Unterlagen im Moodle-Kurs.</p>
+  <p>Am besten am Laptop im Vollbild ansehen.</p>
+</footer>
+</div>
+</body>
+</html>
