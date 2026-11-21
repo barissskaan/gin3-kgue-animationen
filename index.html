@@ -507,9 +507,9 @@ function switchView(to, k, id, immediate) {
   stage.classList.toggle('away', to);
 
   var flights = [stage.animate([{ opacity: to ? 1 : 0 }, { opacity: to ? 0 : 1 }], {
-    duration: to ? 300 : 400, delay: to ? 0 : 500, easing: 'ease-out', fill: 'backwards'
+    duration: to ? 200 : 400, delay: to ? 0 : 500, easing: 'ease-out', fill: 'backwards'
   })];
-  var fade = { duration: to ? 400 : 220, delay: to ? 550 : 0, easing: 'ease-out', fill: to ? 'backwards' : 'forwards' };
+  var fade = { duration: to ? 300 : 220, delay: to ? 330 : 0, easing: 'ease-out', fill: to ? 'backwards' : 'forwards' };
   function fadePart(el, hidden, shown) {
     flights.push(el.animate(to ? [hidden, shown] : [shown, hidden], fade));
   }
@@ -531,7 +531,7 @@ function switchView(to, k, id, immediate) {
     };
     var target = { transform: 'none', opacity: 1, backgroundColor: artStyle.backgroundColor, borderColor: artStyle.color };
     flights.push(c.art.animate(to ? [source, target] : [target, source], {
-      duration: to ? 750 : 700, delay: to ? 250 + c.indexInRow * 25 : 150,
+      duration: to ? 600 : 700, delay: to ? 110 + c.indexInRow * 15 : 150,
       easing: 'cubic-bezier(.3,.7,.2,1)', fill: to ? 'backwards' : 'forwards'
     }));
   });
