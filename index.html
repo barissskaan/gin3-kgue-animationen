@@ -26,52 +26,34 @@ a{color:inherit}button{font:inherit;color:inherit}
 [hidden]{display:none!important}
 
 /* ---------- top bar ---------- */
-.top{position:fixed;left:0;right:0;top:0;height:60px;display:flex;align-items:center;gap:14px;padding:0 28px 0 34px;z-index:30}
+.top{position:fixed;left:0;right:0;top:0;height:68px;display:flex;align-items:center;gap:14px;padding:0 28px 0 34px;z-index:30}
 .wm{display:flex;align-items:center;gap:10px;font:600 12.5px/1 var(--mono);letter-spacing:.08em;text-decoration:none}
 .wm i{display:grid;gap:2.5px}.wm i b{display:block;width:16px;height:3.5px;border-radius:1px;background:var(--ink)}.wm i b:nth-child(2){background:var(--mark)}
 .top nav{margin-left:auto;display:flex;gap:6px}
 .tb{font:600 12.5px/1 var(--mono);text-decoration:none;border:1.5px solid transparent;border-radius:999px;padding:9px 13px;background:transparent;cursor:pointer;color:var(--muted)}
 .tb:hover{color:var(--ink);border-color:var(--ink);background:var(--card)}
 .tb.k{background:var(--ink);color:#fff}
+.switch{position:absolute;left:50%;transform:translateX(-50%);display:flex;background:var(--card);border:1.5px solid var(--ink);border-radius:999px;padding:4px;box-shadow:0 4px 0 var(--ink)}
+.switch::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:136px;border-radius:999px;background:var(--mark);transition:transform .45s var(--ease)}
+body.ueb .switch::before{transform:translateX(136px)}
+.switch button{position:relative;min-width:136px;border:0;background:transparent;border-radius:999px;padding:10px 12px;font:600 14px var(--sans);display:flex;justify-content:center;align-items:center;gap:8px;cursor:pointer}
+.switch svg{width:17px;height:17px}
 
 /* ---------- layout ---------- */
-.app{position:fixed;inset:60px 0 0 0;display:grid;grid-template-columns:var(--col) minmax(0,1fr)}
+.app{position:fixed;inset:68px 0 0 0;display:grid;grid-template-columns:var(--col) minmax(0,1fr)}
 .col{position:relative;padding:14px 22px 20px 34px;display:flex;flex-direction:column;min-height:0;z-index:12}
 .views{flex:1;min-height:0;overflow-y:auto;padding-right:6px}
 .views::-webkit-scrollbar{width:6px}.views::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
 h1{font:700 clamp(26px,2.1vw,30px)/1.08 var(--disp);letter-spacing:-.03em;margin:6px 0 10px}
 .lead{color:#474b52;margin:0 0 18px;max-width:34ch}
-.cap-s{font:600 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.kg-caption{font:600 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
 
-/* journey stepper */
-.steps{list-style:none;margin:0;padding:0;position:relative}
-.steps::before{content:"";position:absolute;left:12.25px;top:16px;bottom:16px;width:1.5px;background:var(--line)}
-.steps button{position:relative;display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:11px;align-items:center;width:100%;text-align:left;background:transparent;border:0;border-radius:10px;padding:6px 8px 6px 0;cursor:pointer}
-.steps .n{width:26px;height:26px;border-radius:50%;background:var(--bg);border:1.5px solid var(--line);display:grid;place-items:center;font:600 11px/1 var(--mono);color:var(--muted);transition:background-color .25s,border-color .25s,color .25s}
-.steps b{font:600 15px/1.25 var(--sans)}
-.steps small{display:block;font:400 13px/1.35 var(--sans);color:var(--muted);max-height:0;overflow:hidden;opacity:0;transition:max-height .35s var(--ease),opacity .3s}
-.steps em{font:600 10.5px/1 var(--mono);font-style:normal;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap}
-.steps em i{width:8px;height:8px;border-radius:50%;background:var(--c)}
-.steps li.done .n{background:var(--ink);border-color:var(--ink);color:#fff}
-.steps li.cur .n{background:var(--mark);border-color:var(--ink);color:var(--ink)}
-.steps li.cur small{max-height:60px;opacity:1}
-.steps button:hover b{background:linear-gradient(var(--mark-soft),var(--mark-soft)) no-repeat 0 85%/100% 50%}
-.ctl{display:flex;gap:8px;margin:14px 0 0 37px}
 .btn{font:600 12.5px/1 var(--mono);border:1.5px solid var(--ink);background:var(--card);border-radius:999px;padding:9px 13px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
 .btn:hover{background:var(--mark)}
 .btn svg{width:13px;height:13px}
 .btn kbd{font:600 10px/1 var(--mono);border:1px solid var(--line);border-radius:4px;padding:2px 4px;color:var(--muted)}
 
-/* detail + layer views */
-.back{display:inline-flex;align-items:center;gap:8px;font:600 12px/1 var(--mono);background:transparent;border:0;padding:6px 0;cursor:pointer;color:var(--muted);margin-top:4px}
-.back:hover{color:var(--ink)}.back svg{width:14px;height:14px}
-.badge{display:flex;align-items:center;gap:8px;font:600 11px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:12px}
-.badge i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
-h2{font:700 30px/1.06 var(--disp);letter-spacing:-.03em;margin:10px 0 8px}
-.desc{color:#3d4148;margin:0 0 16px}
-.thumb{display:block;position:relative;height:0;padding-bottom:56.5%;border-radius:12px;overflow:hidden;border:1.5px solid var(--ink);background:#0f0f11;margin:0 0 12px;box-shadow:0 5px 0 var(--ink)}
-.thumb iframe{position:absolute;left:0;top:0;width:1470px;height:830px;border:0;transform-origin:0 0;pointer-events:none}
-.thumb span{position:absolute;left:8px;bottom:8px;font:600 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;background:rgba(15,15,17,.82);color:#fff;padding:6px 8px;border-radius:6px}
+/* ---------- mobile animation links ---------- */
 .anims{display:grid;gap:9px;margin:0 0 16px}
 .anim{display:grid;grid-template-columns:auto minmax(0,1fr) 16px;gap:11px;align-items:center;padding:12px 13px;border:1.5px solid var(--ink);border-radius:13px;background:#fff;text-decoration:none;box-shadow:0 4px 0 var(--ink);transition:transform .15s,box-shadow .15s;cursor:pointer;width:100%;text-align:left}
 .anim:hover{transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
@@ -80,18 +62,48 @@ h2{font:700 30px/1.06 var(--disp);letter-spacing:-.03em;margin:10px 0 8px}
 .anim b{font-weight:600}.anim span{display:block;color:var(--muted);font-size:13px;line-height:1.35}
 .anim svg{width:16px;height:16px}
 
-/* KGÜ quick index */
-.idx{flex:none;padding-top:14px;border-top:1.5px solid var(--line);margin-top:12px}
-.chips{display:flex;gap:6px}
-.chip{flex:1;font:600 13px/1 var(--mono);border:1.5px solid var(--ink);background:var(--card);border-radius:10px;padding:9px 0 8px;cursor:pointer;display:grid;gap:6px;justify-items:center}
-.chip i{width:18px;height:4px;border-radius:2px;background:var(--c)}
-.chip:hover,.chip.on{background:var(--ink);color:#fff}
-.pop{position:fixed;z-index:40;width:340px;background:var(--card);border:1.5px solid var(--ink);border-radius:16px;padding:16px;box-shadow:0 6px 0 var(--ink)}
-.pop h3{font:700 19px/1.15 var(--disp);letter-spacing:-.02em;margin:8px 0 12px}
-.pop .anims{margin:0}
+/* ---------- exercise navigation ---------- */
+.journey{margin-bottom:22px}
+.journey .lead{margin-bottom:10px}
+body.ueb .journey{display:none}
+.kg{display:grid;gap:10px}
+.kg button{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;text-align:left;padding:10px 12px;border:1.5px solid var(--ink);border-radius:14px;background:var(--card);box-shadow:0 4px 0 var(--ink);cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s}
+.kg button:hover{background:var(--mark-soft);transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
+.kg button.on{background:var(--ink);color:#fff}
+.knum{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:50%;background:var(--c);color:#fff;font:700 18px var(--disp)}
+.kg b{font:600 15.5px/1.25 var(--sans)}
+.kbars{display:flex;gap:3px}.kbars i{width:5px;height:16px;border-radius:2px;background:var(--c)}
+.col>.who{flex:none;margin:18px 0 0;font-size:12px}
+
+/* ---------- exercise cards ---------- */
+.stage-cell{position:relative;min-width:0;min-height:0}
+#ueb{position:absolute;inset:0;overflow-y:auto;scrollbar-gutter:stable;padding:10px 34px var(--tail,60px) 16px;visibility:hidden;opacity:0;transition:opacity .15s;z-index:20}
+body.ueb #ueb{visibility:visible;opacity:1}
+.krow{border-top:1.5px solid var(--line);padding:18px 0 22px}
+.khead{display:flex;gap:14px;align-items:center;margin-bottom:18px}
+.khead .knum{width:44px;height:44px;font-size:20px}
+.khead h2{font:700 26px/1.15 var(--disp);letter-spacing:-.03em;margin:0}
+.kcards{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+.kcard{width:264px;flex:none;background:var(--card);border:1.5px solid var(--ink);border-radius:16px;box-shadow:0 5px 0 var(--ink)}
+.kcard.pick{box-shadow:0 5px 0 var(--ink),0 0 0 4px var(--mark)}
+.kart{position:relative;z-index:2;height:150px;border-radius:14px 14px 0 0;overflow:hidden;border-bottom:1.5px solid var(--ink);background:var(--surface)}
+.kart svg{display:block;width:100%;height:100%}
+.klinks a{display:grid;grid-template-columns:auto 1fr 18px;gap:10px;align-items:center;padding:12px 14px;text-decoration:none;font:600 15px var(--sans)}
+.klinks a+a{border-top:1px solid var(--line)}
+.klinks small{font:600 10px var(--mono);text-transform:uppercase;border-radius:6px;padding:5px 7px;background:#ece8de}
+.klinks small.l{background:var(--mark)}
+.klinks svg{width:18px;height:18px}
+.klinks a:hover{background:var(--mark)}
+.klinks a:last-child{border-radius:0 0 14px 14px}
+.kcard.wide{width:544px;display:grid;grid-template-columns:264px 1fr}
+.wide .kart{height:100%;min-height:170px;border-bottom:0;border-right:1.5px solid var(--ink);border-radius:14px 0 0 14px}
+.wide .klinks a:first-child{border-top-right-radius:14px}
+.wide .klinks a:last-child{border-bottom-left-radius:0}
+body.flying #ueb{pointer-events:none}
+body.flying .kart{will-change:transform}
 
 /* ---------- stage ---------- */
-.stage{position:relative;perspective:3400px;perspective-origin:50% 45%;min-width:0}
+.stage{position:relative;width:100%;height:100%;perspective:3400px;perspective-origin:50% 45%;min-width:0}
 .stack{position:absolute;left:50%;top:50%;width:760px;height:440px;margin:-220px 0 0 -380px;transform-style:preserve-3d;
   transform:translate(var(--ox,70px),var(--oy,0px)) scale(var(--s,.85)) rotateX(57deg) rotateZ(-10deg);transition:transform 1s var(--ease)}
 .stack.flat{transform:translate(0px,6px) scale(var(--sf,1.2)) rotateX(0deg) rotateZ(0deg)}
@@ -105,21 +117,24 @@ h2{font:700 30px/1.06 var(--disp);letter-spacing:-.03em;margin:10px 0 8px}
 .face svg{display:block;width:100%;height:100%}
 .ex{background:var(--edge,#b9b4a6)}
 .shadow{position:absolute;inset:-4% -2%;border-radius:40%;background:radial-gradient(closest-side,rgba(22,24,29,.36),rgba(22,24,29,0));transform:translateZ(-460px);filter:blur(22px);transition:opacity .5s;pointer-events:none}
-.stack.flat .shadow{opacity:0}
+.stack.flat .shadow,.stack.away .shadow{opacity:0}
+.stack.away .slab{opacity:0;transform:translateZ(var(--z)) translateY(240px);pointer-events:none}
+.stack.notrans,.stack.notrans .slab,.stack.notrans .shadow{transition:none!important}
 .an{position:absolute;width:0;height:0;pointer-events:none}
 .face [data-stop]{cursor:pointer}
 
 /* ---------- overlay: labels + signal ---------- */
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:14;transition:opacity .4s}
-#labels{position:fixed;inset:0;pointer-events:none;z-index:16}
+#labels{position:fixed;inset:0;pointer-events:none;z-index:16;transition:opacity .4s}
+body.ueb #labels,body.ueb #fx{opacity:0;pointer-events:none}
+body.ueb #labels .lb{pointer-events:none}
 .lb{position:absolute;left:0;top:0;pointer-events:auto;white-space:nowrap;will-change:transform;transition:opacity .35s}
 .lb.off{opacity:0;pointer-events:none}
 .lb.stop{display:flex;align-items:center;gap:7px;font:600 12.5px/1 var(--sans);background:var(--card);border:1.5px solid var(--ink);border-radius:999px;padding:6px 11px 6px 8px;cursor:pointer;box-shadow:0 3px 0 var(--ink)}
-.lb.stop i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.lb.stop i{width:18px;height:18px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font:600 10.5px var(--mono);font-style:normal}
 .lb.stop::after{content:"";position:absolute;left:50%;top:100%;width:1.5px;height:var(--stem,30px);margin-top:3px;background:var(--ink)}
 .lb.stop::before{content:"";position:absolute;left:50%;top:calc(100% + var(--stem,30px) + 1px);width:7px;height:7px;margin-left:-2.75px;border-radius:50%;background:var(--ink)}
 .lb.stop:hover,.lb.stop.on{background:var(--mark)}
-.lb.stop.sel{background:var(--ink);color:#fff}
 .flat .lb.stop{font-size:14px;padding:8px 14px 8px 10px}
 .flat .lb.stop::after,.flat .lb.stop::before{display:none}
 .lb.slot{font:600 10.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--bg);border:1.5px dashed #a9a59a;border-radius:999px;padding:5px 9px;pointer-events:none}
@@ -128,42 +143,34 @@ h2{font:700 30px/1.06 var(--disp);letter-spacing:-.03em;margin:10px 0 8px}
 .lb.layer b{display:block;font:700 19px/1.15 var(--disp);letter-spacing:-.02em;margin:4px 0 2px}
 .lb.layer span{display:block;font:400 12.5px/1.35 var(--sans);color:var(--muted);white-space:normal;width:170px;margin-left:auto}
 .lb.layer:hover b,.lb.layer.on b{background:linear-gradient(var(--mark),var(--mark)) no-repeat 0 88%/100% 42%}
-#cap{position:fixed;left:calc(var(--col) + (100vw - var(--col)) / 2);bottom:22px;transform:translateX(-50%);z-index:18;display:flex;align-items:center;gap:12px;background:var(--ink);color:#fff;border-radius:14px;padding:12px 18px 12px 12px;font:500 15.5px/1.35 var(--sans);max-width:min(620px,calc(100vw - var(--col) - 40px));box-shadow:0 14px 30px -14px rgba(22,24,29,.6);transition:opacity .4s,transform .4s var(--ease)}
-#cap.off{opacity:0;transform:translateX(-50%) translateY(12px);pointer-events:none}
-#cap .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--mark);color:var(--ink);display:grid;place-items:center;font:600 12px/1 var(--mono)}
-#cap em{flex:none;font:600 10.5px/1 var(--mono);font-style:normal;letter-spacing:.06em;color:#fff;opacity:.6;white-space:nowrap}
-.foc-bar{position:fixed;left:calc(var(--col) + (100vw - var(--col)) / 2);top:74px;transform:translateX(-50%);z-index:18}
+.foc-bar{position:fixed;left:calc(var(--col) + (100vw - var(--col)) / 2);top:82px;transform:translateX(-50%);z-index:18}
 
-/* ---------- list overlay ---------- */
-.list{position:fixed;inset:0;z-index:50;background:rgba(244,242,236,.97);overflow-y:auto;padding:86px 22px 60px}
-.list .in{max-width:780px;margin:0 auto}
-.list section{margin-bottom:26px}
-.list h3{display:flex;gap:10px;align-items:center;font:700 19px/1.2 var(--disp);margin:0 0 10px}
-.list h3 i{width:10px;height:10px;border-radius:50%;background:var(--c)}
 .who{font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px}
 .who b{color:var(--ink)}
-.dn-back{position:fixed;left:50%;top:15px;transform:translateX(-50%);z-index:60}
 
 /* ---------- small screens: plain list ---------- */
 .mobile{display:none}
 @media (max-width:980px){
   body{overflow:auto;background-size:22px 22px}
-  .app,#fx,#labels,#cap,.foc-bar{display:none!important}
+  .app,#fx,#labels,.foc-bar,.switch{display:none!important}
   .mobile{display:block;padding:76px 20px 50px;max-width:640px;margin:0 auto}
   .mobile section{margin:26px 0}
   .mobile h3{font:700 21px/1.15 var(--disp);letter-spacing:-.02em;margin:0 0 4px}
   .mobile p.ld{color:var(--muted);margin:0 0 12px}
   .top nav .opt{display:none}
 }
-@media (prefers-reduced-motion:reduce){.stack,.slab{transition:none}}
+@media (prefers-reduced-motion:reduce){.stack,.slab,#ueb,#labels,#fx,.switch::before{transition:none}}
 </style>
 </head>
 <body>
 
 <header class="top">
   <a class="wm" href="./"><i><b></b><b></b><b></b></i>GIN3 · KGÜ-ANIMATIONEN</a>
+  <div class="switch" role="group" aria-label="Ansicht">
+    <button id="schBtn" type="button" aria-pressed="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="m2 6 8-4 8 4-8 4-8-4Zm0 4 8 4 8-4M2 14l8 4 8-4"/></svg>Schichten</button>
+    <button id="uebBtn" type="button" aria-pressed="false"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="6" height="6" rx="1"/><rect x="12" y="2" width="6" height="6" rx="1"/><rect x="2" y="12" width="6" height="6" rx="1"/><rect x="12" y="12" width="6" height="6" rx="1"/></svg>Übungen</button>
+  </div>
   <nav>
-    <button class="tb opt" id="listBtn" type="button">Alle Animationen</button>
     <a class="tb" href="KGUE-Animationen.zip" download>Zip</a>
     <a class="tb opt" href="https://github.com/barissskaan/gin3-kgue-animationen">GitHub</a>
     <a class="tb opt" href="https://bariskaandatli.com">bariskaandatli.com</a>
@@ -172,27 +179,21 @@ h2{font:700 30px/1.06 var(--disp);letter-spacing:-.03em;margin:10px 0 8px}
 
 <main class="app">
   <section class="col">
-    <div class="views" id="views">
-      <div id="vJourney">
-        <h1>Ein Computer, Schicht für Schicht.</h1>
-        <p class="lead">Folge einem Programm von der Shell bis zur CPU. Jede Station ist ein Thema aus den Kleingruppenübungen in Grundgebiete der Informatik&nbsp;3.</p>
-        <p class="cap-s"><span>Der Weg eines Programms</span></p>
-        <ol class="steps" id="steps"></ol>
-        <div class="ctl">
-          <button class="btn" id="replay" type="button"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a5 5 0 1 0 1.6-3.7M2 2v3h3"/></svg>Nochmal <kbd>W</kbd></button>
-          <button class="btn" id="skip" type="button">Überspringen</button>
-        </div>
+    <div class="views">
+      <h1>Ein Computer,<br>Schicht für Schicht.</h1>
+      <div class="journey">
+        <p class="lead">Folge einem Programm von der Shell bis zur CPU.</p>
+        <button class="btn" id="replay" type="button"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a5 5 0 1 0 1.6-3.7M2 2v3h3"/></svg>Nochmal <kbd>W</kbd></button>
       </div>
-      <div id="vDetail" hidden></div>
-      <div id="vLayer" hidden></div>
+      <p class="kg-caption">Kleingruppenübungen</p>
+      <nav class="kg" id="kg" aria-label="Kleingruppenübungen"></nav>
     </div>
-    <div class="idx">
-      <p class="cap-s"><span>Direkt zur Übung</span><span>5 Übungen · 15 Animationen</span></p>
-      <div class="chips" id="chips"></div>
-      <p class="who"><b>Barış Kaan Datlı</b> · Tutor in Grundgebiete der Informatik 3, RWTH Aachen, WS 2026/27. Inoffizielle Begleitmaterialien.</p>
-    </div>
+    <p class="who"><b>Barış Kaan Datlı</b> · Tutor, RWTH Aachen · WS 2026/27<br>Inoffizielle Begleitmaterialien.</p>
   </section>
-  <section class="stage" id="stage"><div class="stack" id="stack"><div class="shadow"></div></div></section>
+  <div class="stage-cell">
+    <section class="stage" id="stage" aria-label="Computer in drei Schichten"><div class="stack" id="stack"><div class="shadow"></div></div></section>
+    <div id="ueb" aria-label="Animationen nach Kleingruppenübung" inert></div>
+  </div>
 </main>
 
 <svg id="fx" aria-hidden="true">
@@ -203,10 +204,7 @@ h2{font:700 30px/1.06 var(--disp);letter-spacing:-.03em;margin:10px 0 8px}
   <g id="dot" opacity="0"><circle r="15" fill="#ffd400" opacity=".28"/><circle r="8" fill="#ffd400" stroke="#16181d" stroke-width="1.6"/></g>
 </svg>
 <div id="labels"></div>
-<div id="cap" class="off" aria-live="polite"><span class="n"></span><span class="t"></span><em></em></div>
 <div class="foc-bar" id="focBar" hidden><button class="btn" id="unfocus" type="button"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2 4 7l5 5"/></svg>Alle Schichten</button></div>
-<div class="pop" id="pop" hidden></div>
-<div class="list" id="list" hidden><div class="in" id="listIn"></div></div>
 <div class="mobile" id="mobile"></div>
 
 <script src="start/art-apps.js"></script>
@@ -256,15 +254,7 @@ var STOPS = {
   ram: { l: 'hw', r: [430, 70, 270, 210], t: 'RAM und Adressen', k: 2, a: ['ram'], d: 'Register, Arbeitsspeicher, SSD: wo Daten liegen, wie schnell man an sie herankommt und was eine Adresse ist.' }
 };
 var SLOTS = [['apps', 190, 337], ['os', 475, 323], ['os', 645, 323]];
-var STEPS = [
-  { s: ['gcc'], k: 1, t: 'Kompilieren', x: 'Mit gcc wird aus main.c das Programm hallo.' },
-  { s: ['shell'], k: 1, t: 'Starten', x: 'Du tippst ./hallo. Die Shell startet das Programm.' },
-  { s: ['frei'], k: 3, t: 'Speicher suchen', x: 'Das Betriebssystem sucht in der Freiliste nach freiem Speicher.' },
-  { s: ['alloc', 'speicher'], k: 4, t: 'Speicher reservieren', x: 'Eine passende Lücke im Arbeitsspeicher wird reserviert.' },
-  { s: ['sched'], k: 5, t: 'Rechenzeit bekommen', x: 'Der Scheduler reiht den Prozess ein und gibt ihm die CPU.' },
-  { s: ['cpu', 'ram'], k: 2, t: 'Ausführen', x: 'Die CPU führt Befehl für Befehl aus und liest dabei aus dem RAM.' },
-  { s: ['shell'], k: 1, t: 'Ausgabe', x: 'Die Ausgabe erscheint im Terminal: Hallo, Welt!' }
-];
+var STORY = [['gcc'], ['shell'], ['frei'], ['alloc', 'speicher'], ['sched'], ['cpu', 'ram'], ['shell']];
 // signal route: [layer, x, y, step reached on arrival]
 var WP = [
   ['apps', 546, 131, 0], ['apps', 356, 131], ['apps', 356, 161], ['apps', 190, 161, 1],
@@ -275,7 +265,6 @@ var WP = [
   ['os', 205, 215], ['apps', 205, 215], ['apps', 190, 161, 6]
 ];
 var ARROW = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg>';
-var BACK = '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2 4 7l5 5"/></svg>';
 var $ = function (id) { return document.getElementById(id); };
 var RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 var small = matchMedia('(max-width:980px)');
@@ -317,9 +306,10 @@ Object.keys(STOPS).forEach(function (id) {
   var s = STOPS[id]; s.id = id;
   s.cx = s.r[0] + s.r[2] / 2; s.cy = s.r[1] + s.r[3] / 2;
   s.aC = s.la ? anchor(s.l, s.la[0], s.la[1]) : anchor(s.l, s.cx, s.cy); s.aT = anchor(s.l, s.cx, s.r[1]);
+  s.corners = [[0, 0], [1, 0], [1, 1], [0, 1]].map(function (c) { return anchor(s.l, s.r[0] + c[0] * s.r[2], s.r[1] + c[1] * s.r[3]); });
   var b = document.createElement('button'); b.type = 'button'; b.className = 'lb stop'; b.style.setProperty('--c', K[s.k].c);
-  b.innerHTML = '<i></i>' + s.t; b.setAttribute('aria-label', s.t + ', Kleingruppenübung ' + s.k);
-  b.onclick = function () { select(id); };
+  b.innerHTML = '<i>' + s.k + '</i>' + s.t; b.setAttribute('aria-label', s.t + ', Kleingruppenübung ' + s.k);
+  b.onclick = function () { openStop(id); };
   b.onmouseenter = function () { hovStop = id; applyAct(); }; b.onmouseleave = function () { hovStop = null; applyAct(); };
   labels.appendChild(b); s.lb = b; s.g = slabs[s.l].querySelector('[data-stop="' + id + '"]');
 });
@@ -329,7 +319,7 @@ SLOTS.forEach(function (sl) {
 });
 LAYERS.forEach(function (L, i) {
   var b = document.createElement('button'); b.type = 'button'; b.className = 'lb layer';
-  b.innerHTML = '<span class="no">SCHICHT 0' + (i + 1) + '</span><b>' + L.n + '</b><span>' + L.d + '</span>';
+  b.innerHTML = '<span class="no">SCHICHT 0' + (i + 1) + '</span><b>' + L.n + '</b>';
   b.onclick = function () { focusLayer(L.id); };
   b.onmouseenter = function () { L.el.classList.add('hov'); }; b.onmouseleave = function () { L.el.classList.remove('hov'); };
   labels.appendChild(b); L.lb = b; L.a = anchor(L.id, 0, 250);
@@ -337,16 +327,15 @@ LAYERS.forEach(function (L, i) {
 });
 
 // ---------- state ----------
-var sel = null, hovStop = null, hovK = 0, storyStops = [], focus = null;
+var hovStop = null, hovK = 0, storyStops = [], focus = null;
 function applyAct() {
   var on = {};
   storyStops.forEach(function (x) { on[x] = 1; });
   if (hovStop) on[hovStop] = 1;
-  if (sel) on[sel] = 1;
   Object.keys(STOPS).forEach(function (id) {
-    var s = STOPS[id], a = !!on[id] || ((hovK || popK) && s.k === (hovK || popK));
+    var s = STOPS[id], a = !!on[id] || (hovK && s.k === hovK);
     if (s.g) s.g.classList.toggle('act', a);
-    s.lb.classList.toggle('on', a); s.lb.classList.toggle('sel', sel === id);
+    s.lb.classList.toggle('on', !!a);
   });
 }
 LAYERS.forEach(function (L) {
@@ -355,85 +344,166 @@ LAYERS.forEach(function (L) {
   face.addEventListener('mouseleave', function () { hovStop = null; applyAct(); L.el.classList.remove('hov'); L.lb.classList.remove('on'); });
   face.addEventListener('click', function (e) {
     var g = e.target.closest('[data-stop]');
-    if (g && STOPS[g.getAttribute('data-stop')]) select(g.getAttribute('data-stop'));
+    if (g && STOPS[g.getAttribute('data-stop')]) openStop(g.getAttribute('data-stop'));
     else if (!focus) focusLayer(L.id);
   });
 });
 
-// ---------- left column views ----------
-var vJ = $('vJourney'), vD = $('vDetail'), vL = $('vLayer'), views = $('views');
-function show(v) { [vJ, vD, vL].forEach(function (x) { x.hidden = x !== v; }); views.scrollTop = 0; }
-var stepsEl = $('steps');
-STEPS.forEach(function (st, i) {
-  var li = document.createElement('li');
-  li.innerHTML = '<button type="button"><span class="n">' + (i + 1) + '</span><span><b>' + st.t + '</b><small>' + st.x + '</small></span><em style="--c:' + K[st.k].c + '"><i></i>KGÜ ' + st.k + '</em></button>';
-  li.firstChild.onclick = function () { endStory(); select(st.s[0]); };
-  li.firstChild.onmouseenter = function () { if (!playing) { storyStops = st.s; applyAct(); } };
-  li.firstChild.onmouseleave = function () { if (!playing) { storyStops = []; applyAct(); } };
-  stepsEl.appendChild(li); st.li = li;
-});
-function select(id) {
-  endStory();
-  var s = STOPS[id]; sel = id; applyAct();
-  if (focus && focus !== s.l) focusLayer(s.l, true);
-  var k = K[s.k], h = '<button class="back" type="button" id="dBack">' + BACK + (focus ? 'Zur Schicht' : 'Zum Weg des Programms') + '</button>';
-  h += '<div class="badge" style="--c:' + k.c + '"><i></i>Kleingruppenübung ' + s.k + ' · ' + k.n + '</div><h2>' + s.t + '</h2><p class="desc">' + s.d + '</p>';
-  h += '<a class="thumb" href="' + R + A[s.a[0]][1] + '"><iframe loading="lazy" tabindex="-1" aria-hidden="true" src="' + R + A[s.a[0]][1] + '"></iframe><span>Vorschau</span></a>';
-  h += '<div class="anims">' + s.a.map(animRow).join('') + '</div>';
-  var si = -1; STEPS.forEach(function (st, i) { if (si < 0 && st.s.indexOf(id) >= 0) si = i; });
-  if (si >= 0 && si < STEPS.length - 1) { var nx = STEPS[si + 1]; h += '<p class="cap-s"><span>Danach im Ablauf</span></p><button class="anim" type="button" id="dNext"><small>' + (si + 2) + '</small><div><b>' + nx.t + '</b><span>' + nx.x + '</span></div>' + ARROW + '</button>'; }
-  vD.innerHTML = h; show(vD);
-  var th = vD.querySelector('.thumb'), fr = th.querySelector('iframe');
-  requestAnimationFrame(function () { fr.style.transform = 'scale(' + (th.clientWidth / 1470) + ')'; });
-  $('dBack').onclick = function () { sel = null; applyAct(); focus ? layerView(focus) : show(vJ); };
-  if ($('dNext')) $('dNext').onclick = function () { select(nx.s[0]); };
-}
-function layerView(id) {
-  var L = LAYERS.filter(function (x) { return x.id === id; })[0];
-  var h = '<button class="back" type="button" id="lBack">' + BACK + 'Alle Schichten</button><div class="badge" style="--c:var(--ink)"><i></i>Schicht 0' + (L.i + 1) + ' von 03</div><h2>' + L.n + '</h2><p class="desc">' + L.d + '</p><div class="anims">';
-  Object.keys(STOPS).forEach(function (k) { var s = STOPS[k]; if (s.l !== id) return; h += '<button class="anim" type="button" data-s="' + k + '"><small style="background:' + K[s.k].c + ';color:#fff">KGÜ ' + s.k + '</small><div><b>' + s.t + '</b><span>' + s.a.length + (s.a.length > 1 ? ' Animationen' : ' Animation') + '</span></div>' + ARROW + '</button>'; });
-  vL.innerHTML = h + '</div>'; show(vL);
-  $('lBack').onclick = unfocus;
-  vL.querySelectorAll('[data-s]').forEach(function (b) {
-    b.onclick = function () { select(b.dataset.s); };
-    b.onmouseenter = function () { hovStop = b.dataset.s; applyAct(); }; b.onmouseleave = function () { hovStop = null; applyAct(); };
-  });
-}
-
 // ---------- focus (dive into one layer) ----------
-function focusLayer(id, keepView) {
+function focusLayer(id) {
   endStory(); focus = id;
   stack.classList.add('flat'); labels.classList.add('flat');
   LAYERS.forEach(function (L) { L.el.classList.toggle('foc', L.id === id); L.el.classList.remove('hov'); });
   $('focBar').hidden = false; $('fx').style.opacity = 0;
-  if (!keepView) { sel = null; applyAct(); layerView(id); }
 }
 function unfocus() {
-  focus = null; sel = null; applyAct();
+  focus = null; hovStop = null; applyAct();
   stack.classList.remove('flat'); labels.classList.remove('flat');
-  LAYERS.forEach(function (L) { L.el.classList.remove('foc'); });
-  $('focBar').hidden = true; $('fx').style.opacity = 1; show(vJ);
+  LAYERS.forEach(function (L) { L.el.classList.remove('foc', 'hov'); });
+  $('focBar').hidden = true; $('fx').style.opacity = '';
 }
 $('unfocus').onclick = unfocus;
 
-// ---------- KGÜ quick index ----------
-var chips = $('chips'), pop = $('pop'), popK = 0;
+// ---------- exercises and live artwork ----------
+var ueb = $('ueb'), rows = [], cards = [], kgButtons = [];
+var KG_STOPS = [null, ['shell', 'gcc'], ['ram', 'cpu'], ['git', 'rust', 'frei'], ['speicher', 'alloc'], ['sched']];
 for (var k = 1; k <= 5; k++) (function (k) {
-  var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.style.setProperty('--c', K[k].c);
-  b.innerHTML = 'KGÜ ' + k + '<i></i>'; b.setAttribute('aria-label', 'Kleingruppenübung ' + k + ': ' + K[k].n);
+  var b = document.createElement('button'); b.type = 'button'; b.style.setProperty('--c', K[k].c);
+  var bars = ''; KG_ANIMS[k].forEach(function () { bars += '<i></i>'; });
+  b.innerHTML = '<span class="knum">' + k + '</span><b>' + K[k].n + '</b><span class="kbars" aria-hidden="true">' + bars + '</span>';
+  b.setAttribute('aria-label', 'KGÜ ' + k + ': ' + K[k].n);
   b.onmouseenter = function () { hovK = k; applyAct(); }; b.onmouseleave = function () { hovK = 0; applyAct(); };
-  b.onclick = function (e) {
-    e.stopPropagation();
-    if (popK === k) { closePop(); return; }
-    popK = k; [].forEach.call(chips.children, function (c, i) { c.classList.toggle('on', i + 1 === k); });
-    pop.innerHTML = '<div class="badge" style="--c:' + K[k].c + ';margin:0"><i></i>Kleingruppenübung ' + k + '</div><h3>' + K[k].n + '</h3><div class="anims">' + KG_ANIMS[k].map(animRow).join('') + '</div>';
-    pop.hidden = false; applyAct();
-    var r = chips.getBoundingClientRect(); pop.style.left = r.left + 'px'; pop.style.top = Math.max(70, r.top - pop.offsetHeight - 12) + 'px';
-  };
-  chips.appendChild(b);
+  b.onclick = function () { requestView(true, k); };
+  $('kg').appendChild(b); kgButtons.push(b);
+  var row = document.createElement('section'); row.className = 'krow'; row.id = 'kgue-' + k; row.style.setProperty('--c', K[k].c);
+  row.innerHTML = '<div class="khead"><span class="knum">' + k + '</span><h2>' + K[k].n + '</h2></div><div class="kcards"></div>';
+  ueb.appendChild(row); rows.push(row);
+  KG_STOPS[k].forEach(function (id) {
+    var s = STOPS[id], r = s.r, card = document.createElement('article');
+    card.className = 'kcard' + (s.a.length >= 3 ? ' wide' : ''); card.id = 'card-' + id;
+    card.setAttribute('aria-label', s.t);
+    card.style.setProperty('--surface', s.l === 'hw' ? '#0f1f1a' : s.l === 'os' ? '#fff6d6' : '#fbfaf6');
+    card.innerHTML = '<div class="kart"></div><div class="klinks">' + s.a.map(function (key) {
+      var a = A[key];
+      return '<a href="' + R + a[1] + '"><small class="' + (a[0] === 'L' ? 'l' : '') + '">' + (a[0] === 'L' ? 'Lösung' : 'Theorie') + '</small><span>' + a[2] + '</span>' + ARROW + '</a>';
+    }).join('') + '</div>';
+    var svg = slabs[s.l].querySelector('.face svg').cloneNode(false);
+    svg.setAttribute('class', 'art art-' + s.l); svg.removeAttribute('id');
+    svg.setAttribute('viewBox', [r[0] - 8, r[1] - 8, r[2] + 16, r[3] + 16].join(' '));
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('aria-hidden', 'true');
+    var clone = s.g.cloneNode(true); clone.classList.remove('act');
+    clone.querySelectorAll('.hit').forEach(function (hit) { hit.remove(); });
+    svg.appendChild(clone); card.querySelector('.kart').appendChild(svg);
+    card.onmouseenter = function () { clone.classList.add('act'); }; card.onmouseleave = function () { clone.classList.remove('act'); };
+    row.querySelector('.kcards').appendChild(card);
+    cards.push({ id: id, el: card, art: card.querySelector('.kart') });
+  });
 })(k);
-function closePop() { popK = 0; pop.hidden = true; applyAct(); [].forEach.call(chips.children, function (c) { c.classList.remove('on'); }); }
-document.addEventListener('click', function (e) { if (popK && !pop.contains(e.target)) closePop(); });
+function activeRow() {
+  var nearest = -1, distance = Infinity;
+  if (isUeb) rows.forEach(function (row, i) {
+    var d = Math.abs(row.offsetTop - ueb.scrollTop - 10);
+    if (d < distance) { distance = d; nearest = i; }
+  });
+  kgButtons.forEach(function (b, i) { b.classList.toggle('on', i === nearest); b.setAttribute('aria-current', i === nearest ? 'true' : 'false'); });
+}
+ueb.addEventListener('scroll', activeRow);
+ueb.addEventListener('wheel', function (e) { if (transitioning) e.preventDefault(); }, { passive: false });
+ueb.addEventListener('touchmove', function (e) { if (transitioning) e.preventDefault(); }, { passive: false });
+function scrollRow(k, smooth) {
+  if (k) ueb.scrollTo({ top: rows[k - 1].offsetTop - 10, behavior: smooth && !RM ? 'smooth' : 'instant' });
+  activeRow();
+}
+var pickTimer = 0;
+function markCard(id) {
+  clearTimeout(pickTimer);
+  cards.forEach(function (c) { c.el.classList.toggle('pick', c.id === id); });
+  pickTimer = setTimeout(function () { cards.forEach(function (c) { c.el.classList.remove('pick'); }); }, 1800);
+}
+function openStop(id) { requestView(true, STOPS[id].k, id); }
+
+// ---------- fly between the computer and the exercise cards ----------
+var isUeb = false, wantedUeb = false, transitioning = false, flights = [];
+var pendingKg = 0, pendingPick = null, replayPending = false;
+function rememberView(to) { try { localStorage['gin3-view'] = to ? 'ueb' : 'sch'; } catch (e) {} }
+function viewState(to) {
+  isUeb = to; document.body.classList.toggle('ueb', to);
+  $('schBtn').setAttribute('aria-pressed', String(!to)); $('uebBtn').setAttribute('aria-pressed', String(to));
+  ueb.inert = !to || transitioning; labels.inert = to; stage.inert = to;
+  activeRow();
+}
+function originals(hidden) {
+  Object.keys(STOPS).forEach(function (id) { if (STOPS[id].g) STOPS[id].g.style.visibility = hidden ? 'hidden' : ''; });
+}
+function sourceBoxes() {
+  var boxes = {}, scale = parseFloat(stack.style.getPropertyValue('--s'));
+  Object.keys(STOPS).forEach(function (id) {
+    var s = STOPS[id], p = s.corners.map(pt), cx = 0, cy = 0;
+    p.forEach(function (q) { cx += q[0] / 4; cy += q[1] / 4; });
+    boxes[id] = { cx: cx, cy: cy, w: s.r[2] * scale, h: s.r[3] * scale * .545 };
+  });
+  return boxes;
+}
+function sourceTransform(S, T) {
+  return 'translate(' + (S.cx - T.left - T.width / 2) + 'px,' + (S.cy - T.top - T.height / 2) + 'px) rotate(-5.5deg) scale(' + S.w / T.width + ',' + S.h / T.height + ')';
+}
+function finishFlight(to) {
+  if (!to) { viewState(false); originals(false); }
+  flights.forEach(function (a) { a.cancel(); }); flights = [];
+  transitioning = false; document.body.classList.remove('flying'); ueb.inert = !isUeb;
+  if (wantedUeb !== isUeb) { switchView(wantedUeb); return; }
+  if (isUeb) {
+    if (pendingKg) scrollRow(pendingKg, false);
+    if (pendingPick) markCard(pendingPick);
+  }
+  pendingKg = 0; pendingPick = null;
+  if (replayPending && !isUeb) { replayPending = false; beginStory(); }
+}
+function switchView(to, immediate) {
+  transitioning = true; document.body.classList.add('flying');
+  endStory();
+  // Measure the settled, tilted stack, including after a resize or a dive.
+  stack.classList.add('notrans');
+  if (focus) unfocus();
+  LAYERS.forEach(function (L) { L.el.classList.remove('pre', 'hov'); });
+  stack.classList.remove('away');
+  stack.getBoundingClientRect();
+  var sources = sourceBoxes();
+  if (!to) { stack.classList.add('away'); stack.getBoundingClientRect(); }
+  if (to) scrollRow(pendingKg, false);
+  var targets = cards.map(function (c) { return c.art.getBoundingClientRect(); });
+  originals(true);
+  if (to) viewState(true);
+  if (immediate || RM || small.matches || !cards[0].art.animate) {
+    stack.classList.add('notrans'); stack.classList.toggle('away', to); stack.getBoundingClientRect(); stack.classList.remove('notrans');
+    finishFlight(to); return;
+  }
+  function fly() {
+    // Commit the restored away pose before allowing the slabs to fly home.
+    stack.classList.remove('notrans'); stack.getBoundingClientRect();
+    stack.classList.toggle('away', to);
+    cards.forEach(function (c, i) {
+      var from = sourceTransform(sources[c.id], targets[i]);
+      flights.push(c.art.animate([{ transform: to ? from : 'none' }, { transform: to ? 'none' : from }], {
+        duration: to ? 950 : 700, delay: i * 35, easing: 'cubic-bezier(.3,.7,.2,1)', fill: to ? 'backwards' : 'forwards'
+      }));
+    });
+    Promise.all(flights.map(function (a) { return a.finished; })).then(function () { finishFlight(to); });
+  }
+  if (to) fly(); else requestAnimationFrame(fly);
+}
+function requestView(to, k, id) {
+  endStory(); replayPending = false; wantedUeb = to;
+  pendingKg = k || 0; pendingPick = id || null; rememberView(to);
+  if (transitioning) return;
+  if (isUeb !== to) switchView(to);
+  else {
+    if (to) { scrollRow(k, true); if (id) markCard(id); }
+    pendingKg = 0; pendingPick = null;
+  }
+}
+$('schBtn').onclick = function () { requestView(false); };
+$('uebBtn').onclick = function () { requestView(true); };
 
 // ---------- full list + mobile ----------
 function fullList(withIntro) {
@@ -441,9 +511,6 @@ function fullList(withIntro) {
   for (var k = 1; k <= 5; k++) h += '<section><h3 style="--c:' + K[k].c + '"><i></i>Kleingruppenübung ' + k + ' · ' + K[k].n + '</h3><div class="anims">' + KG_ANIMS[k].map(animRow).join('') + '</div></section>';
   return h;
 }
-$('listIn').innerHTML = '<h1>Alle Animationen</h1>' + fullList() + '<button class="btn" type="button" id="listClose">' + BACK + 'Zurück</button>';
-$('listBtn').onclick = function () { if (small.matches) { $('mobile').scrollIntoView(); return; } $('list').hidden = false; };
-$('listClose').onclick = function () { $('list').hidden = true; };
 $('mobile').innerHTML = '<h1>Ein Computer, Schicht für Schicht.</h1><p class="lead" style="max-width:none">Interaktive Animationen zu den Kleingruppenübungen in Grundgebiete der Informatik 3: erst die Theorie, dann die Lösungen. Auf einem großen Bildschirm siehst du hier den Computer als drei Schichten.</p>' + fullList() + '<p class="who"><b>Barış Kaan Datlı</b> · Tutor in Grundgebiete der Informatik 3, RWTH Aachen, WS 2026/27. Inoffizielle Begleitmaterialien. Maßgeblich sind Vorlesung, Übung und die Unterlagen im Moodle-Kurs.</p>';
 
 // ---------- layout ----------
@@ -454,6 +521,8 @@ function layout() {
   stack.style.setProperty('--ox', Math.round(Math.min(110, Math.max(40, (w - 800 * s) / 2 - 60))) + 'px');
   stack.style.setProperty('--oy', '-30px');
   stack.style.setProperty('--sf', Math.max(.6, Math.min(1.7, (w - 90) / 760, (h - 170) / 440)).toFixed(3));
+  ueb.style.setProperty('--tail', Math.max(60, ueb.clientHeight - rows[4].offsetHeight - 10) + 'px');
+  activeRow();
 }
 addEventListener('resize', layout); layout();
 
@@ -470,43 +539,43 @@ function buildTimeline() {
   }
   tl.end = t;
 }
-function dwell(s) { return 1150 + STEPS[s].x.length * 24; }
+function dwell() { return 700; }
 function setStep(i) {
   if (i === curStep) return; curStep = i;
-  STEPS.forEach(function (st, j) { st.li.classList.toggle('cur', j === i); st.li.classList.toggle('done', i < 0 ? done : j < i); });
-  var cap = $('cap');
-  if (i >= 0) {
-    var st = STEPS[i]; storyStops = st.s;
-    cap.querySelector('.n').textContent = i + 1; cap.querySelector('.t').textContent = st.x; cap.querySelector('em').textContent = 'KGÜ ' + st.k;
-    cap.classList.remove('off');
-  } else { storyStops = []; cap.classList.add('off'); }
-  applyAct();
+  storyStops = i >= 0 ? STORY[i] : []; applyAct();
+}
+var startTimer = 0;
+function beginStory() {
+  if (focus) unfocus();
+  buildTimeline(); playing = true; done = false; curStep = -2; headIdx = 0; headF = 0; t0 = performance.now();
+  $('route').setAttribute('stroke-opacity', '.28'); $('trail').style.opacity = 1; $('trail2').style.opacity = 1;
 }
 function play() {
-  if (focus) unfocus(); sel = null; show(vJ);
-  buildTimeline(); playing = true; done = false; curStep = -2; headIdx = 0; headF = 0; t0 = performance.now();
-  STEPS.forEach(function (st) { st.li.classList.remove('done', 'cur'); });
-  $('route').setAttribute('stroke-opacity', '.28'); $('trail').style.opacity = 1; $('trail2').style.opacity = 1;
-  $('skip').hidden = false;
+  requestView(false); replayPending = true;
+  if (!transitioning && !isUeb) { replayPending = false; beginStory(); }
 }
 function endStory() {
+  clearTimeout(startTimer);
   if (!playing && done) return;
   playing = false; done = true; headIdx = WP.length - 1; headF = 0;
-  setStep(-1); STEPS.forEach(function (st) { st.li.classList.add('done'); });
+  setStep(-1);
   $('dot').setAttribute('opacity', 0); $('route').setAttribute('stroke-opacity', '.4');
-  $('trail').style.opacity = 0; $('trail2').style.opacity = 0; $('skip').hidden = true;
+  $('trail').style.opacity = 0; $('trail2').style.opacity = 0;
 }
-$('replay').onclick = play; $('skip').onclick = endStory;
+// Capture ends the old story before a replay button can start a new one.
+document.addEventListener('click', function () { endStory(); replayPending = false; }, true);
+$('replay').onclick = play;
 addEventListener('keydown', function (e) {
-  if (e.target.tagName === 'INPUT') return;
-  if (e.key === 'w' || e.key === 'W') play();
-  if (e.key === 'Escape') { if (!$('list').hidden) $('list').hidden = true; else if (popK) closePop(); else if (sel) $('dBack').click(); else if (focus) unfocus(); else endStory(); }
+  if (e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable) return;
+  if (e.key === 'w' || e.key === 'W') { e.preventDefault(); play(); }
+  if (/^[1-5]$/.test(e.key)) { e.preventDefault(); requestView(true, +e.key); }
+  if (e.key === 'Escape') { replayPending = false; if (focus) unfocus(); else endStory(); }
 });
 
 // ---------- frame loop: project anchors, place labels, draw signal ----------
 function place(el, x, y, tx, ty) { el.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px) translate(' + tx + ',' + ty + ')'; }
 function frame(now) {
-  if (!small.matches) {
+  if (!small.matches && (!isUeb || transitioning)) {
     var flat = !!focus, sc = parseFloat(stack.style.getPropertyValue('--s')) || .85;
     Object.keys(STOPS).forEach(function (id) {
       var s = STOPS[id], off = flat && s.l !== focus;
@@ -545,8 +614,13 @@ function frame(now) {
 requestAnimationFrame(frame);
 
 // ---------- entrance ----------
-LAYERS.slice().reverse().forEach(function (L, i) { setTimeout(function () { L.el.classList.remove('pre'); }, RM ? 0 : 120 + i * 190); });
-if (RM || small.matches) endStory(); else setTimeout(play, 1500);
+var savedView = 'sch';
+try { savedView = localStorage['gin3-view']; } catch (e) {}
+if (savedView === 'ueb') { wantedUeb = true; switchView(true, true); }
+else {
+  LAYERS.slice().reverse().forEach(function (L, i) { setTimeout(function () { L.el.classList.remove('pre'); }, RM ? 0 : 120 + i * 190); });
+  if (RM || small.matches) endStory(); else startTimer = setTimeout(beginStory, 1500);
+}
 })();
 </script>
 </body>
