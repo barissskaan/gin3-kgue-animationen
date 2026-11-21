@@ -132,12 +132,13 @@ figcaption{font-size:14px;line-height:1.45;color:var(--muted);margin-top:12px;pa
 
 /* ---------- footer ---------- */
 footer{background:var(--chip);color:var(--chip-fg);margin-top:clamp(30px,5vw,60px);padding-bottom:env(safe-area-inset-bottom,0px)}
-.foot{padding-block:clamp(40px,6vw,72px);display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(24px,5vw,72px);align-items:end}
-.foot h3{font:700 clamp(26px,3.4vw,44px)/1.05 var(--display);letter-spacing:-.03em;margin:0 0 14px;text-wrap:balance}
-.foot p{color:var(--chip-muted);margin:0;max-width:36em;font-size:15.5px}
-.foot .who{color:var(--chip-fg);margin-bottom:8px}
-.acts{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
-.btn{display:inline-flex;align-items:center;gap:9px;font:600 14px/1 var(--mono);text-decoration:none;padding:14px 18px;border-radius:999px;border:1.5px solid var(--chip-line);color:var(--chip-fg)}
+.foot{padding-block:clamp(40px,6vw,72px);display:grid;gap:clamp(26px,3.5vw,40px)}
+.foot .by{font:500 12.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--chip-muted);margin:0 0 12px}
+.foot h3{font:700 clamp(30px,4vw,52px)/1.02 var(--display);letter-spacing:-.03em;margin:0 0 16px}
+.foot p{color:var(--chip-muted);margin:0;max-width:44em;font-size:15.5px}
+.foot .who{color:var(--chip-fg);font-size:17px;margin-bottom:8px}
+.acts{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:9px;white-space:nowrap;font:600 14px/1 var(--mono);text-decoration:none;padding:14px 18px;border-radius:999px;border:1.5px solid var(--chip-line);color:var(--chip-fg)}
 .btn svg{width:16px;height:16px}
 .btn:hover{border-color:var(--chip-fg)}
 .btn.y{background:var(--mark);border-color:var(--mark);color:var(--ink)}
@@ -155,9 +156,8 @@ footer a:focus-visible{outline-color:var(--mark)}
 
 /* ---------- small screens ---------- */
 @media (max-width:860px){
-  .hero,.kgu,.kgu:nth-of-type(even),.foot{grid-template-columns:minmax(0,1fr)}
+  .hero,.kgu,.kgu:nth-of-type(even){grid-template-columns:minmax(0,1fr)}
   .kgu .fig,.kgu:nth-of-type(even) .fig{order:-1}
-  .acts{justify-content:flex-start}
   .top nav a.opt{display:none}
   .hero{gap:40px}
 }
@@ -383,12 +383,13 @@ footer a:focus-visible{outline-color:var(--mark)}
 <footer>
   <div class="wrap foot">
     <div>
-      <h3>Alles auf einmal mitnehmen.</h3>
-      <p class="who">Erstellt von Barış Kaan Datlı, Tutor der Kleingruppenübungen.</p>
-      <p>Inoffizielle Begleitmaterialien. Maßgeblich sind Vorlesung, Übung und die Unterlagen im Moodle-Kurs. Am besten am Laptop im Vollbild ansehen.</p>
+      <p class="by">Erstellt von</p>
+      <h3>Barış Kaan Datlı</h3>
+      <p class="who">Tutor in „Grundgebiete der Informatik 3: Betriebssysteme und Systemsicherheit“, RWTH Aachen, WS 2026/27.</p>
+      <p>Inoffizielle Begleitmaterialien. Maßgeblich sind Vorlesung, Übung und die Unterlagen im Moodle-Kurs.</p>
     </div>
     <div class="acts">
-      <a class="btn y" href="KGUE-Animationen.zip" download><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M4.5 6.5 8 10l3.500-3.500M3 13.500h10"/></svg>Alles als Zip</a>
+      <a class="btn y" href="KGUE-Animationen.zip" download><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M4.5 6.5 8 10l3.500-3.500M3 13.500h10"/></svg>Alle Animationen als Zip</a>
       <a class="btn" href="https://github.com/barissskaan/gin3-kgue-animationen">Quellcode auf GitHub</a>
       <a class="btn" href="https://bariskaandatli.com">bariskaandatli.com</a>
     </div>
