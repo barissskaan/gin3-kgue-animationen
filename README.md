@@ -2,7 +2,7 @@
 
 Interaktive Seiten zu den Kleingruppenübungen: Theorie und Lösungen, Schritt für Schritt.
 
-**Direkt im Browser öffnen:** https://barissskaan.github.io/gin3-kgue-animationen/
+**Direkt im Browser öffnen:** https://gin3.bariskaandatli.com/
 
 Alles als Zip: [`KGUE-Animationen.zip`](KGUE-Animationen.zip) — entpacken und `index.html` öffnen.
 
