@@ -54,15 +54,6 @@ h1{font:700 clamp(26px,2.1vw,30px)/1.08 var(--disp);letter-spacing:-.03em;margin
 .btn svg{width:13px;height:13px}
 .btn kbd{font:600 10px/1 var(--mono);border:1px solid var(--line);border-radius:4px;padding:2px 4px;color:var(--muted)}
 
-/* ---------- mobile animation links ---------- */
-.anims{display:grid;gap:9px;margin:0 0 16px}
-.anim{display:grid;grid-template-columns:auto minmax(0,1fr) 16px;gap:11px;align-items:center;padding:12px 13px;border:1.5px solid var(--ink);border-radius:13px;background:#fff;text-decoration:none;box-shadow:0 4px 0 var(--ink);transition:transform .15s,box-shadow .15s;cursor:pointer;width:100%;text-align:left}
-.anim:hover{transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
-.anim small{font:600 10px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;padding:5px 7px;border-radius:6px;background:#ece8de}
-.anim small.l{background:var(--mark)}
-.anim b{font-weight:600}.anim span{display:block;color:var(--muted);font-size:13px;line-height:1.35}
-.anim svg{width:16px;height:16px}
-
 /* ---------- exercise navigation ---------- */
 .journey{margin-bottom:20px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
 .journey .lead{margin:0;max-width:none;font-size:14.5px;line-height:1.45;text-wrap:balance}
@@ -85,7 +76,7 @@ body.ueb #ueb{visibility:visible;opacity:1}
 .krow{border-top:1.5px solid var(--line);padding:18px 0 22px}
 .khead{display:flex;gap:14px;align-items:center;margin-bottom:18px}
 .khead .knum{width:44px;height:44px;font-size:20px}
-.khead h2{font:700 26px/1.15 var(--disp);letter-spacing:-.03em;margin:0}
+.khead h3{font:700 26px/1.15 var(--disp);letter-spacing:-.03em;margin:0}
 .kcards{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
 .kcard{width:264px;flex:none;background:var(--card);border:1.5px solid var(--ink);border-radius:16px;box-shadow:0 5px 0 var(--ink)}
 .kcard.pick{box-shadow:0 5px 0 var(--ink),0 0 0 4px var(--mark)}
@@ -98,7 +89,7 @@ body.ueb #ueb{visibility:visible;opacity:1}
 .klinks svg{width:18px;height:18px}
 .klinks a:hover{background:var(--mark)}
 .klinks a:last-child{border-radius:0 0 14px 14px}
-.kcard.wide{width:544px;display:grid;grid-template-columns:264px 1fr}
+.kcard.wide{width:544px;max-width:100%;display:grid;grid-template-columns:264px 1fr}
 .wide .kart{height:100%;min-height:170px;border-bottom:0;border-right:1.5px solid var(--ink);border-radius:14px 0 0 14px}
 .wide .klinks a:first-child{border-top-right-radius:14px}
 .wide .klinks a:last-child{border-bottom-left-radius:0}
@@ -173,16 +164,35 @@ body.ueb .foc-bar{opacity:0;pointer-events:none}
 .who{font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px}
 .who b{color:var(--ink)}
 
-/* ---------- small screens: plain list ---------- */
-.mobile{display:none}
+/* ---------- compact layout ---------- */
+.layer-names{display:none}
 @media (max-width:980px){
-  body{overflow:auto;background-size:22px 22px}
-  .app,#fx,#labels,.foc-bar,.switch{display:none!important}
-  .mobile{display:block;padding:76px 20px 50px;max-width:640px;margin:0 auto}
-  .mobile section{margin:26px 0}
-  .mobile h3{font:700 21px/1.15 var(--disp);letter-spacing:-.02em;margin:0 0 4px}
-  .mobile p.ld{color:var(--muted);margin:0 0 12px}
-  .top nav .opt{display:none}
+  html,body{height:auto;min-height:100%}
+  body{overflow:auto;background-size:22px 22px;--side:clamp(16px,5vw,28px)}
+  .top,.app{padding-left:max(var(--side),env(safe-area-inset-left));padding-right:max(var(--side),env(safe-area-inset-right))}
+  .top{position:relative;inset:auto;height:calc(64px + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);gap:8px}
+  .tb{display:grid;place-items:center;min-height:48px}
+  #fx,#labels,.foc-bar,.switch,.top nav .opt,.col .journey,.col .kg{display:none!important}
+  .app{position:static;display:block;max-width:760px;margin:auto;padding-bottom:calc(36px + env(safe-area-inset-bottom))}
+  .col,.views{display:block;overflow:visible;padding:0}
+  h1{font-size:clamp(30px,5.5vw,42px);margin:6px 0 0}
+  .stage{height:auto;max-width:620px;aspect-ratio:1;margin:auto;overflow:clip}
+  .stage,#stage *{pointer-events:none}
+  .shadow{inset:0 1% 20%}
+  .stack,.slab{transition:none}
+  .layer-names{display:flex;justify-content:center;flex-wrap:wrap;gap:4px 12px;list-style:none;margin:0 0 26px;padding:0;color:var(--muted);font:600 11px/1.4 var(--mono)}
+  #ueb{position:static;overflow:visible;scrollbar-gutter:auto;padding:0;visibility:visible;opacity:1;transition:none}
+  .kcards{display:grid;justify-items:center;grid-template-columns:minmax(0,1fr)}
+  .kcard,.kcard.wide{display:block;width:100%;max-width:520px;min-width:0}
+  .kart,.wide .kart{height:auto;aspect-ratio:2 / 1;min-height:150px;max-height:220px;border:0;border-bottom:1.5px solid var(--ink);border-radius:14px 14px 0 0}
+  .klinks a{min-height:48px;grid-template-columns:auto minmax(0,1fr) 18px;overflow-wrap:anywhere}
+  .wide .klinks a:first-child{border-top-right-radius:0}
+  .wide .klinks a:last-child{border-bottom-left-radius:14px}
+  .who{margin:12px 0 0}
+}
+@media (700px <= width <= 980px){
+  .kcards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kcard:only-child{grid-column:1 / -1}
 }
 body.instant-view #ueb,body.instant-view #labels,body.instant-view #fx,body.instant-view .foc-bar,body.instant-view .switch::before{transition:none}
 @media (prefers-reduced-motion:reduce){.stack,.slab,#ueb,#labels,#fx,.foc-bar,.switch::before{transition:none}}
@@ -211,14 +221,15 @@ body.instant-view #ueb,body.instant-view #labels,body.instant-view #fx,body.inst
         <p class="lead">Sieh zu, wie ein Programm beim Start durch alle drei Schichten läuft.</p>
         <button class="btn" id="replay" type="button"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a5 5 0 1 0 1.6-3.7M2 2v3h3"/></svg>Nochmal <kbd>W</kbd></button>
       </div>
-      <p class="kg-caption">Kleingruppenübungen</p>
+      <h2 class="kg-caption">Kleingruppenübungen</h2>
       <nav class="kg" id="kg" aria-label="Kleingruppenübungen"></nav>
     </div>
     <p class="who"><b>Barış Kaan Datlı</b> · Tutor, RWTH Aachen · WS 2026/27<br>Inoffizielle Begleitmaterialien.</p>
   </section>
   <div class="stage-cell">
     <section class="stage" id="stage" aria-label="Computer in drei Schichten"><div class="stack notrans" id="stack"><div class="shadow"></div></div></section>
-    <div id="ueb" aria-label="Animationen nach Kleingruppenübung" inert></div>
+    <ul class="layer-names" id="layerNames" aria-label="Computerschichten"></ul>
+    <div id="ueb" aria-label="Animationen nach Kleingruppenübung"></div>
   </div>
 </main>
 
@@ -231,7 +242,6 @@ body.instant-view #ueb,body.instant-view #labels,body.instant-view #fx,body.inst
 </svg>
 <div id="labels"></div>
 <div class="foc-bar" id="focBar" hidden><button class="btn" id="unfocus" type="button"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2 4 7l5 5"/></svg>Alle Schichten</button></div>
-<div class="mobile" id="mobile"></div>
 
 <script src="start/art-apps.js"></script>
 <script src="start/art-os.js"></script>
@@ -249,21 +259,21 @@ var LAYERS = [
   { id: 'hw', z: -292, n: 'Hardware', d: 'Was wirklich rechnet und speichert.' }
 ];
 var A = {
-  shell: ['T', 'kgue-1/shell.html', 'Die Shell', 'Was im Terminal bei einem Befehl passiert'],
-  gcc: ['T', 'kgue-1/gcc.html', 'Von C zum Programm', 'Präprozessor, Compiler, Assembler, Linker'],
-  ram: ['T', 'kgue-2/ram.html', 'RAM und Adressen', 'Wo Daten liegen: Register, Arbeitsspeicher, SSD'],
-  nasm: ['T', 'kgue-2/nasm.html', 'NASM-Grundlagen', 'Die ersten Befehle in Assembler'],
-  k2a: ['L', 'kgue-2/aufgaben.html', 'Aufgaben', 'Ein Programm Schritt für Schritt auf der CPU'],
-  git: ['T', 'kgue-3/git.html', 'Git-Grundlagen', 'Commits, Branches und Zusammenführen'],
-  k3a1: ['L', 'kgue-3/aufgabe-1.html', 'Aufgabe 1', 'Fakultät in Rust'],
-  k3a2: ['L', 'kgue-3/aufgabe-2.html', 'Aufgabe 2', 'Ownership, Stack und Heap'],
-  k3a3: ['L', 'kgue-3/aufgabe-3.html', 'Aufgabe 3', 'Die Freiliste des Betriebssystems'],
-  sp: ['T', 'kgue-4/speicher.html', 'Speicher für Programme', 'Wie das Betriebssystem den Speicher verteilt'],
-  k4a3: ['L', 'kgue-4/aufgabe-3.html', 'Aufgabe 3', 'Allokationsstrategien im Vergleich'],
-  sch: ['T', 'kgue-5/scheduling.html', 'Scheduling', 'Prozesse, Warteschlange und die vier Regeln'],
-  k5a1: ['L', 'kgue-5/aufgabe-1.html', 'Aufgabe 1', 'FCFS, SJF, Priority und Round Robin'],
-  k5a2: ['L', 'kgue-5/aufgabe-2.html', 'Aufgabe 2', 'Prioritäten mit Strafe'],
-  k5a3: ['L', 'kgue-5/aufgabe-3.html', 'Aufgabe 3', 'Welche Strategie passt zu welchem Ziel?']
+  shell: ['T', 'kgue-1/shell.html', 'Die Shell'],
+  gcc: ['T', 'kgue-1/gcc.html', 'Von C zum Programm'],
+  ram: ['T', 'kgue-2/ram.html', 'RAM und Adressen'],
+  nasm: ['T', 'kgue-2/nasm.html', 'NASM-Grundlagen'],
+  k2a: ['L', 'kgue-2/aufgaben.html', 'Aufgaben'],
+  git: ['T', 'kgue-3/git.html', 'Git-Grundlagen'],
+  k3a1: ['L', 'kgue-3/aufgabe-1.html', 'Aufgabe 1'],
+  k3a2: ['L', 'kgue-3/aufgabe-2.html', 'Aufgabe 2'],
+  k3a3: ['L', 'kgue-3/aufgabe-3.html', 'Aufgabe 3'],
+  sp: ['T', 'kgue-4/speicher.html', 'Speicher für Programme'],
+  k4a3: ['L', 'kgue-4/aufgabe-3.html', 'Aufgabe 3'],
+  sch: ['T', 'kgue-5/scheduling.html', 'Scheduling'],
+  k5a1: ['L', 'kgue-5/aufgabe-1.html', 'Aufgabe 1'],
+  k5a2: ['L', 'kgue-5/aufgabe-2.html', 'Aufgabe 2'],
+  k5a3: ['L', 'kgue-5/aufgabe-3.html', 'Aufgabe 3']
 };
 var KG_ANIMS = [null, ['shell', 'gcc'], ['ram', 'nasm', 'k2a'], ['git', 'k3a1', 'k3a2', 'k3a3'], ['sp', 'k4a3'], ['sch', 'k5a1', 'k5a2', 'k5a3']];
 // stops: rect = [x, y, w, h] on the 760x440 slab
@@ -295,11 +305,6 @@ var $ = function (id) { return document.getElementById(id); };
 var motion = matchMedia('(prefers-reduced-motion: reduce)');
 var small = matchMedia('(max-width:980px)');
 
-function animRow(key, tag) {
-  var a = A[key];
-  return '<a class="anim" href="' + R + a[1] + '"><small class="' + (a[0] === 'L' ? 'l' : '') + '">' + (a[0] === 'L' ? 'Lösung' : 'Theorie') + '</small><div><b>' + a[2] + '</b><span>' + a[3] + '</span></div>' + ARROW + '</a>';
-}
-
 // ---------- build slabs ----------
 var stack = $('stack'), stage = $('stage'), slabs = {}, anchors = {};
 var ART = window.GIN3_ART || {}, artCss = '';
@@ -313,6 +318,7 @@ LAYERS.forEach(function (L, i) {
   if (art) artCss += art.css + '\n';
   stack.appendChild(s); slabs[L.id] = s; L.el = s; L.i = i;
 });
+$('layerNames').innerHTML = LAYERS.map(function (L) { return '<li>' + L.n + '</li>'; }).join('');
 if (artCss) { var st = document.createElement('style'); st.textContent = artCss; document.head.appendChild(st); }
 function placeholder(L) {
   var g = '<svg viewBox="0 0 760 440" xmlns="http://www.w3.org/2000/svg"><rect width="760" height="440" rx="22" fill="#fbfaf6" stroke="#16181d" stroke-width="1.5"/>';
@@ -377,6 +383,7 @@ LAYERS.forEach(function (L) {
 
 // ---------- focus (dive into one layer) ----------
 function focusLayer(id) {
+  if (small.matches) return;
   endStory(); focus = id;
   stack.classList.add('flat'); labels.classList.add('flat');
   LAYERS.forEach(function (L) { L.el.classList.toggle('foc', L.id === id); L.el.classList.remove('hov'); });
@@ -402,7 +409,7 @@ for (var k = 1; k <= 5; k++) (function (k) {
   b.onclick = function () { requestView(true, k); };
   $('kg').appendChild(b); kgButtons.push(b);
   var row = document.createElement('section'); row.className = 'krow'; row.id = 'kgue-' + k; row.style.setProperty('--c', K[k].c);
-  row.innerHTML = '<div class="khead"><span class="knum">' + k + '</span><h2>' + K[k].n + '</h2></div><div class="kcards"></div>';
+  row.innerHTML = '<div class="khead"><span class="knum">' + k + '</span><h3>' + K[k].n + '</h3></div><div class="kcards"></div>';
   ueb.appendChild(row); rows.push(row);
   KG_STOPS[k].forEach(function (id, indexInRow) {
     var s = STOPS[id], r = s.r, card = document.createElement('article');
@@ -420,9 +427,10 @@ for (var k = 1; k <= 5; k++) (function (k) {
     var clone = s.g.cloneNode(true); clone.classList.remove('act');
     clone.querySelectorAll('.hit').forEach(function (hit) { hit.remove(); });
     svg.appendChild(clone); card.querySelector('.kart').appendChild(svg);
-    card.onmouseenter = function () { clone.classList.add('act'); }; card.onmouseleave = function () { clone.classList.remove('act'); };
+    card.onmouseenter = function () { if (!small.matches) clone.classList.add('act'); };
+    card.onmouseleave = function () { clone.classList.remove('act'); };
     row.querySelector('.kcards').appendChild(card);
-    cards.push({ id: id, el: card, art: card.querySelector('.kart'), indexInRow: indexInRow });
+    cards.push({ id: id, el: card, art: card.querySelector('.kart'), clone: clone, indexInRow: indexInRow });
   });
 })(k);
 function activeRow() {
@@ -449,12 +457,13 @@ function markCard(id) {
 function openStop(id) { requestView(true, STOPS[id].k, id); }
 
 // ---------- fly between the computer and the exercise cards ----------
-var isUeb = false, transitioning = false, replayPending = false;
+var isUeb = false, transitioning = false, replayPending = false, activeFlight = null;
+function savedExercises() { try { return localStorage['gin3-view'] === 'ueb'; } catch (e) { return false; } }
 function rememberView(to) { try { localStorage['gin3-view'] = to ? 'ueb' : 'sch'; } catch (e) {} }
 function viewState(to) {
   isUeb = to; document.body.classList.toggle('ueb', to);
   $('schBtn').setAttribute('aria-pressed', String(!to)); $('uebBtn').setAttribute('aria-pressed', String(to));
-  ueb.inert = !to || transitioning; labels.inert = to; stage.inert = to; $('focBar').inert = to;
+  ueb.inert = !small.matches && (!to || transitioning); labels.inert = to || small.matches; stage.inert = to; $('focBar').inert = to;
   activeRow();
 }
 function originals(hidden) {
@@ -510,7 +519,7 @@ function finishFlight(to, id, flights) {
 }
 function switchView(to, k, id, immediate) {
   endStory();
-  if (immediate || motion.matches || small.matches || !stage.animate || typeof DOMMatrix === 'undefined') {
+  if (immediate || motion.matches || !stage.animate || typeof DOMMatrix === 'undefined') {
     document.body.classList.add('instant-view');
     stage.classList.toggle('away', to);
     if (to) { originals(true); scrollRow(k, false); viewState(true); }
@@ -527,7 +536,7 @@ function switchView(to, k, id, immediate) {
   originals(true);
   stage.classList.toggle('away', to);
 
-  var flights = [stage.animate([{ opacity: to ? 1 : 0 }, { opacity: to ? 0 : 1 }], {
+  var flights = activeFlight = [stage.animate([{ opacity: to ? 1 : 0 }, { opacity: to ? 0 : 1 }], {
     duration: to ? 200 : 400, delay: to ? 0 : 500, easing: 'ease-out', fill: 'backwards'
   })];
   var fade = { duration: to ? 300 : 220, delay: to ? 330 : 0, easing: 'ease-out', fill: to ? 'backwards' : 'forwards' };
@@ -556,10 +565,16 @@ function switchView(to, k, id, immediate) {
       easing: 'cubic-bezier(.3,.7,.2,1)', fill: to ? 'backwards' : 'forwards'
     }));
   });
-  Promise.all(flights.map(function (a) { return a.finished; })).then(function () { finishFlight(to, id, flights); });
+  Promise.all(flights.map(function (a) { return a.finished; })).then(function () {
+    if (activeFlight !== flights) return;
+    activeFlight = null;
+    finishFlight(to, id, flights);
+  }, function (error) {
+    if (activeFlight === flights) throw error;
+  });
 }
 function requestView(to, k, id) {
-  if (transitioning) return;
+  if (small.matches || transitioning) return;
   endStory(); replayPending = false; rememberView(to);
   if (isUeb !== to) switchView(to, k, id);
   else if (to) { scrollRow(k, true); if (id) markCard(id); }
@@ -567,28 +582,31 @@ function requestView(to, k, id) {
 $('schBtn').onclick = function () { requestView(false); };
 $('uebBtn').onclick = function () { requestView(true); };
 
-// ---------- full list + mobile ----------
-function fullList(withIntro) {
-  var h = '';
-  for (var k = 1; k <= 5; k++) h += '<section><h3 style="--c:' + K[k].c + '"><i></i>Kleingruppenübung ' + k + ' · ' + K[k].n + '</h3><div class="anims">' + KG_ANIMS[k].map(animRow).join('') + '</div></section>';
-  return h;
-}
-$('mobile').innerHTML = '<h1>Ein Computer, Schicht für Schicht.</h1><p class="lead" style="max-width:none">Interaktive Animationen zu den Kleingruppenübungen in Grundgebiete der Informatik 3: erst die Theorie, dann die Lösungen. Auf einem großen Bildschirm siehst du hier den Computer als drei Schichten.</p>' + fullList() + '<p class="who"><b>Barış Kaan Datlı</b> · Tutor in Grundgebiete der Informatik 3, RWTH Aachen, WS 2026/27. Inoffizielle Begleitmaterialien. Maßgeblich sind Vorlesung, Übung und die Unterlagen im Moodle-Kurs.</p>';
-
 // ---------- layout ----------
+var views = document.querySelector('.views'), caption = views.querySelector('.kg-caption'), credit = document.querySelector('.who');
+function placeContent() {
+  if (small.matches) {
+    ueb.before(caption);
+    ueb.after(credit);
+  } else {
+    $('kg').before(caption);
+    views.after(credit);
+  }
+}
 function layout() {
-  var w = stage.clientWidth, h = stage.clientHeight;
-  var s = Math.max(.46, Math.min(1.12, (h - 170) / 740, (w - 300) / 800));
+  var w = stage.clientWidth, h = stage.clientHeight, compact = small.matches;
+  var minScale = innerWidth <= 1200 ? .5 : .46;
+  // Allow for the tilt and perspective when fitting the 760px slab to the stage.
+  var s = compact ? w / 940 : Math.max(minScale, Math.min(1.12, (h - 170) / 740, (w - 300) / 800));
   stack.style.setProperty('--s', s.toFixed(3));
-  stack.style.setProperty('--ox', Math.round(Math.min(110, Math.max(40, (w - 800 * s) / 2 - 60))) + 'px');
-  stack.style.setProperty('--oy', '-30px');
+  stack.style.setProperty('--ox', compact ? '0px' : Math.round(Math.min(110, Math.max(40, (w - 800 * s) / 2 - 60))) + 'px');
+  stack.style.setProperty('--oy', compact ? '0px' : '-30px');
+  if (compact) return;
   stack.style.setProperty('--sf', Math.max(.6, Math.min(1.7, (w - 90) / 760, (h - 170) / 440)).toFixed(3));
   ueb.style.setProperty('--tail', Math.max(60, ueb.clientHeight - rows[4].offsetHeight - 10) + 'px');
   activeRow();
 }
-addEventListener('resize', layout); layout();
-stack.getBoundingClientRect();
-stack.classList.remove('notrans');
+addEventListener('resize', layout);
 
 // ---------- story ----------
 var wpA = WP.map(function (w) { return anchor(w[0], w[1], w[2]); });
@@ -622,7 +640,7 @@ function beginStory() {
   $('route').setAttribute('stroke-opacity', '.28'); $('trail').style.opacity = 1; $('trail2').style.opacity = 1;
 }
 function play() {
-  if (transitioning) return;
+  if (small.matches || transitioning) return;
   requestView(false); replayPending = true;
   if (!transitioning && !isUeb) { replayPending = false; if (!startIntro()) beginStory(); }
 }
@@ -641,7 +659,7 @@ document.addEventListener('click', function () { if (!transitioning) { endStory(
 $('replay').onclick = play;
 addEventListener('keydown', function (e) {
   if (intro) endStory();
-  if (e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable) return;
+  if (small.matches || e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable) return;
   if (e.key === 'w' || e.key === 'W') { e.preventDefault(); play(); }
   if (/^[1-5]$/.test(e.key)) { e.preventDefault(); requestView(true, +e.key); }
   if (e.key === 'Escape' && !transitioning) { replayPending = false; if (focus) unfocus(); else endStory(); }
@@ -750,7 +768,7 @@ function makeLaptop() {
   return laptop;
 }
 function startIntro() {
-  if (isUeb || small.matches || motion.matches || !stack.animate) return false;
+  if (isUeb || motion.matches || !stack.animate) return false;
   endStory();
   resetStack();
 
@@ -842,14 +860,25 @@ function startIntro() {
   animatePart(stack.querySelector('.shadow'), [
     { transform: z(baseZ - 62) + ' scale(.86,.8)' }, { transform: z(-460) + ' scale(1)' }
   ], enter, rest, lift);
-  animatePart(stack, [
+  var entrance = animatePart(stack, [
     { transform: 'translate(var(--ox,70px),calc(var(--oy,0px) + 36px)) scale(calc(var(--s,.85) * .82)) rotateX(57deg) rotateZ(-10deg)' },
     { transform: 'translate(var(--ox,70px),var(--oy,0px)) scale(var(--s,.85)) rotateX(57deg) rotateZ(-10deg)' }
   ], 0, finish, 'cubic-bezier(.25,.45,.3,1)');
-  fade($('fx'), 0, 1, rest, finish, 'ease-in-out');
-  fade(labels, 0, 1, rest, finish, 'ease-in-out').onfinish = function () {
+  if (small.matches) {
+    // Keep the open lid inside the compact stage as it rises and becomes the apps slab.
+    var drop = '0px calc(var(--s) * 104px)';
+    animatePart(stack, [
+      { translate: '0px 0px', easing: ease }, { translate: drop, offset: .3 },
+      { translate: drop, offset: .66, easing: ease }, { translate: '0px 0px', offset: .88 },
+      { translate: '0px 0px' }
+    ], 0, finish, 'linear');
+  } else {
+    fade($('fx'), 0, 1, rest, finish, 'ease-in-out');
+    fade(labels, 0, 1, rest, finish, 'ease-in-out');
+  }
+  entrance.onfinish = function () {
     stopIntro();
-    beginStory();
+    if (!small.matches) beginStory();
   };
   return true;
 }
@@ -863,22 +892,51 @@ function stopIntro() {
   intro = null;
   stack.getBoundingClientRect(); // Apply the rest pose while transitions are still disabled.
   document.body.classList.remove('intro');
-  labels.inert = stage.inert = false;
+  labels.inert = small.matches; stage.inert = false;
 }
 function skipIntroIfNeeded(e) { if (intro && e.matches) endStory(); }
-small.addEventListener('change', skipIntroIfNeeded);
 motion.addEventListener('change', skipIntroIfNeeded);
 
+small.addEventListener('change', function () {
+  document.body.classList.add('instant-view');
+  endStory();
+  var flights = activeFlight;
+  activeFlight = null;
+  if (flights) flights.forEach(function (a) { a.cancel(); });
+  transitioning = replayPending = false;
+  document.body.classList.remove('flying', 'to-sch');
+  clearTimeout(pickTimer);
+  cards.forEach(function (c) { c.el.classList.remove('pick'); c.clone.classList.remove('act'); });
+  hovStop = null; hovK = 0;
+  applyAct();
+  LAYERS.forEach(function (L) { L.lb.classList.remove('on'); });
+  originals(false);
+  stage.classList.remove('away');
+  viewState(false);
+  placeContent();
+  layout();
+  resetStack();
+  ueb.scrollTop = 0;
+  window.scrollTo(0, 0);
+  if (!small.matches && savedExercises()) switchView(true, 0, null, true);
+  document.body.getBoundingClientRect();
+  document.body.classList.remove('instant-view');
+});
+
 // ---------- entrance ----------
-var savedView = 'sch', firstVisit = true;
+placeContent();
+viewState(false);
+layout();
+stack.getBoundingClientRect();
+stack.classList.remove('notrans');
+var firstVisit = true;
 try {
-  savedView = localStorage['gin3-view'];
   firstVisit = localStorage['gin3-intro'] !== '1';
   localStorage['gin3-intro'] = '1';
 } catch (e) {}
-if (savedView === 'ueb') switchView(true, 0, null, true);
-else if (motion.matches || small.matches) endStory();
-else if (!firstVisit || !startIntro()) queueStory();
+if (!small.matches && savedExercises()) switchView(true, 0, null, true);
+else if (motion.matches) endStory();
+else if ((!firstVisit || !startIntro()) && !small.matches) queueStory();
 })();
 </script>
 </body>
