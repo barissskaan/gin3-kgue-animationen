@@ -147,6 +147,7 @@ body.ueb #labels .lb{pointer-events:none}
 .lb.off{opacity:0;pointer-events:none}
 .lb.stop{display:flex;align-items:center;gap:7px;font:600 12.5px/1 var(--sans);background:var(--card);border:1.5px solid var(--ink);border-radius:999px;padding:6px 11px 6px 8px;cursor:pointer;box-shadow:0 3px 0 var(--ink)}
 .lb.stop i{width:18px;height:18px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font:600 10.5px var(--mono);font-style:normal}
+.lb.stop .short{display:none}
 .lb.stop::after{content:"";position:absolute;left:50%;top:100%;width:1.5px;height:var(--stem,30px);margin-top:3px;background:var(--ink)}
 .lb.stop::before{content:"";position:absolute;left:50%;top:calc(100% + var(--stem,30px) + 1px);width:7px;height:7px;margin-left:-2.75px;border-radius:50%;background:var(--ink)}
 .lb.stop:hover,.lb.stop.on{background:var(--mark)}
@@ -172,15 +173,26 @@ body.ueb .foc-bar{opacity:0;pointer-events:none}
   .top,.app{padding-left:max(var(--side),env(safe-area-inset-left));padding-right:max(var(--side),env(safe-area-inset-right))}
   .top{position:relative;inset:auto;height:calc(64px + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);gap:8px}
   .tb{display:grid;place-items:center;min-height:48px}
-  #fx,#labels,.foc-bar,.switch,.top nav .opt,.col .journey,.col .kg{display:none!important}
-  .app{position:static;display:block;max-width:760px;margin:auto;padding-bottom:calc(36px + env(safe-area-inset-bottom))}
+  #fx,.switch,.top nav .opt,.col .journey,.col .kg{display:none!important}
+  .app{position:static;display:block;max-width:760px;margin:auto;padding-bottom:calc(36px + env(safe-area-inset-bottom) + var(--jump-tail,0px))}
   .col,.views{display:block;overflow:visible;padding:0}
   h1{font-size:clamp(30px,5.5vw,42px);margin:6px 0 0}
-  .stage{height:auto;max-width:620px;aspect-ratio:1;margin:auto;overflow:clip}
-  .stage,#stage *{pointer-events:none}
+  .stage{height:auto;max-height:620px;aspect-ratio:1;margin:auto;overflow:clip}
   .shadow{inset:0 1% 20%}
-  .stack,.slab{transition:none}
+  .stack.flat .slab:not(.foc) .hit{pointer-events:none}
+  .stack.flat .slab.foc{cursor:pointer}
+  .stack.flat .face .slot{cursor:default}
+  .stack.flat .slab.foc .slot rect{pointer-events:all}
+  #labels{position:absolute}
+  #labels .lb.layer{display:none}
+  #labels .lb{visibility:hidden;transition:none}
+  #labels.flat .lb:not(.off){visibility:visible}
+  #labels .lb.stop{min-height:32px;gap:5px;font-size:12px;padding:5px 6px}
+  #labels .lb.slot{font-size:10px;padding:4px 6px}
+  .foc-bar{position:absolute;left:50%;top:calc(50% - var(--flat-half-height) - 6px);transform:translate(-50%,-100%);white-space:nowrap}
   .layer-names{display:flex;justify-content:center;flex-wrap:wrap;gap:4px 12px;list-style:none;margin:0 0 26px;padding:0;color:var(--muted);font:600 11px/1.4 var(--mono)}
+  .layer-names button{border:0;background:none;padding:8px 4px;margin:-8px -4px;border-radius:999px;cursor:pointer}
+  .layer-names button[aria-pressed="true"]{background:var(--mark);color:var(--ink)}
   #ueb{position:static;overflow:visible;scrollbar-gutter:auto;padding:0;visibility:visible;opacity:1;transition:none}
   .kcards{display:grid;justify-items:center;grid-template-columns:minmax(0,1fr)}
   .kcard,.kcard.wide{display:block;width:100%;max-width:520px;min-width:0}
@@ -189,6 +201,21 @@ body.ueb .foc-bar{opacity:0;pointer-events:none}
   .wide .klinks a:first-child{border-top-right-radius:0}
   .wide .klinks a:last-child{border-bottom-left-radius:14px}
   .who{margin:12px 0 0}
+}
+@media (max-width:400px){
+  .lb.stop .full{display:none}
+  .lb.stop .short{display:inline}
+}
+@media (max-width:980px) and (prefers-reduced-motion:no-preference){
+  /* Give the projected labels time to separate as the slab turns flat. */
+  #labels.flat .lb:not(.off){transition:visibility 0s .65s}
+  .stack.hint .slab{animation:compact-lift .65s var(--ease)}
+  .stack.hint .slab[data-layer="os"]{animation-delay:.1s}
+  .stack.hint .slab[data-layer="hw"]{animation-delay:.2s}
+}
+@keyframes compact-lift{
+  0%,100%{transform:translateZ(var(--z))}
+  45%{transform:translateZ(calc(var(--z) + 12px))}
 }
 @media (700px <= width <= 980px){
   .kcards{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -286,8 +313,8 @@ var STOPS = {
   speicher: { l: 'os', la: [470, 98], r: [400, 50, 320, 96], t: 'Speicher', k: 4, a: ['sp'], d: 'Viele Programme, ein Arbeitsspeicher: wie das Betriebssystem den Speicher an Programme verteilt.' },
   alloc: { l: 'os', la: [660, 201], r: [400, 162, 320, 78], t: 'Allokation', k: 4, a: ['k4a3'], d: 'First Fit, Best Fit und Co.: welche Lücke bekommt eine neue Anfrage?' },
   frei: { l: 'os', r: [40, 262, 330, 122], t: 'Freiliste', k: 3, a: ['k3a3'], d: 'Das Betriebssystem merkt sich die freien Speicherbereiche in einer Liste und vergibt sie daraus.' },
-  cpu: { l: 'hw', r: [80, 100, 250, 230], t: 'CPU und Assembler', k: 2, a: ['nasm', 'k2a'], d: 'Die CPU führt Befehl für Befehl aus. Assembler zeigt dir genau diese Befehle: mov, add, cmp und Sprünge.' },
-  ram: { l: 'hw', r: [430, 70, 270, 210], t: 'RAM und Adressen', k: 2, a: ['ram'], d: 'Register, Arbeitsspeicher, SSD: wo Daten liegen, wie schnell man an sie herankommt und was eine Adresse ist.' }
+  cpu: { l: 'hw', r: [80, 100, 250, 230], t: 'CPU und Assembler', short: 'CPU &amp; ASM', k: 2, a: ['nasm', 'k2a'], d: 'Die CPU führt Befehl für Befehl aus. Assembler zeigt dir genau diese Befehle: mov, add, cmp und Sprünge.' },
+  ram: { l: 'hw', r: [430, 70, 270, 210], t: 'RAM und Adressen', short: 'RAM', k: 2, a: ['ram'], d: 'Register, Arbeitsspeicher, SSD: wo Daten liegen, wie schnell man an sie herankommt und was eine Adresse ist.' }
 };
 var SLOTS = [['apps', 190, 337], ['os', 475, 323], ['os', 645, 323]];
 var STORY = [['gcc'], ['shell'], ['frei'], ['alloc', 'speicher'], ['sched'], ['cpu', 'ram'], ['shell']];
@@ -318,7 +345,19 @@ LAYERS.forEach(function (L, i) {
   if (art) artCss += art.css + '\n';
   stack.appendChild(s); slabs[L.id] = s; L.el = s; L.i = i;
 });
-$('layerNames').innerHTML = LAYERS.map(function (L) { return '<li>' + L.n + '</li>'; }).join('');
+LAYERS.forEach(function (L) {
+  var item = document.createElement('li'), b = document.createElement('button');
+  b.type = 'button'; b.textContent = L.n;
+  b.setAttribute('aria-pressed', 'false'); b.setAttribute('aria-controls', 'stage');
+  b.onclick = function (e) {
+    focusLayer(L.id);
+    if (e.detail === 0) $('unfocus').focus({ preventScroll: true });
+  };
+  item.appendChild(b); $('layerNames').appendChild(item); L.caption = b;
+});
+stack.addEventListener('animationend', function (e) {
+  if (e.animationName === 'compact-lift' && e.target === slabs.hw) stack.classList.remove('hint');
+});
 if (artCss) { var st = document.createElement('style'); st.textContent = artCss; document.head.appendChild(st); }
 function placeholder(L) {
   var g = '<svg viewBox="0 0 760 440" xmlns="http://www.w3.org/2000/svg"><rect width="760" height="440" rx="22" fill="#fbfaf6" stroke="#16181d" stroke-width="1.5"/>';
@@ -333,14 +372,15 @@ function anchor(layer, x, y) {
 function pt(a) { var r = a.getBoundingClientRect(); return [r.left, r.top]; }
 
 // ---------- labels ----------
-var labels = $('labels'), LB = [];
+var labels = $('labels'), focBar = $('focBar'), LB = [];
 Object.keys(STOPS).forEach(function (id) {
   var s = STOPS[id]; s.id = id;
   s.cx = s.r[0] + s.r[2] / 2; s.cy = s.r[1] + s.r[3] / 2;
   s.aC = s.la ? anchor(s.l, s.la[0], s.la[1]) : anchor(s.l, s.cx, s.cy); s.aT = anchor(s.l, s.cx, s.r[1]);
   s.corners = [[0, 0], [1, 0], [1, 1], [0, 1]].map(function (c) { return anchor(s.l, s.r[0] + c[0] * s.r[2], s.r[1] + c[1] * s.r[3]); });
   var b = document.createElement('button'); b.type = 'button'; b.className = 'lb stop'; b.style.setProperty('--c', K[s.k].c);
-  b.innerHTML = '<i>' + s.k + '</i>' + s.t; b.setAttribute('aria-label', s.t + ', Kleingruppenübung ' + s.k);
+  var title = s.short ? '<span class="full">' + s.t + '</span><span class="short">' + s.short + '</span>' : s.t;
+  b.innerHTML = '<i>' + s.k + '</i>' + title; b.setAttribute('aria-label', s.t + ', Kleingruppenübung ' + s.k);
   b.onclick = function () { openStop(id); };
   b.onmouseenter = function () { hovStop = id; applyAct(); }; b.onmouseleave = function () { hovStop = null; applyAct(); };
   labels.appendChild(b); s.lb = b; s.g = slabs[s.l].querySelector('[data-stop="' + id + '"]');
@@ -372,28 +412,52 @@ function applyAct() {
 }
 LAYERS.forEach(function (L) {
   var face = L.el.querySelector('.face');
-  face.addEventListener('mouseover', function (e) { var g = e.target.closest('[data-stop]'); hovStop = g ? g.getAttribute('data-stop') : null; applyAct(); L.el.classList.toggle('hov', !g && !focus); L.lb.classList.toggle('on', !g); });
-  face.addEventListener('mouseleave', function () { hovStop = null; applyAct(); L.el.classList.remove('hov'); L.lb.classList.remove('on'); });
+  face.addEventListener('mouseover', function (e) { if (small.matches) return; var g = e.target.closest('[data-stop]'); hovStop = g ? g.getAttribute('data-stop') : null; applyAct(); L.el.classList.toggle('hov', !g && !focus); L.lb.classList.toggle('on', !g); });
+  face.addEventListener('mouseleave', function () { if (small.matches) return; hovStop = null; applyAct(); L.el.classList.remove('hov'); L.lb.classList.remove('on'); });
   face.addEventListener('click', function (e) {
+    if (small.matches) return;
     var g = e.target.closest('[data-stop]');
     if (g && STOPS[g.getAttribute('data-stop')]) openStop(g.getAttribute('data-stop'));
     else if (!focus) focusLayer(L.id);
   });
+  L.el.addEventListener('click', function (e) {
+    if (!small.matches) return;
+    if (!focus) focusLayer(L.id);
+    else if (focus === L.id && !e.target.closest('.slot')) {
+      var g = e.target.closest('[data-stop]');
+      if (g && STOPS[g.dataset.stop]) openStop(g.dataset.stop);
+      else unfocus();
+    }
+  });
 });
 
 // ---------- focus (dive into one layer) ----------
+function compactFocusState() {
+  labels.inert = !focus;
+  LAYERS.forEach(function (L) { L.caption.setAttribute('aria-pressed', String(L.id === focus)); });
+  Object.keys(STOPS).forEach(function (id) { var s = STOPS[id]; s.lb.classList.toggle('off', s.l !== focus); });
+  LB.forEach(function (o) { o.el.classList.toggle('off', o.layer !== focus); });
+}
 function focusLayer(id) {
-  if (small.matches) return;
   endStory(); focus = id;
   stack.classList.add('flat'); labels.classList.add('flat');
   LAYERS.forEach(function (L) { L.el.classList.toggle('foc', L.id === id); L.el.classList.remove('hov'); });
-  $('focBar').hidden = false; $('fx').style.opacity = 0;
+  focBar.hidden = false; $('fx').style.opacity = 0;
+  if (small.matches) {
+    stack.classList.remove('hint');
+    compactFocusState();
+    placeCompactLabels();
+  }
 }
 function unfocus() {
+  if (small.matches && focus && (labels.contains(document.activeElement) || focBar.contains(document.activeElement))) {
+    LAYERS.find(function (L) { return L.id === focus; }).caption.focus({ preventScroll: true });
+  }
   focus = null; hovStop = null; applyAct();
   stack.classList.remove('flat'); labels.classList.remove('flat');
   LAYERS.forEach(function (L) { L.el.classList.remove('foc', 'hov'); });
-  $('focBar').hidden = true; $('fx').style.opacity = '';
+  focBar.hidden = true; $('fx').style.opacity = '';
+  if (small.matches) compactFocusState();
 }
 $('unfocus').onclick = unfocus;
 
@@ -454,7 +518,43 @@ function markCard(id) {
   cards.forEach(function (c) { c.el.classList.toggle('pick', c.id === id); });
   pickTimer = setTimeout(function () { cards.forEach(function (c) { c.el.classList.remove('pick'); }); }, 1800);
 }
-function openStop(id) { requestView(true, STOPS[id].k, id); }
+var jumpFrame = 0;
+function openStop(id) {
+  var stop = STOPS[id];
+  if (!small.matches) { requestView(true, stop.k, id); return; }
+  if (focus !== stop.l) return;
+
+  cancelAnimationFrame(jumpFrame);
+  var fromPill = document.activeElement === stop.lb;
+  unfocus();
+  var card = $('card-' + id);
+  if (fromPill) card.querySelector('.klinks a').focus({ preventScroll: true });
+  var target = card.previousElementSibling ? card : rows[stop.k - 1].querySelector('.khead');
+  var top = Math.round(scrollY + target.getBoundingClientRect().top - 16);
+
+  // Leave enough scroll room for a heading near the end of a short exercise list.
+  var page = document.scrollingElement, missing = top + page.clientHeight - page.scrollHeight;
+  if (missing > 0) {
+    var tail = parseInt(app.style.getPropertyValue('--jump-tail'), 10) || 0;
+    app.style.setProperty('--jump-tail', tail + missing + 'px');
+  }
+  var smooth = !motion.matches && Math.abs(scrollY - top) > 1;
+  window.scrollTo({ top: top, behavior: smooth ? 'smooth' : 'instant' });
+  if (!smooth) { markCard(id); return; }
+
+  // A gesture can interrupt the smooth scroll before it reaches the target.
+  var start = performance.now(), previous = scrollY, still = 0;
+  function markWhenSettled(now) {
+    var y = scrollY;
+    still = y === previous ? still + 1 : 0;
+    previous = y;
+    if (still >= 4 && (Math.abs(y - top) <= 1 || now - start > 200)) {
+      jumpFrame = 0;
+      markCard(id);
+    } else jumpFrame = requestAnimationFrame(markWhenSettled);
+  }
+  jumpFrame = requestAnimationFrame(markWhenSettled);
+}
 
 // ---------- fly between the computer and the exercise cards ----------
 var isUeb = false, transitioning = false, replayPending = false, activeFlight = null;
@@ -583,25 +683,32 @@ $('schBtn').onclick = function () { requestView(false); };
 $('uebBtn').onclick = function () { requestView(true); };
 
 // ---------- layout ----------
-var views = document.querySelector('.views'), caption = views.querySelector('.kg-caption'), credit = document.querySelector('.who');
+var app = document.querySelector('.app'), views = document.querySelector('.views'), caption = views.querySelector('.kg-caption'), credit = document.querySelector('.who');
 function placeContent() {
   if (small.matches) {
     ueb.before(caption);
     ueb.after(credit);
+    stage.append(focBar, labels);
   } else {
     $('kg').before(caption);
     views.after(credit);
+    if (labels.parentNode === stage) $('fx').after(labels, focBar);
   }
 }
 function layout() {
   var w = stage.clientWidth, h = stage.clientHeight, compact = small.matches;
   var minScale = innerWidth <= 1200 ? .5 : .46;
   // Allow for the tilt and perspective when fitting the 760px slab to the stage.
-  var s = compact ? w / 940 : Math.max(minScale, Math.min(1.12, (h - 170) / 740, (w - 300) / 800));
+  var s = compact ? Math.min(w, 620) / 940 : Math.max(minScale, Math.min(1.12, (h - 170) / 740, (w - 300) / 800));
   stack.style.setProperty('--s', s.toFixed(3));
   stack.style.setProperty('--ox', compact ? '0px' : Math.round(Math.min(110, Math.max(40, (w - 800 * s) / 2 - 60))) + 'px');
   stack.style.setProperty('--oy', compact ? '0px' : '-30px');
-  if (compact) return;
+  if (compact) {
+    var flatScale = (w - 24) / 760;
+    stack.style.setProperty('--sf', flatScale);
+    stage.style.setProperty('--flat-half-height', 220 * flatScale + 'px');
+    return;
+  }
   stack.style.setProperty('--sf', Math.max(.6, Math.min(1.7, (w - 90) / 760, (h - 170) / 440)).toFixed(3));
   ueb.style.setProperty('--tail', Math.max(60, ueb.clientHeight - rows[4].offsetHeight - 10) + 'px');
   activeRow();
@@ -654,11 +761,15 @@ function endStory() {
   $('dot').setAttribute('opacity', 0); $('route').setAttribute('stroke-opacity', '.4');
   $('trail').style.opacity = 0; $('trail2').style.opacity = 0;
 }
-// Let the clicked control run after the intro or story has been skipped.
-document.addEventListener('click', function () { if (!transitioning) { endStory(); replayPending = false; } }, true);
+document.addEventListener('click', function (e) {
+  if (transitioning) return;
+  if (intro && small.matches) { e.preventDefault(); e.stopImmediatePropagation(); }
+  endStory(); replayPending = false;
+}, true);
 $('replay').onclick = play;
 addEventListener('keydown', function (e) {
   if (intro) endStory();
+  if (small.matches && e.key === 'Escape' && focus) unfocus();
   if (small.matches || e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable) return;
   if (e.key === 'w' || e.key === 'W') { e.preventDefault(); play(); }
   if (/^[1-5]$/.test(e.key)) { e.preventDefault(); requestView(true, +e.key); }
@@ -667,6 +778,20 @@ addEventListener('keydown', function (e) {
 
 // ---------- frame loop: project anchors, place labels, draw signal ----------
 function place(el, x, y, tx, ty) { el.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px) translate(' + tx + ',' + ty + ')'; }
+function placeCompactLabels() {
+  var r = stage.getBoundingClientRect();
+  Object.keys(STOPS).forEach(function (id) {
+    var s = STOPS[id];
+    if (s.l !== focus) return;
+    var p = pt(s.aT);
+    place(s.lb, p[0] - r.left, p[1] - r.top, '-50%', '-62%');
+  });
+  LB.forEach(function (o) {
+    if (o.layer !== focus) return;
+    var p = pt(o.a);
+    place(o.el, p[0] - r.left, p[1] - r.top, '-50%', '-50%');
+  });
+}
 function frame(now) {
   if (!small.matches && (!isUeb || transitioning)) {
     var flat = !!focus, sc = parseFloat(stack.style.getPropertyValue('--s')) || .85;
@@ -701,7 +826,7 @@ function frame(now) {
         if (t >= tl.end) endStory();
       }
     }
-  }
+  } else if (small.matches && focus) placeCompactLabels();
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
@@ -893,18 +1018,26 @@ function stopIntro() {
   stack.getBoundingClientRect(); // Apply the rest pose while transitions are still disabled.
   document.body.classList.remove('intro');
   labels.inert = small.matches; stage.inert = false;
+  if (small.matches && !motion.matches) stack.classList.add('hint');
 }
-function skipIntroIfNeeded(e) { if (intro && e.matches) endStory(); }
+function skipIntroIfNeeded(e) {
+  if (!e.matches) return;
+  if (intro) endStory();
+  stack.classList.remove('hint');
+}
 motion.addEventListener('change', skipIntroIfNeeded);
 
 small.addEventListener('change', function () {
   document.body.classList.add('instant-view');
   endStory();
+  stack.classList.remove('hint');
   var flights = activeFlight;
   activeFlight = null;
   if (flights) flights.forEach(function (a) { a.cancel(); });
   transitioning = replayPending = false;
   document.body.classList.remove('flying', 'to-sch');
+  cancelAnimationFrame(jumpFrame);
+  app.style.removeProperty('--jump-tail');
   clearTimeout(pickTimer);
   cards.forEach(function (c) { c.el.classList.remove('pick'); c.clone.classList.remove('act'); });
   hovStop = null; hovK = 0;
@@ -916,6 +1049,7 @@ small.addEventListener('change', function () {
   placeContent();
   layout();
   resetStack();
+  if (small.matches) compactFocusState();
   ueb.scrollTop = 0;
   window.scrollTo(0, 0);
   if (!small.matches && savedExercises()) switchView(true, 0, null, true);
@@ -936,7 +1070,10 @@ try {
 } catch (e) {}
 if (!small.matches && savedExercises()) switchView(true, 0, null, true);
 else if (motion.matches) endStory();
-else if ((!firstVisit || !startIntro()) && !small.matches) queueStory();
+else if (!firstVisit || !startIntro()) {
+  if (small.matches) stack.classList.add('hint');
+  else queueStory();
+}
 })();
 </script>
 </body>
