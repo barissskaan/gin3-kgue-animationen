@@ -4,459 +4,549 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>GIN3 · KGÜ-Animationen</title>
-<meta name="description" content="15 interaktive Animationen zu den Kleingruppenübungen in Grundgebiete der Informatik 3 (RWTH Aachen, WS 2026/27). Theorie und Lösungen, Schritt für Schritt.">
+<meta name="description" content="15 interaktive Animationen zu den Kleingruppenübungen in Grundgebiete der Informatik 3 (RWTH Aachen, WS 2026/27): ein Computer als drei Schichten, vom Programm bis zur CPU.">
 <meta name="author" content="Barış Kaan Datlı">
 <meta property="og:title" content="GIN3 · KGÜ-Animationen">
-<meta property="og:description" content="15 interaktive Animationen zu den Kleingruppenübungen. Theorie und Lösungen, Schritt für Schritt.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2316181d'/%3E%3Crect x='7' y='19' width='18' height='6' fill='%23ffd400'/%3E%3Crect x='7' y='8' width='11' height='6' fill='%23f6f5f1'/%3E%3C/svg%3E">
+<meta property="og:description" content="Ein Computer, Schicht für Schicht: 15 interaktive Animationen zu den Kleingruppenübungen.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23f4f2ec'/%3E%3Crect x='6' y='7' width='20' height='5' rx='1.5' fill='%2316181d'/%3E%3Crect x='6' y='13.500' width='20' height='5' rx='1.5' fill='%23ffd400'/%3E%3Crect x='6' y='20' width='20' height='5' rx='1.5' fill='%2316181d'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap">
 <style>
 :root{
-  --paper:#f6f5f1; --ink:#16181d; --muted:#5d6370; --line:#d9d6cc; --card:#ffffff;
-  --mark:#ffd400; --mark-soft:#fff1a8;
-  --chip:#15171c; --chip-2:#22252d; --chip-line:#2e323c; --chip-fg:#eceef2; --chip-muted:#8b92a0;
-  --display:"Bricolage Grotesque","IBM Plex Sans",system-ui,sans-serif;
-  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
-  color-scheme:light;
+  --bg:#f4f2ec;--ink:#16181d;--muted:#6b7078;--line:#dcd7cb;--card:#fbfaf6;--mark:#ffd400;--mark-soft:#fff3b0;
+  --k1:#2f8fb0;--k2:#4f9a3f;--k3:#c9781f;--k4:#8a5bb5;--k5:#d24a3e;
+  --disp:"Space Grotesk",system-ui,sans-serif;--sans:"Inter",system-ui,-apple-system,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --col:392px;--ease:cubic-bezier(.2,.8,.2,1);
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 var(--body);-webkit-font-smoothing:antialiased}
-a{color:inherit}
-::selection{background:var(--mark);color:var(--ink)}
-.wrap{max-width:1180px;margin:0 auto;padding-left:max(22px,env(safe-area-inset-left,0px));padding-right:max(22px,env(safe-area-inset-right,0px))}
-.mono{font-family:var(--mono)}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15.5px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+body{background-image:radial-gradient(#d6d1c4 1px,transparent 1.2px);background-size:24px 24px;overflow:hidden}
+a{color:inherit}button{font:inherit;color:inherit}
+[hidden]{display:none!important}
 
 /* ---------- top bar ---------- */
-.top{display:flex;align-items:center;gap:18px;padding-block:22px}
-.wordmark{font:600 13px/1 var(--mono);letter-spacing:.08em;text-decoration:none;display:flex;align-items:center;gap:10px}
-.wordmark i{display:block;width:22px;height:22px;border-radius:5px;background:var(--ink);position:relative}
-.wordmark i::before,.wordmark i::after{content:"";position:absolute;left:5px;height:4px}
-.wordmark i::before{top:6px;width:8px;background:var(--paper)}
-.wordmark i::after{top:13px;width:12px;background:var(--mark)}
-.top nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
-.top nav a{font:500 13px/1 var(--mono);text-decoration:none;padding:9px 12px;border-radius:999px;color:var(--muted)}
-.top nav a:hover{color:var(--ink);background:#eceae3}
+.top{position:fixed;left:0;right:0;top:0;height:60px;display:flex;align-items:center;gap:14px;padding:0 28px 0 34px;z-index:30}
+.wm{display:flex;align-items:center;gap:10px;font:600 12.5px/1 var(--mono);letter-spacing:.08em;text-decoration:none}
+.wm i{display:grid;gap:2.5px}.wm i b{display:block;width:16px;height:3.5px;border-radius:1px;background:var(--ink)}.wm i b:nth-child(2){background:var(--mark)}
+.top nav{margin-left:auto;display:flex;gap:6px}
+.tb{font:600 12.5px/1 var(--mono);text-decoration:none;border:1.5px solid transparent;border-radius:999px;padding:9px 13px;background:transparent;cursor:pointer;color:var(--muted)}
+.tb:hover{color:var(--ink);border-color:var(--ink);background:var(--card)}
+.tb.k{background:var(--ink);color:#fff}
 
-/* ---------- hero ---------- */
-.hero{padding-block:clamp(28px,5vw,64px) clamp(44px,7vw,92px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vw,80px);align-items:center}
-.eyebrow{font:500 12.5px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 22px}
-h1{font:700 clamp(38px,5.2vw,70px)/1 var(--display);letter-spacing:-.035em;margin:0;text-wrap:balance}
-.mk{background:linear-gradient(var(--mark),var(--mark)) no-repeat 0 78%/100% 62%;padding:0 .08em;margin:0 -.08em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
-.toc{border-top:2px solid var(--ink);margin:0;padding:0;list-style:none}
-.toc li{border-bottom:1px solid var(--line)}
-.toc a{display:grid;grid-template-columns:44px minmax(0,1fr) auto 24px;gap:12px;align-items:center;padding:20px 14px 20px 12px;text-decoration:none;transition:background-color .18s ease}
-.toc .n{font:600 15px/1 var(--mono);color:var(--muted)}
-.toc .t{font:600 clamp(19px,1.5vw,21px)/1.25 var(--body)}
-.toc .c{font:500 13px/1 var(--mono);color:var(--muted);white-space:nowrap}
-.toc .a{justify-self:end;transition:transform .2s ease}
-.toc .a svg{display:block;width:20px;height:20px}
-.toc a:hover,.toc a:focus-visible{background:var(--mark)}
-.toc a:hover .n,.toc a:hover .c,.toc a:focus-visible .n,.toc a:focus-visible .c{color:var(--ink)}
-.toc a:hover .a,.toc a:focus-visible .a{transform:translateY(4px)}
-.toc-head{display:flex;justify-content:space-between;font:500 12.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0 14px 12px 12px}
+/* ---------- layout ---------- */
+.app{position:fixed;inset:60px 0 0 0;display:grid;grid-template-columns:var(--col) minmax(0,1fr)}
+.col{position:relative;padding:14px 22px 20px 34px;display:flex;flex-direction:column;min-height:0;z-index:12}
+.views{flex:1;min-height:0;overflow-y:auto;padding-right:6px}
+.views::-webkit-scrollbar{width:6px}.views::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+h1{font:700 clamp(26px,2.1vw,30px)/1.08 var(--disp);letter-spacing:-.03em;margin:6px 0 10px}
+.lead{color:#474b52;margin:0 0 18px;max-width:34ch}
+.cap-s{font:600 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
 
-/* ---------- sections ---------- */
-.kgu{padding-block:clamp(44px,7vw,96px);border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(26px,5vw,72px);align-items:center;scroll-margin-top:12px}
-.kgu:nth-of-type(even) .fig{order:-1}
-.kgu:nth-of-type(even){grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
-.kicker{display:flex;align-items:flex-end;gap:16px;margin-bottom:14px}
-.kicker b{font:800 clamp(64px,9vw,118px)/.8 var(--display);letter-spacing:-.05em}
-.kicker span{font:500 12.5px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-bottom:6px}
-h2{font:700 clamp(26px,3.1vw,40px)/1.08 var(--display);letter-spacing:-.025em;margin:0 0 10px;text-wrap:balance}
-.sub{color:var(--muted);margin:0 0 22px;max-width:30em}
-.rows{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
-.rows li{border-bottom:1px solid var(--line)}
-.rows a{display:grid;grid-template-columns:78px minmax(0,1fr) 26px;gap:12px;align-items:center;padding:15px 2px;text-decoration:none}
-.kind{font:600 10.5px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;padding:6px 0;text-align:center;border-radius:5px;border:1.5px solid var(--ink)}
-.kind.l{background:var(--mark);border-color:var(--mark)}
-.rt b{display:inline;font-weight:600;font-size:17.5px;line-height:1.3;background:linear-gradient(var(--mark),var(--mark)) no-repeat 0 85%/0% 55%;transition:background-size .28s ease}
-.rt span{display:block;color:var(--muted);font-size:14.5px;line-height:1.4;margin-top:2px}
-.go{justify-self:end;transition:transform .2s ease}
-.go svg{display:block;width:20px;height:20px}
-.rows a:hover .rt b,.rows a:focus-visible .rt b{background-size:100% 55%}
-.rows a:hover .go,.rows a:focus-visible .go{transform:translateX(5px)}
-a:focus-visible{outline:2.5px solid var(--ink);outline-offset:3px;border-radius:4px}
+/* journey stepper */
+.steps{list-style:none;margin:0;padding:0;position:relative}
+.steps::before{content:"";position:absolute;left:12.25px;top:16px;bottom:16px;width:1.5px;background:var(--line)}
+.steps button{position:relative;display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:11px;align-items:center;width:100%;text-align:left;background:transparent;border:0;border-radius:10px;padding:6px 8px 6px 0;cursor:pointer}
+.steps .n{width:26px;height:26px;border-radius:50%;background:var(--bg);border:1.5px solid var(--line);display:grid;place-items:center;font:600 11px/1 var(--mono);color:var(--muted);transition:background-color .25s,border-color .25s,color .25s}
+.steps b{font:600 15px/1.25 var(--sans)}
+.steps small{display:block;font:400 13px/1.35 var(--sans);color:var(--muted);max-height:0;overflow:hidden;opacity:0;transition:max-height .35s var(--ease),opacity .3s}
+.steps em{font:600 10.5px/1 var(--mono);font-style:normal;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.steps em i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.steps li.done .n{background:var(--ink);border-color:var(--ink);color:#fff}
+.steps li.cur .n{background:var(--mark);border-color:var(--ink);color:var(--ink)}
+.steps li.cur small{max-height:60px;opacity:1}
+.steps button:hover b{background:linear-gradient(var(--mark-soft),var(--mark-soft)) no-repeat 0 85%/100% 50%}
+.ctl{display:flex;gap:8px;margin:14px 0 0 37px}
+.btn{font:600 12.5px/1 var(--mono);border:1.5px solid var(--ink);background:var(--card);border-radius:999px;padding:9px 13px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn:hover{background:var(--mark)}
+.btn svg{width:13px;height:13px}
+.btn kbd{font:600 10px/1 var(--mono);border:1px solid var(--line);border-radius:4px;padding:2px 4px;color:var(--muted)}
 
-/* ---------- figures (dark chip panels) ---------- */
-.fig{margin:0;min-width:0}
-.mini{background:var(--chip);color:var(--chip-fg);border-radius:20px;overflow:hidden;container-type:inline-size;box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 50px -28px rgba(22,24,29,.55)}
-.mini-bar{display:flex;justify-content:space-between;gap:12px;padding:3.2cqw 4cqw 0;font:500 max(10px,2.1cqw)/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--chip-muted)}
-.mini-bar em{font-style:normal;color:var(--mark)}
-.stage{aspect-ratio:16/9.4;position:relative}
-.stage svg{position:absolute;inset:0;width:100%;height:100%}
-figcaption{font-size:14px;line-height:1.45;color:var(--muted);margin-top:12px;padding-left:2px}
-.o-c{transform-box:fill-box;transform-origin:center}
-.o-l{transform-box:fill-box;transform-origin:left center}
-.sv-t{font-family:var(--mono);fill:var(--chip-muted);font-size:12px}
-.sv-t.w{fill:var(--chip-fg)} .sv-t.k{fill:var(--chip);font-weight:600} .sv-t.y{fill:var(--mark)}
+/* detail + layer views */
+.back{display:inline-flex;align-items:center;gap:8px;font:600 12px/1 var(--mono);background:transparent;border:0;padding:6px 0;cursor:pointer;color:var(--muted);margin-top:4px}
+.back:hover{color:var(--ink)}.back svg{width:14px;height:14px}
+.badge{display:flex;align-items:center;gap:8px;font:600 11px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:12px}
+.badge i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+h2{font:700 30px/1.06 var(--disp);letter-spacing:-.03em;margin:10px 0 8px}
+.desc{color:#3d4148;margin:0 0 16px}
+.thumb{display:block;position:relative;height:0;padding-bottom:56.5%;border-radius:12px;overflow:hidden;border:1.5px solid var(--ink);background:#0f0f11;margin:0 0 12px;box-shadow:0 5px 0 var(--ink)}
+.thumb iframe{position:absolute;left:0;top:0;width:1470px;height:830px;border:0;transform-origin:0 0;pointer-events:none}
+.thumb span{position:absolute;left:8px;bottom:8px;font:600 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;background:rgba(15,15,17,.82);color:#fff;padding:6px 8px;border-radius:6px}
+.anims{display:grid;gap:9px;margin:0 0 16px}
+.anim{display:grid;grid-template-columns:auto minmax(0,1fr) 16px;gap:11px;align-items:center;padding:12px 13px;border:1.5px solid var(--ink);border-radius:13px;background:#fff;text-decoration:none;box-shadow:0 4px 0 var(--ink);transition:transform .15s,box-shadow .15s;cursor:pointer;width:100%;text-align:left}
+.anim:hover{transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
+.anim small{font:600 10px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;padding:5px 7px;border-radius:6px;background:#ece8de}
+.anim small.l{background:var(--mark)}
+.anim b{font-weight:600}.anim span{display:block;color:var(--muted);font-size:13px;line-height:1.35}
+.anim svg{width:16px;height:16px}
 
-/* terminal */
-.term{position:absolute;inset:0;padding:6cqw 6cqw;font:500 3.5cqw/1.9 var(--mono);white-space:pre}
-.term .p{color:var(--mark)}
-.term .out{color:#fff;font-weight:600}
-.ty{display:inline-block;overflow:hidden;white-space:pre;vertical-align:bottom;width:calc(var(--n)*1ch)}
-.cur{display:inline-block;width:.6em;height:1.15em;background:var(--mark);vertical-align:-.2em;margin-left:.1em}
-.cur.hide{opacity:0}
-.cur.blink{animation:blink 1.1s steps(1) infinite}
-@keyframes blink{50%{opacity:0}}
+/* KGÜ quick index */
+.idx{flex:none;padding-top:14px;border-top:1.5px solid var(--line);margin-top:12px}
+.chips{display:flex;gap:6px}
+.chip{flex:1;font:600 13px/1 var(--mono);border:1.5px solid var(--ink);background:var(--card);border-radius:10px;padding:9px 0 8px;cursor:pointer;display:grid;gap:6px;justify-items:center}
+.chip i{width:18px;height:4px;border-radius:2px;background:var(--c)}
+.chip:hover,.chip.on{background:var(--ink);color:#fff}
+.pop{position:fixed;z-index:40;width:340px;background:var(--card);border:1.5px solid var(--ink);border-radius:16px;padding:16px;box-shadow:0 6px 0 var(--ink)}
+.pop h3{font:700 19px/1.15 var(--disp);letter-spacing:-.02em;margin:8px 0 12px}
+.pop .anims{margin:0}
 
-/* assembler */
-.asm{position:absolute;inset:0;display:grid;grid-template-columns:1.25fr 1fr;gap:5cqw;padding:6cqw;align-items:center}
-.code{position:relative;font:500 3.5cqw/1 var(--mono)}
-.ins{height:9cqw;display:flex;align-items:center;padding-left:4cqw;position:relative;white-space:pre}
-.ins span{color:var(--chip-muted);display:inline-block;width:4.2ch}
-.hl{position:absolute;left:0;right:0;top:0;height:9cqw;background:rgba(255,212,0,.15);border-left:.9cqw solid var(--mark);border-radius:1cqw;transform:translateY(300%)}
-.regs{display:grid;gap:3.4cqw}
-.reg{border:1px solid var(--chip-line);border-radius:2.2cqw;background:var(--chip-2);padding:2.6cqw 3.4cqw;display:flex;align-items:center;justify-content:space-between}
-.reg label{font:500 2.7cqw/1 var(--mono);letter-spacing:.08em;color:var(--chip-muted)}
-.val{height:6cqw;overflow:hidden;font:600 5cqw/6cqw var(--mono);color:var(--mark);text-align:right}
-.strip{display:flex;flex-direction:column}
-.strip span{height:6cqw;display:block}
-.strip.r3{transform:translateY(-66.667%)} .strip.r2{transform:translateY(-50%)}
-.jump{font:600 2.7cqw/1 var(--mono);color:var(--chip);background:var(--mark);border-radius:999px;padding:1.6cqw 3cqw;justify-self:start}
+/* ---------- stage ---------- */
+.stage{position:relative;perspective:3400px;perspective-origin:50% 45%;min-width:0}
+.stack{position:absolute;left:50%;top:50%;width:760px;height:440px;margin:-220px 0 0 -380px;transform-style:preserve-3d;
+  transform:translate(var(--ox,70px),var(--oy,0px)) scale(var(--s,.85)) rotateX(57deg) rotateZ(-10deg);transition:transform 1s var(--ease)}
+.stack.flat{transform:translate(0px,6px) scale(var(--sf,1.2)) rotateX(0deg) rotateZ(0deg)}
+.slab{position:absolute;inset:0;transform-style:preserve-3d;transform:translateZ(var(--z));transition:transform .9s var(--ease),opacity .5s ease;cursor:pointer}
+.slab.pre{opacity:0;transform:translateZ(calc(var(--z) + 260px))}
+.slab.hov{transform:translateZ(calc(var(--z) + 16px))}
+.stack.flat .slab{opacity:0;pointer-events:none;transform:translateZ(calc(var(--z) * 1.8))}
+.stack.flat .slab.foc{opacity:1;pointer-events:auto;transform:translateZ(0);cursor:default}
+.face,.ex{position:absolute;inset:0;border-radius:22px}
+.face{overflow:hidden;background:var(--card)}
+.face svg{display:block;width:100%;height:100%}
+.ex{background:var(--edge,#b9b4a6)}
+.shadow{position:absolute;inset:-4% -2%;border-radius:40%;background:radial-gradient(closest-side,rgba(22,24,29,.36),rgba(22,24,29,0));transform:translateZ(-460px);filter:blur(22px);transition:opacity .5s;pointer-events:none}
+.stack.flat .shadow{opacity:0}
+.an{position:absolute;width:0;height:0;pointer-events:none}
+.face [data-stop]{cursor:pointer}
 
-/* ---------- side index ---------- */
-.spy{position:fixed;right:max(18px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);display:none;flex-direction:column;gap:4px;z-index:5;background:rgba(246,245,241,.86);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:16px;padding:8px}
-.spy a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--muted);padding:11px 13px;border-radius:10px;transition:background-color .18s ease,color .18s ease}
-.spy b{font:600 15px/1 var(--mono)}
-.spy span{font:500 14px/1 var(--body);display:none;white-space:nowrap}
-.spy a:hover{color:var(--ink);background:#eceae3}
-.spy a.on{background:var(--mark);color:var(--ink)}
-.spy a.on span{font-weight:600}
-@media (min-width:1340px){.spy{display:flex}}
-@media (min-width:1560px){.spy span{display:block}}
+/* ---------- overlay: labels + signal ---------- */
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:14;transition:opacity .4s}
+#labels{position:fixed;inset:0;pointer-events:none;z-index:16}
+.lb{position:absolute;left:0;top:0;pointer-events:auto;white-space:nowrap;will-change:transform;transition:opacity .35s}
+.lb.off{opacity:0;pointer-events:none}
+.lb.stop{display:flex;align-items:center;gap:7px;font:600 12.5px/1 var(--sans);background:var(--card);border:1.5px solid var(--ink);border-radius:999px;padding:6px 11px 6px 8px;cursor:pointer;box-shadow:0 3px 0 var(--ink)}
+.lb.stop i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.lb.stop::after{content:"";position:absolute;left:50%;top:100%;width:1.5px;height:var(--stem,30px);margin-top:3px;background:var(--ink)}
+.lb.stop::before{content:"";position:absolute;left:50%;top:calc(100% + var(--stem,30px) + 1px);width:7px;height:7px;margin-left:-2.75px;border-radius:50%;background:var(--ink)}
+.lb.stop:hover,.lb.stop.on{background:var(--mark)}
+.lb.stop.sel{background:var(--ink);color:#fff}
+.flat .lb.stop{font-size:14px;padding:8px 14px 8px 10px}
+.flat .lb.stop::after,.flat .lb.stop::before{display:none}
+.lb.slot{font:600 10.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--bg);border:1.5px dashed #a9a59a;border-radius:999px;padding:5px 9px;pointer-events:none}
+.lb.layer{text-align:right;cursor:pointer;background:transparent;border:0;padding:6px 14px 6px 6px;border-right:1.5px solid var(--ink)}
+.lb.layer .no{font:600 11px/1 var(--mono);letter-spacing:.1em;color:var(--muted)}
+.lb.layer b{display:block;font:700 19px/1.15 var(--disp);letter-spacing:-.02em;margin:4px 0 2px}
+.lb.layer span{display:block;font:400 12.5px/1.35 var(--sans);color:var(--muted);white-space:normal;width:170px;margin-left:auto}
+.lb.layer:hover b,.lb.layer.on b{background:linear-gradient(var(--mark),var(--mark)) no-repeat 0 88%/100% 42%}
+#cap{position:fixed;left:calc(var(--col) + (100vw - var(--col)) / 2);bottom:22px;transform:translateX(-50%);z-index:18;display:flex;align-items:center;gap:12px;background:var(--ink);color:#fff;border-radius:14px;padding:12px 18px 12px 12px;font:500 15.5px/1.35 var(--sans);max-width:min(620px,calc(100vw - var(--col) - 40px));box-shadow:0 14px 30px -14px rgba(22,24,29,.6);transition:opacity .4s,transform .4s var(--ease)}
+#cap.off{opacity:0;transform:translateX(-50%) translateY(12px);pointer-events:none}
+#cap .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--mark);color:var(--ink);display:grid;place-items:center;font:600 12px/1 var(--mono)}
+#cap em{flex:none;font:600 10.5px/1 var(--mono);font-style:normal;letter-spacing:.06em;color:#fff;opacity:.6;white-space:nowrap}
+.foc-bar{position:fixed;left:calc(var(--col) + (100vw - var(--col)) / 2);top:74px;transform:translateX(-50%);z-index:18}
 
-/* ---------- footer ---------- */
-footer{background:var(--chip);color:var(--chip-fg);margin-top:clamp(30px,5vw,60px);padding-bottom:env(safe-area-inset-bottom,0px)}
-.foot{padding-block:clamp(40px,6vw,72px);display:grid;gap:clamp(26px,3.5vw,40px)}
-.foot .by{font:500 12.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--chip-muted);margin:0 0 12px}
-.foot h3{font:700 clamp(30px,4vw,52px)/1.02 var(--display);letter-spacing:-.03em;margin:0 0 16px}
-.foot p{color:var(--chip-muted);margin:0;max-width:44em;font-size:15.5px}
-.foot .who{color:var(--chip-fg);font-size:17px;margin-bottom:8px}
-.acts{display:flex;flex-wrap:wrap;gap:10px}
-.btn{display:inline-flex;align-items:center;gap:9px;white-space:nowrap;font:600 14px/1 var(--mono);text-decoration:none;padding:14px 18px;border-radius:999px;border:1.5px solid var(--chip-line);color:var(--chip-fg)}
-.btn svg{width:16px;height:16px}
-.btn:hover{border-color:var(--chip-fg)}
-.btn.y{background:var(--mark);border-color:var(--mark);color:var(--ink)}
-.btn.y:hover{background:#ffe04d;border-color:#ffe04d}
-footer a:focus-visible{outline-color:var(--mark)}
+/* ---------- list overlay ---------- */
+.list{position:fixed;inset:0;z-index:50;background:rgba(244,242,236,.97);overflow-y:auto;padding:86px 22px 60px}
+.list .in{max-width:780px;margin:0 auto}
+.list section{margin-bottom:26px}
+.list h3{display:flex;gap:10px;align-items:center;font:700 19px/1.2 var(--disp);margin:0 0 10px}
+.list h3 i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.who{font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px}
+.who b{color:var(--ink)}
+.dn-back{position:fixed;left:50%;top:15px;transform:translateX(-50%);z-index:60}
 
-/* ---------- load ---------- */
-@media (prefers-reduced-motion:no-preference){
-  .rise{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
-  .rise.d1{animation-delay:.08s}.rise.d2{animation-delay:.16s}.rise.d3{animation-delay:.26s}
-  @keyframes rise{from{opacity:0;transform:translateY(14px)}}
-  h1 .mk{animation:sweep .8s .55s cubic-bezier(.6,0,.2,1) both}
-  @keyframes sweep{from{background-size:0% 62%}}
+/* ---------- small screens: plain list ---------- */
+.mobile{display:none}
+@media (max-width:980px){
+  body{overflow:auto;background-size:22px 22px}
+  .app,#fx,#labels,#cap,.foc-bar{display:none!important}
+  .mobile{display:block;padding:76px 20px 50px;max-width:640px;margin:0 auto}
+  .mobile section{margin:26px 0}
+  .mobile h3{font:700 21px/1.15 var(--disp);letter-spacing:-.02em;margin:0 0 4px}
+  .mobile p.ld{color:var(--muted);margin:0 0 12px}
+  .top nav .opt{display:none}
 }
-
-/* ---------- small screens ---------- */
-@media (max-width:860px){
-  .hero,.kgu,.kgu:nth-of-type(even){grid-template-columns:minmax(0,1fr)}
-  .kgu .fig,.kgu:nth-of-type(even) .fig{order:-1}
-  .top nav a.opt{display:none}
-  .hero{gap:40px}
-}
-@media (max-width:520px){
-  .toc a{grid-template-columns:36px minmax(0,1fr) 22px;padding:17px 6px}
-  .toc .c{display:none}
-  .toc-head{padding-inline:6px}
-}
-@media (max-width:420px){
-  .rows a{grid-template-columns:70px minmax(0,1fr) 20px;gap:10px}
-}
+@media (prefers-reduced-motion:reduce){.stack,.slab{transition:none}}
 </style>
 </head>
 <body>
 
-<div class="wrap">
-  <header class="top">
-    <a class="wordmark" href="#top" aria-label="GIN3 KGÜ-Animationen"><i></i>GIN3 / KGÜ</a>
-    <nav>
-      <a href="KGUE-Animationen.zip" download>Alles als Zip</a>
-      <a class="opt" href="https://github.com/barissskaan/gin3-kgue-animationen">GitHub</a>
-      <a class="opt" href="https://bariskaandatli.com">bariskaandatli.com</a>
-    </nav>
-  </header>
+<header class="top">
+  <a class="wm" href="./"><i><b></b><b></b><b></b></i>GIN3 · KGÜ-ANIMATIONEN</a>
+  <nav>
+    <button class="tb opt" id="listBtn" type="button">Alle Animationen</button>
+    <a class="tb" href="KGUE-Animationen.zip" download>Zip</a>
+    <a class="tb opt" href="https://github.com/barissskaan/gin3-kgue-animationen">GitHub</a>
+    <a class="tb opt" href="https://bariskaandatli.com">bariskaandatli.com</a>
+  </nav>
+</header>
 
-  <section class="hero" id="top">
-    <div>
-      <p class="eyebrow rise">KGÜ-Animationen · RWTH Aachen · WS 2026/27</p>
-      <h1 class="rise d1">Grundgebiete der Informatik&nbsp;3, <span class="mk">Schritt für Schritt.</span></h1>
-    </div>
-    <div class="rise d2">
-      <div class="toc-head"><span>Inhalt</span><span>5 Übungen · 15 Animationen</span></div>
-      <ol class="toc">
-        <li><a href="#kgue-1"><span class="n">01</span><span class="t">Einführung in C und Linux</span><span class="c">2 Animationen</span><span class="a" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4v12M5 11l5 5 5-5"/></svg></span></a></li>
-        <li><a href="#kgue-2"><span class="n">02</span><span class="t">Assembler</span><span class="c">3 Animationen</span><span class="a" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4v12M5 11l5 5 5-5"/></svg></span></a></li>
-        <li><a href="#kgue-3"><span class="n">03</span><span class="t">Rust, Git und Betriebssystem</span><span class="c">4 Animationen</span><span class="a" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4v12M5 11l5 5 5-5"/></svg></span></a></li>
-        <li><a href="#kgue-4"><span class="n">04</span><span class="t">Speicherverwaltung</span><span class="c">2 Animationen</span><span class="a" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4v12M5 11l5 5 5-5"/></svg></span></a></li>
-        <li><a href="#kgue-5"><span class="n">05</span><span class="t">Scheduling</span><span class="c">4 Animationen</span><span class="a" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4v12M5 11l5 5 5-5"/></svg></span></a></li>
-      </ol>
-    </div>
-  </section>
-
-  <main>
-  <!-- ============ KGÜ 1 ============ -->
-  <section class="kgu" id="kgue-1">
-    <div>
-      <div class="kicker"><b>01</b><span>Kleingruppen&shy;übung</span></div>
-      <h2>Einführung in C und Linux</h2>
-      <p class="sub">Was passiert, wenn man einen Befehl eintippt? Und wie wird aus C-Text ein Programm?</p>
-      <ul class="rows">
-        <li><a href="kgue-1/shell.html"><span class="kind">Theorie</span><span class="rt"><b>Die Shell</b><span>Was im Terminal bei einem Befehl passiert</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-        <li><a href="kgue-1/gcc.html"><span class="kind">Theorie</span><span class="rt"><b>Von C zum Programm</b><span>Präprozessor, Compiler, Assembler, Linker</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-      </ul>
-    </div>
-    <figure class="fig">
-      <div class="mini" aria-hidden="true">
-        <div class="mini-bar"><span>Abb. 1</span><span>Terminal</span></div>
-        <div class="stage">
-          <div class="term"><div><span class="p">$</span> <span class="ty" style="--n:19" data-n="19" data-fx="type .05 .27">gcc main.c -o hallo</span><span class="cur hide" data-seq='{"p":"opacity","v":[[1,0],[0,0.31]]}'></span></div><div data-fx="fade .31"><span class="p">$</span> <span class="ty" style="--n:7" data-n="7" data-fx="type .37 .47">./hallo</span><span class="cur hide" data-seq='{"p":"opacity","v":[[0,0],[1,0.31],[0,0.54]]}'></span></div><div class="out" data-fx="fade .54">Hallo, Welt!</div><div data-fx="fade .6"><span class="p">$</span> <span class="cur blink"></span></div></div>
+<main class="app">
+  <section class="col">
+    <div class="views" id="views">
+      <div id="vJourney">
+        <h1>Ein Computer, Schicht für Schicht.</h1>
+        <p class="lead">Folge einem Programm von der Shell bis zur CPU. Jede Station ist ein Thema aus den Kleingruppenübungen in Grundgebiete der Informatik&nbsp;3.</p>
+        <p class="cap-s"><span>Der Weg eines Programms</span></p>
+        <ol class="steps" id="steps"></ol>
+        <div class="ctl">
+          <button class="btn" id="replay" type="button"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a5 5 0 1 0 1.6-3.7M2 2v3h3"/></svg>Nochmal <kbd>W</kbd></button>
+          <button class="btn" id="skip" type="button">Überspringen</button>
         </div>
       </div>
-      <figcaption>Aus <span class="mono">main.c</span> wird ein Programm, das die CPU ausführen kann.</figcaption>
-    </figure>
+      <div id="vDetail" hidden></div>
+      <div id="vLayer" hidden></div>
+    </div>
+    <div class="idx">
+      <p class="cap-s"><span>Direkt zur Übung</span><span>5 Übungen · 15 Animationen</span></p>
+      <div class="chips" id="chips"></div>
+      <p class="who"><b>Barış Kaan Datlı</b> · Tutor in Grundgebiete der Informatik 3, RWTH Aachen, WS 2026/27. Inoffizielle Begleitmaterialien.</p>
+    </div>
   </section>
+  <section class="stage" id="stage"><div class="stack" id="stack"><div class="shadow"></div></div></section>
+</main>
 
-  <!-- ============ KGÜ 2 ============ -->
-  <section class="kgu" id="kgue-2">
-    <div>
-      <div class="kicker"><b>02</b><span>Kleingruppen&shy;übung</span></div>
-      <h2>Assembler</h2>
-      <p class="sub">Register, Adressen und Befehle: so arbeitet die CPU wirklich, Zeile für Zeile.</p>
-      <ul class="rows">
-        <li><a href="kgue-2/ram.html"><span class="kind">Theorie</span><span class="rt"><b>RAM und Adressen</b><span>Wo Daten liegen: Register, Arbeitsspeicher, SSD</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-        <li><a href="kgue-2/nasm.html"><span class="kind">Theorie</span><span class="rt"><b>NASM-Grundlagen</b><span>Die ersten Befehle in Assembler</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-        <li><a href="kgue-2/aufgaben.html"><span class="kind l">Lösung</span><span class="rt"><b>Aufgaben</b><span>Ein Programm Schritt für Schritt auf der CPU</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-      </ul>
-    </div>
-    <figure class="fig">
-      <div class="mini" aria-hidden="true">
-        <div class="mini-bar"><span>Abb. 2</span><span>CPU</span></div>
-        <div class="stage">
-          <div class="asm">
-            <div class="code">
-              <div class="hl" data-seq='{"p":"transform","v":[["translateY(0%)",0],["translateY(100%)",0.28],["translateY(200%)",0.48],["translateY(300%)",0.68]]}' data-seq2='{"p":"opacity","v":[[0,0],[1,0.08]]}'></div>
-              <div class="ins"><span>mov</span>rax, 5</div>
-              <div class="ins"><span>add</span>rax, 3</div>
-              <div class="ins"><span>cmp</span>rax, 8</div>
-              <div class="ins"><span>je</span>fertig</div>
-            </div>
-            <div class="regs">
-              <div class="reg"><label>RAX</label><div class="val"><div class="strip r3" data-seq='{"p":"transform","v":[["translateY(0%)",0],["translateY(-33.333%)",0.13],["translateY(-66.667%)",0.33]]}'><span>0</span><span>5</span><span>8</span></div></div></div>
-              <div class="reg"><label>ZF</label><div class="val"><div class="strip r2" data-seq='{"p":"transform","v":[["translateY(0%)",0],["translateY(-50%)",0.53]]}'><span>0</span><span>1</span></div></div></div>
-              <div class="jump" data-fx="fade .72">Sprung zu fertig</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <figcaption>Die CPU arbeitet Befehl für Befehl. Das Register <span class="mono">rax</span> ändert sich mit.</figcaption>
-    </figure>
-  </section>
+<svg id="fx" aria-hidden="true">
+  <path id="guides" fill="none" stroke="#16181d" stroke-opacity=".22" stroke-width="1.2" stroke-dasharray="3 6"/>
+  <path id="route" fill="none" stroke="#16181d" stroke-opacity="0" stroke-width="1.5" stroke-dasharray="2 7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path id="trail" fill="none" stroke="#ffd400" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 5px rgba(255,212,0,.9))"/>
+  <path id="trail2" fill="none" stroke="#16181d" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".55"/>
+  <g id="dot" opacity="0"><circle r="15" fill="#ffd400" opacity=".28"/><circle r="8" fill="#ffd400" stroke="#16181d" stroke-width="1.6"/></g>
+</svg>
+<div id="labels"></div>
+<div id="cap" class="off" aria-live="polite"><span class="n"></span><span class="t"></span><em></em></div>
+<div class="foc-bar" id="focBar" hidden><button class="btn" id="unfocus" type="button"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2 4 7l5 5"/></svg>Alle Schichten</button></div>
+<div class="pop" id="pop" hidden></div>
+<div class="list" id="list" hidden><div class="in" id="listIn"></div></div>
+<div class="mobile" id="mobile"></div>
 
-  <!-- ============ KGÜ 3 ============ -->
-  <section class="kgu" id="kgue-3">
-    <div>
-      <div class="kicker"><b>03</b><span>Kleingruppen&shy;übung</span></div>
-      <h2>Rust, Git und Betriebssystem</h2>
-      <p class="sub">Versionen verwalten mit Git, sicher programmieren mit Rust, und ein erster Blick auf die Freiliste.</p>
-      <ul class="rows">
-        <li><a href="kgue-3/git.html"><span class="kind">Theorie</span><span class="rt"><b>Git-Grundlagen</b><span>Commits, Branches und Zusammenführen</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-        <li><a href="kgue-3/aufgabe-1.html"><span class="kind l">Lösung</span><span class="rt"><b>Aufgabe 1</b><span>Fakultät in Rust</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-        <li><a href="kgue-3/aufgabe-2.html"><span class="kind l">Lösung</span><span class="rt"><b>Aufgabe 2</b><span>Ownership, Stack und Heap</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-        <li><a href="kgue-3/aufgabe-3.html"><span class="kind l">Lösung</span><span class="rt"><b>Aufgabe 3</b><span>Die Freiliste des Betriebssystems</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-      </ul>
-    </div>
-    <figure class="fig">
-      <div class="mini" aria-hidden="true">
-        <div class="mini-bar"><span>Abb. 3</span><span>Git</span></div>
-        <div class="stage">
-          <svg viewBox="0 0 480 282" fill="none">
-            <path d="M70 176H410" stroke="#eceef2" stroke-width="3" stroke-linecap="round" pathLength="1" stroke-dasharray="1" data-fx="draw .05 .62"/>
-            <path d="M150 176C185 176 185 96 220 96H290C325 96 325 176 345 176" stroke="#8b92a0" stroke-width="3" stroke-linecap="round" pathLength="1" stroke-dasharray="1" data-fx="draw .2 .5"/>
-            <circle class="o-c" cx="70" cy="176" r="9" fill="#eceef2" data-fx="pop .05"/>
-            <circle class="o-c" cx="150" cy="176" r="9" fill="#eceef2" data-fx="pop .18"/>
-            <circle class="o-c" cx="220" cy="96" r="9" fill="#15171c" stroke="#8b92a0" stroke-width="3" data-fx="pop .3"/>
-            <circle class="o-c" cx="290" cy="96" r="9" fill="#15171c" stroke="#8b92a0" stroke-width="3" data-fx="pop .4"/>
-            <circle class="o-c" cx="345" cy="176" r="9" fill="#eceef2" data-fx="pop .52"/>
-            <circle class="o-c" cx="410" cy="176" r="11" fill="#ffd400" data-fx="pop .62"/>
-            <g data-fx="fade .3"><rect x="216" y="48" width="78" height="24" rx="12" stroke="#8b92a0" stroke-width="1.5"/><text class="sv-t" x="255" y="64.5" text-anchor="middle">feature</text></g>
-            <g data-fx="fade .66"><rect x="380" y="128" width="60" height="24" rx="12" fill="#ffd400"/><text class="sv-t k" x="410" y="144.5" text-anchor="middle">main</text></g>
-            <text class="sv-t" x="70" y="208" text-anchor="middle" data-fx="fade .07">a1f3</text>
-            <text class="sv-t" x="150" y="208" text-anchor="middle" data-fx="fade .2">c27e</text>
-            <text class="sv-t" x="345" y="208" text-anchor="middle" data-fx="fade .54">9bd0</text>
-            <text class="sv-t y" x="410" y="208" text-anchor="middle" data-fx="fade .64">e4a8</text>
-          </svg>
-        </div>
-      </div>
-      <figcaption>Ein Branch zweigt ab und wird später wieder mit <span class="mono">main</span> zusammengeführt.</figcaption>
-    </figure>
-  </section>
-
-  <!-- ============ KGÜ 4 ============ -->
-  <section class="kgu" id="kgue-4">
-    <div>
-      <div class="kicker"><b>04</b><span>Kleingruppen&shy;übung</span></div>
-      <h2>Allokationsstrategien und Speicherverwaltung</h2>
-      <p class="sub">Viele Programme, ein Arbeitsspeicher: wer bekommt welche Lücke?</p>
-      <ul class="rows">
-        <li><a href="kgue-4/speicher.html"><span class="kind">Theorie</span><span class="rt"><b>Speicher für Programme</b><span>Wie das Betriebssystem den Speicher verteilt</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-        <li><a href="kgue-4/aufgabe-3.html"><span class="kind l">Lösung</span><span class="rt"><b>Aufgabe 3</b><span>Allokationsstrategien im Vergleich</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-      </ul>
-    </div>
-    <figure class="fig">
-      <div class="mini" aria-hidden="true">
-        <div class="mini-bar"><span>Abb. 4</span><span>First Fit</span></div>
-        <div class="stage">
-          <svg viewBox="0 0 480 282" fill="none">
-            <text class="sv-t" x="40" y="50">Anfragen</text>
-            <g data-fx="fade .05"><rect x="130" y="33" width="62" height="26" rx="13" stroke="#8b92a0" stroke-width="1.5"/><text class="sv-t w" x="161" y="50.5" text-anchor="middle">A · 50</text></g>
-            <g data-fx="fade .09"><rect x="202" y="33" width="62" height="26" rx="13" stroke="#8b92a0" stroke-width="1.5"/><text class="sv-t w" x="233" y="50.5" text-anchor="middle">B · 80</text></g>
-            <g data-fx="fade .13"><rect x="274" y="33" width="62" height="26" rx="13" stroke="#8b92a0" stroke-width="1.5"/><text class="sv-t w" x="305" y="50.5" text-anchor="middle">C · 60</text></g>
-            <rect x="40" y="112" width="400" height="64" rx="8" fill="#22252d" stroke="#2e323c" stroke-width="1.5"/>
-            <rect x="40" y="112" width="70" height="64" rx="8" fill="#4a505d"/>
-            <rect x="170" y="112" width="60" height="64" fill="#4a505d"/>
-            <rect x="320" y="112" width="40" height="64" fill="#4a505d"/>
-            <g data-fx="drop .22"><rect x="110" y="112" width="50" height="64" fill="#ffd400"/><text class="sv-t k" x="135" y="149" text-anchor="middle" font-size="15">A</text></g>
-            <g data-fx="drop .42"><rect x="230" y="112" width="80" height="64" fill="#ffd400"/><text class="sv-t k" x="270" y="149" text-anchor="middle" font-size="15">B</text></g>
-            <g data-fx="drop .62"><rect x="360" y="112" width="60" height="64" fill="#ffd400"/><text class="sv-t k" x="390" y="149" text-anchor="middle" font-size="15">C</text></g>
-            <path d="M110 190v8h60v-8M230 190v8h90v-8M360 190v8h80v-8" stroke="#8b92a0" stroke-width="1.5"/>
-            <text class="sv-t" x="140" y="218" text-anchor="middle">60 frei</text>
-            <text class="sv-t" x="275" y="218" text-anchor="middle">90 frei</text>
-            <text class="sv-t" x="400" y="218" text-anchor="middle">80 frei</text>
-            <rect x="40" y="244" width="12" height="12" rx="2" fill="#4a505d"/><text class="sv-t" x="60" y="255">belegt</text>
-            <rect x="124" y="244" width="12" height="12" rx="2" fill="#ffd400"/><text class="sv-t" x="144" y="255">neu</text>
-          </svg>
-        </div>
-      </div>
-      <figcaption>First Fit: Jede Anfrage nimmt die erste Lücke, die groß genug ist.</figcaption>
-    </figure>
-  </section>
-
-  <!-- ============ KGÜ 5 ============ -->
-  <section class="kgu" id="kgue-5">
-    <div>
-      <div class="kicker"><b>05</b><span>Kleingruppen&shy;übung</span></div>
-      <h2>Scheduling</h2>
-      <p class="sub">Viele Programme, eine CPU: wer darf wann rechnen, und nach welcher Regel?</p>
-      <ul class="rows">
-        <li><a href="kgue-5/scheduling.html"><span class="kind">Theorie</span><span class="rt"><b>Scheduling</b><span>Prozesse, Warteschlange und die vier Regeln</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-        <li><a href="kgue-5/aufgabe-1.html"><span class="kind l">Lösung</span><span class="rt"><b>Aufgabe 1</b><span>FCFS, SJF, Priority und Round Robin</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-        <li><a href="kgue-5/aufgabe-2.html"><span class="kind l">Lösung</span><span class="rt"><b>Aufgabe 2</b><span>Prioritäten mit Strafe</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-        <li><a href="kgue-5/aufgabe-3.html"><span class="kind l">Lösung</span><span class="rt"><b>Aufgabe 3</b><span>Welche Strategie passt zu welchem Ziel?</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></a></li>
-      </ul>
-    </div>
-    <figure class="fig">
-      <div class="mini" aria-hidden="true">
-        <div class="mini-bar"><span>Abb. 5</span><span>Round Robin</span></div>
-        <div class="stage">
-          <svg viewBox="0 0 480 282" fill="none">
-            <path d="M130 44v176M174 44v176M218 44v176M262 44v176M306 44v176M350 44v176M394 44v176M438 44v176" stroke="#2e323c" stroke-width="1"/>
-            <text class="sv-t w" x="34" y="80">Spiel</text>
-            <text class="sv-t w" x="34" y="130">Musik</text>
-            <text class="sv-t w" x="34" y="180">Download</text>
-            <rect class="o-l" x="130" y="60" width="88" height="32" rx="5" fill="#ffd400" data-fx="grow .08 .263"/>
-            <rect class="o-l" x="218" y="110" width="44" height="32" rx="5" fill="#eceef2" data-fx="grow .263 .354"/>
-            <rect class="o-l" x="262" y="160" width="88" height="32" rx="5" fill="#8b92a0" data-fx="grow .354 .537"/>
-            <rect class="o-l" x="350" y="60" width="88" height="32" rx="5" fill="#ffd400" data-fx="grow .537 .72"/>
-            <path d="M130 220H438" stroke="#8b92a0" stroke-width="1.5"/>
-            <g class="sv-t" text-anchor="middle"><text x="130" y="242">0</text><text x="174" y="242">1</text><text x="218" y="242">2</text><text x="262" y="242">3</text><text x="306" y="242">4</text><text x="350" y="242">5</text><text x="394" y="242">6</text><text x="438" y="242">7</text></g>
-            <g data-fx="slide .08 .72 308"><path d="M130 40v184" stroke="#ffffff" stroke-width="2"/><path d="M124 34h12l-6 8z" fill="#ffffff"/></g>
-          </svg>
-        </div>
-      </div>
-      <figcaption>Round Robin: Jeder rechnet höchstens 2 Zeiteinheiten, dann ist der Nächste dran.</figcaption>
-    </figure>
-  </section>
-  </main>
-</div>
-
-<nav class="spy" aria-label="Übungen">
-  <a href="#kgue-1"><b>01</b><span>C und Linux</span></a><a href="#kgue-2"><b>02</b><span>Assembler</span></a><a href="#kgue-3"><b>03</b><span>Rust und Git</span></a><a href="#kgue-4"><b>04</b><span>Speicher</span></a><a href="#kgue-5"><b>05</b><span>Scheduling</span></a>
-</nav>
-
-<footer>
-  <div class="wrap foot">
-    <div>
-      <p class="by">Erstellt von</p>
-      <h3>Barış Kaan Datlı</h3>
-      <p class="who">Tutor in „Grundgebiete der Informatik 3: Betriebssysteme und Systemsicherheit“, RWTH Aachen, WS 2026/27.</p>
-      <p>Inoffizielle Begleitmaterialien. Maßgeblich sind Vorlesung, Übung und die Unterlagen im Moodle-Kurs.</p>
-    </div>
-    <div class="acts">
-      <a class="btn y" href="KGUE-Animationen.zip" download><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M4.5 6.5 8 10l3.500-3.500M3 13.500h10"/></svg>Alle Animationen als Zip</a>
-      <a class="btn" href="https://github.com/barissskaan/gin3-kgue-animationen">Quellcode auf GitHub</a>
-      <a class="btn" href="https://bariskaandatli.com">bariskaandatli.com</a>
-    </div>
-  </div>
-</footer>
-
+<script src="start/art-apps.js"></script>
+<script src="start/art-os.js"></script>
+<script src="start/art-hw.js"></script>
 <script>
 (function () {
-  // Side index: mark the section in view
-  var spy = [].slice.call(document.querySelectorAll('.spy a'));
-  if ('IntersectionObserver' in window && spy.length) {
-    var so = new IntersectionObserver(function (es) {
-      es.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        spy.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id); });
-      });
-    }, { rootMargin: '-45% 0px -45% 0px' });
-    document.querySelectorAll('.kgu').forEach(function (s) { so.observe(s); });
-  }
+'use strict';
+var R = '';
+var K = [null,
+  { n: 'Einführung in C und Linux', c: 'var(--k1)' }, { n: 'Assembler', c: 'var(--k2)' },
+  { n: 'Rust, Git und Betriebssystem', c: 'var(--k3)' }, { n: 'Speicherverwaltung', c: 'var(--k4)' }, { n: 'Scheduling', c: 'var(--k5)' }];
+var LAYERS = [
+  { id: 'apps', z: 292, n: 'Anwendungen', d: 'Programme, die du schreibst und startest.' },
+  { id: 'os', z: 0, n: 'Betriebssystem', d: 'Verteilt Speicher und Rechenzeit an alle Programme.' },
+  { id: 'hw', z: -292, n: 'Hardware', d: 'Was wirklich rechnet und speichert.' }
+];
+var A = {
+  shell: ['T', 'kgue-1/shell.html', 'Die Shell', 'Was im Terminal bei einem Befehl passiert'],
+  gcc: ['T', 'kgue-1/gcc.html', 'Von C zum Programm', 'Präprozessor, Compiler, Assembler, Linker'],
+  ram: ['T', 'kgue-2/ram.html', 'RAM und Adressen', 'Wo Daten liegen: Register, Arbeitsspeicher, SSD'],
+  nasm: ['T', 'kgue-2/nasm.html', 'NASM-Grundlagen', 'Die ersten Befehle in Assembler'],
+  k2a: ['L', 'kgue-2/aufgaben.html', 'Aufgaben', 'Ein Programm Schritt für Schritt auf der CPU'],
+  git: ['T', 'kgue-3/git.html', 'Git-Grundlagen', 'Commits, Branches und Zusammenführen'],
+  k3a1: ['L', 'kgue-3/aufgabe-1.html', 'Aufgabe 1', 'Fakultät in Rust'],
+  k3a2: ['L', 'kgue-3/aufgabe-2.html', 'Aufgabe 2', 'Ownership, Stack und Heap'],
+  k3a3: ['L', 'kgue-3/aufgabe-3.html', 'Aufgabe 3', 'Die Freiliste des Betriebssystems'],
+  sp: ['T', 'kgue-4/speicher.html', 'Speicher für Programme', 'Wie das Betriebssystem den Speicher verteilt'],
+  k4a3: ['L', 'kgue-4/aufgabe-3.html', 'Aufgabe 3', 'Allokationsstrategien im Vergleich'],
+  sch: ['T', 'kgue-5/scheduling.html', 'Scheduling', 'Prozesse, Warteschlange und die vier Regeln'],
+  k5a1: ['L', 'kgue-5/aufgabe-1.html', 'Aufgabe 1', 'FCFS, SJF, Priority und Round Robin'],
+  k5a2: ['L', 'kgue-5/aufgabe-2.html', 'Aufgabe 2', 'Prioritäten mit Strafe'],
+  k5a3: ['L', 'kgue-5/aufgabe-3.html', 'Aufgabe 3', 'Welche Strategie passt zu welchem Ziel?']
+};
+var KG_ANIMS = [null, ['shell', 'gcc'], ['ram', 'nasm', 'k2a'], ['git', 'k3a1', 'k3a2', 'k3a3'], ['sp', 'k4a3'], ['sch', 'k5a1', 'k5a2', 'k5a3']];
+// stops: rect = [x, y, w, h] on the 760x440 slab
+var STOPS = {
+  shell: { l: 'apps', r: [40, 56, 300, 210], t: 'Shell', k: 1, a: ['shell'], d: 'Die Shell liest deinen Befehl, sucht das passende Programm und startet es als neuen Prozess.' },
+  gcc: { l: 'apps', la: [620, 120], r: [372, 56, 348, 150], t: 'Von C zum Programm', k: 1, a: ['gcc'], d: 'Aus C-Text wird in vier Stufen ein ausführbares Programm: Präprozessor, Compiler, Assembler, Linker.' },
+  git: { l: 'apps', la: [440, 318], r: [372, 226, 164, 158], t: 'Git', k: 3, a: ['git'], d: 'Commits, Branches und Zusammenführen: wie Git die Versionen deines Codes verwaltet.' },
+  rust: { l: 'apps', la: [652, 318], r: [556, 226, 164, 158], t: 'Rust', k: 3, a: ['k3a1', 'k3a2'], d: 'Rust prüft schon beim Kompilieren, wem ein Wert gehört. Dazu: Stack, Heap und eine Fakultät in Rust.' },
+  sched: { l: 'os', r: [40, 50, 330, 190], t: 'Scheduling', k: 5, a: ['sch', 'k5a1', 'k5a2', 'k5a3'], d: 'Viele Prozesse, eine CPU: der Scheduler entscheidet, wer wann rechnen darf.' },
+  speicher: { l: 'os', la: [470, 98], r: [400, 50, 320, 96], t: 'Speicher', k: 4, a: ['sp'], d: 'Viele Programme, ein Arbeitsspeicher: wie das Betriebssystem den Speicher an Programme verteilt.' },
+  alloc: { l: 'os', la: [660, 201], r: [400, 162, 320, 78], t: 'Allokation', k: 4, a: ['k4a3'], d: 'First Fit, Best Fit und Co.: welche Lücke bekommt eine neue Anfrage?' },
+  frei: { l: 'os', r: [40, 262, 330, 122], t: 'Freiliste', k: 3, a: ['k3a3'], d: 'Das Betriebssystem merkt sich die freien Speicherbereiche in einer Liste und vergibt sie daraus.' },
+  cpu: { l: 'hw', r: [80, 100, 250, 230], t: 'CPU und Assembler', k: 2, a: ['nasm', 'k2a'], d: 'Die CPU führt Befehl für Befehl aus. Assembler zeigt dir genau diese Befehle: mov, add, cmp und Sprünge.' },
+  ram: { l: 'hw', r: [430, 70, 270, 210], t: 'RAM und Adressen', k: 2, a: ['ram'], d: 'Register, Arbeitsspeicher, SSD: wo Daten liegen, wie schnell man an sie herankommt und was eine Adresse ist.' }
+};
+var SLOTS = [['apps', 190, 337], ['os', 475, 323], ['os', 645, 323]];
+var STEPS = [
+  { s: ['gcc'], k: 1, t: 'Kompilieren', x: 'Mit gcc wird aus main.c das Programm hallo.' },
+  { s: ['shell'], k: 1, t: 'Starten', x: 'Du tippst ./hallo. Die Shell startet das Programm.' },
+  { s: ['frei'], k: 3, t: 'Speicher suchen', x: 'Das Betriebssystem sucht in der Freiliste nach freiem Speicher.' },
+  { s: ['alloc', 'speicher'], k: 4, t: 'Speicher reservieren', x: 'Eine passende Lücke im Arbeitsspeicher wird reserviert.' },
+  { s: ['sched'], k: 5, t: 'Rechenzeit bekommen', x: 'Der Scheduler reiht den Prozess ein und gibt ihm die CPU.' },
+  { s: ['cpu', 'ram'], k: 2, t: 'Ausführen', x: 'Die CPU führt Befehl für Befehl aus und liest dabei aus dem RAM.' },
+  { s: ['shell'], k: 1, t: 'Ausgabe', x: 'Die Ausgabe erscheint im Terminal: Hallo, Welt!' }
+];
+// signal route: [layer, x, y, step reached on arrival]
+var WP = [
+  ['apps', 546, 131, 0], ['apps', 356, 131], ['apps', 356, 161], ['apps', 190, 161, 1],
+  ['apps', 356, 161], ['apps', 356, 251], ['os', 356, 251], ['os', 205, 251], ['os', 205, 323, 2],
+  ['os', 205, 251], ['os', 385, 251], ['os', 385, 201], ['os', 560, 201, 3], ['os', 560, 98],
+  ['os', 385, 98], ['os', 385, 145], ['os', 205, 145, 4],
+  ['hw', 205, 145], ['hw', 205, 215, 5], ['hw', 380, 215], ['hw', 380, 175], ['hw', 565, 175], ['hw', 380, 175], ['hw', 380, 215], ['hw', 205, 215],
+  ['os', 205, 215], ['apps', 205, 215], ['apps', 190, 161, 6]
+];
+var ARROW = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg>';
+var BACK = '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2 4 7l5 5"/></svg>';
+var $ = function (id) { return document.getElementById(id); };
+var RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+var small = matchMedia('(max-width:980px)');
 
-  // Figures: small looping animations, only while visible
-  if (!Element.prototype.animate || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var D = 11000, EASE = 'cubic-bezier(.2,.7,.2,1)';
-  function hold(from, to, t0, t1, ease) {
-    var a = Object.assign({ offset: 0 }, from), b = Object.assign({ offset: t0, easing: ease || EASE }, from);
-    var c = Object.assign({ offset: Math.min(t1, 1) }, to), d = Object.assign({ offset: 1 }, to);
-    return [a, b, c, d];
-  }
-  var fx = {
-    fade: function (t) { return hold({ opacity: 0 }, { opacity: 1 }, t, t + .035); },
-    pop: function (t) { return hold({ opacity: 0, transform: 'scale(.2)' }, { opacity: 1, transform: 'scale(1)' }, t, t + .045, 'cubic-bezier(.3,1.5,.5,1)'); },
-    drop: function (t) { return hold({ opacity: 0, transform: 'translateY(-46px)' }, { opacity: 1, transform: 'translateY(0px)' }, t, t + .07); },
-    draw: function (t, t1) { return hold({ strokeDashoffset: 1 }, { strokeDashoffset: 0 }, t, t1, 'linear'); },
-    grow: function (t, t1) { return hold({ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }, t, t1, 'linear'); },
-    slide: function (t, t1, dx) { return hold({ transform: 'translateX(0px)' }, { transform: 'translateX(' + dx + 'px)' }, t, t1, 'linear'); },
-    type: function (t, t1, x, el) { var n = el.getAttribute('data-n'); return hold({ width: '0ch' }, { width: n + 'ch' }, t, t1, 'steps(' + n + ')'); }
-  };
-  function seq(spec) {
-    var s = JSON.parse(spec), kf = [], v = s.v;
-    for (var i = 0; i < v.length; i++) {
-      var o = {}; o[s.p] = v[i][0];
-      if (i > 0) { var p = {}; p[s.p] = v[i - 1][0]; p.offset = Math.max(v[i][1] - .03, v[i - 1][1]); p.easing = EASE; kf.push(p); }
-      o.offset = v[i][1]; kf.push(o);
-    }
-    var last = {}; last[s.p] = v[v.length - 1][0]; last.offset = 1; kf.push(last);
-    return kf;
-  }
-  var io = new IntersectionObserver(function (es) {
-    es.forEach(function (e) {
-      (e.target._a || []).forEach(function (a) { e.isIntersecting ? a.play() : a.pause(); });
-    });
-  }, { threshold: .25 });
-  document.querySelectorAll('.mini').forEach(function (mini) {
-    var list = [], opt = { duration: D, iterations: Infinity };
-    function run(el, kf) { var a = el.animate(kf, opt); a.pause(); list.push(a); }
-    mini.querySelectorAll('[data-fx]').forEach(function (el) {
-      var p = el.getAttribute('data-fx').split(' ');
-      run(el, fx[p[0]](+p[1], +p[2], +p[3] || +p[2], el));
-    });
-    mini.querySelectorAll('[data-seq]').forEach(function (el) {
-      run(el, seq(el.getAttribute('data-seq')));
-      if (el.hasAttribute('data-seq2')) run(el, seq(el.getAttribute('data-seq2')));
-    });
-    var stage = mini.querySelector('.stage');
-    run(stage, [{ opacity: 0, offset: 0 }, { opacity: 1, offset: .03 }, { opacity: 1, offset: .94 }, { opacity: 0, offset: 1 }]);
-    mini._a = list; io.observe(mini);
+function animRow(key, tag) {
+  var a = A[key];
+  return '<a class="anim" href="' + R + a[1] + '"><small class="' + (a[0] === 'L' ? 'l' : '') + '">' + (a[0] === 'L' ? 'Lösung' : 'Theorie') + '</small><div><b>' + a[2] + '</b><span>' + a[3] + '</span></div>' + ARROW + '</a>';
+}
+
+// ---------- build slabs ----------
+var stack = $('stack'), stage = $('stage'), slabs = {}, anchors = {};
+var ART = window.GIN3_ART || {}, artCss = '';
+LAYERS.forEach(function (L, i) {
+  var s = document.createElement('div'); s.className = 'slab pre'; s.style.setProperty('--z', L.z + 'px'); s.dataset.layer = L.id;
+  var art = ART[L.id];
+  s.style.setProperty('--edge', art ? art.edge : '#b9b4a6');
+  var h = '';
+  for (var e = 9; e >= 1; e--) h += '<div class="ex" style="transform:translateZ(' + (-e * 2.4) + 'px);filter:brightness(' + (0.78 + e * 0.012) + ')"></div>';
+  s.innerHTML = h + '<div class="face">' + (art ? art.svg : placeholder(L)) + '</div>';
+  if (art) artCss += art.css + '\n';
+  stack.appendChild(s); slabs[L.id] = s; L.el = s; L.i = i;
+});
+if (artCss) { var st = document.createElement('style'); st.textContent = artCss; document.head.appendChild(st); }
+function placeholder(L) {
+  var g = '<svg viewBox="0 0 760 440" xmlns="http://www.w3.org/2000/svg"><rect width="760" height="440" rx="22" fill="#fbfaf6" stroke="#16181d" stroke-width="1.5"/>';
+  Object.keys(STOPS).forEach(function (k) { var s = STOPS[k]; if (s.l !== L.id) return; g += '<g data-stop="' + k + '"><rect x="' + s.r[0] + '" y="' + s.r[1] + '" width="' + s.r[2] + '" height="' + s.r[3] + '" rx="12" fill="#fff" stroke="#16181d" stroke-width="1.5"/></g>'; });
+  return g + '</svg>';
+}
+function anchor(layer, x, y) {
+  var k = layer + ':' + x + ':' + y;
+  if (!anchors[k]) { var a = document.createElement('i'); a.className = 'an'; a.style.left = x + 'px'; a.style.top = y + 'px'; slabs[layer].appendChild(a); anchors[k] = a; }
+  return anchors[k];
+}
+function pt(a) { var r = a.getBoundingClientRect(); return [r.left, r.top]; }
+
+// ---------- labels ----------
+var labels = $('labels'), LB = [];
+Object.keys(STOPS).forEach(function (id) {
+  var s = STOPS[id]; s.id = id;
+  s.cx = s.r[0] + s.r[2] / 2; s.cy = s.r[1] + s.r[3] / 2;
+  s.aC = s.la ? anchor(s.l, s.la[0], s.la[1]) : anchor(s.l, s.cx, s.cy); s.aT = anchor(s.l, s.cx, s.r[1]);
+  var b = document.createElement('button'); b.type = 'button'; b.className = 'lb stop'; b.style.setProperty('--c', K[s.k].c);
+  b.innerHTML = '<i></i>' + s.t; b.setAttribute('aria-label', s.t + ', Kleingruppenübung ' + s.k);
+  b.onclick = function () { select(id); };
+  b.onmouseenter = function () { hovStop = id; applyAct(); }; b.onmouseleave = function () { hovStop = null; applyAct(); };
+  labels.appendChild(b); s.lb = b; s.g = slabs[s.l].querySelector('[data-stop="' + id + '"]');
+});
+SLOTS.forEach(function (sl) {
+  var d = document.createElement('span'); d.className = 'lb slot'; d.textContent = 'folgt'; labels.appendChild(d);
+  LB.push({ el: d, a: anchor(sl[0], sl[1], sl[2]), layer: sl[0], kind: 'slot' });
+});
+LAYERS.forEach(function (L, i) {
+  var b = document.createElement('button'); b.type = 'button'; b.className = 'lb layer';
+  b.innerHTML = '<span class="no">SCHICHT 0' + (i + 1) + '</span><b>' + L.n + '</b><span>' + L.d + '</span>';
+  b.onclick = function () { focusLayer(L.id); };
+  b.onmouseenter = function () { L.el.classList.add('hov'); }; b.onmouseleave = function () { L.el.classList.remove('hov'); };
+  labels.appendChild(b); L.lb = b; L.a = anchor(L.id, 0, 250);
+  L.c = [anchor(L.id, 14, 432), anchor(L.id, 746, 432)];
+});
+
+// ---------- state ----------
+var sel = null, hovStop = null, hovK = 0, storyStops = [], focus = null;
+function applyAct() {
+  var on = {};
+  storyStops.forEach(function (x) { on[x] = 1; });
+  if (hovStop) on[hovStop] = 1;
+  if (sel) on[sel] = 1;
+  Object.keys(STOPS).forEach(function (id) {
+    var s = STOPS[id], a = !!on[id] || ((hovK || popK) && s.k === (hovK || popK));
+    if (s.g) s.g.classList.toggle('act', a);
+    s.lb.classList.toggle('on', a); s.lb.classList.toggle('sel', sel === id);
   });
+}
+LAYERS.forEach(function (L) {
+  var face = L.el.querySelector('.face');
+  face.addEventListener('mouseover', function (e) { var g = e.target.closest('[data-stop]'); hovStop = g ? g.getAttribute('data-stop') : null; applyAct(); L.el.classList.toggle('hov', !g && !focus); L.lb.classList.toggle('on', !g); });
+  face.addEventListener('mouseleave', function () { hovStop = null; applyAct(); L.el.classList.remove('hov'); L.lb.classList.remove('on'); });
+  face.addEventListener('click', function (e) {
+    var g = e.target.closest('[data-stop]');
+    if (g && STOPS[g.getAttribute('data-stop')]) select(g.getAttribute('data-stop'));
+    else if (!focus) focusLayer(L.id);
+  });
+});
+
+// ---------- left column views ----------
+var vJ = $('vJourney'), vD = $('vDetail'), vL = $('vLayer'), views = $('views');
+function show(v) { [vJ, vD, vL].forEach(function (x) { x.hidden = x !== v; }); views.scrollTop = 0; }
+var stepsEl = $('steps');
+STEPS.forEach(function (st, i) {
+  var li = document.createElement('li');
+  li.innerHTML = '<button type="button"><span class="n">' + (i + 1) + '</span><span><b>' + st.t + '</b><small>' + st.x + '</small></span><em style="--c:' + K[st.k].c + '"><i></i>KGÜ ' + st.k + '</em></button>';
+  li.firstChild.onclick = function () { endStory(); select(st.s[0]); };
+  li.firstChild.onmouseenter = function () { if (!playing) { storyStops = st.s; applyAct(); } };
+  li.firstChild.onmouseleave = function () { if (!playing) { storyStops = []; applyAct(); } };
+  stepsEl.appendChild(li); st.li = li;
+});
+function select(id) {
+  endStory();
+  var s = STOPS[id]; sel = id; applyAct();
+  if (focus && focus !== s.l) focusLayer(s.l, true);
+  var k = K[s.k], h = '<button class="back" type="button" id="dBack">' + BACK + (focus ? 'Zur Schicht' : 'Zum Weg des Programms') + '</button>';
+  h += '<div class="badge" style="--c:' + k.c + '"><i></i>Kleingruppenübung ' + s.k + ' · ' + k.n + '</div><h2>' + s.t + '</h2><p class="desc">' + s.d + '</p>';
+  h += '<a class="thumb" href="' + R + A[s.a[0]][1] + '"><iframe loading="lazy" tabindex="-1" aria-hidden="true" src="' + R + A[s.a[0]][1] + '"></iframe><span>Vorschau</span></a>';
+  h += '<div class="anims">' + s.a.map(animRow).join('') + '</div>';
+  var si = -1; STEPS.forEach(function (st, i) { if (si < 0 && st.s.indexOf(id) >= 0) si = i; });
+  if (si >= 0 && si < STEPS.length - 1) { var nx = STEPS[si + 1]; h += '<p class="cap-s"><span>Danach im Ablauf</span></p><button class="anim" type="button" id="dNext"><small>' + (si + 2) + '</small><div><b>' + nx.t + '</b><span>' + nx.x + '</span></div>' + ARROW + '</button>'; }
+  vD.innerHTML = h; show(vD);
+  var th = vD.querySelector('.thumb'), fr = th.querySelector('iframe');
+  requestAnimationFrame(function () { fr.style.transform = 'scale(' + (th.clientWidth / 1470) + ')'; });
+  $('dBack').onclick = function () { sel = null; applyAct(); focus ? layerView(focus) : show(vJ); };
+  if ($('dNext')) $('dNext').onclick = function () { select(nx.s[0]); };
+}
+function layerView(id) {
+  var L = LAYERS.filter(function (x) { return x.id === id; })[0];
+  var h = '<button class="back" type="button" id="lBack">' + BACK + 'Alle Schichten</button><div class="badge" style="--c:var(--ink)"><i></i>Schicht 0' + (L.i + 1) + ' von 03</div><h2>' + L.n + '</h2><p class="desc">' + L.d + '</p><div class="anims">';
+  Object.keys(STOPS).forEach(function (k) { var s = STOPS[k]; if (s.l !== id) return; h += '<button class="anim" type="button" data-s="' + k + '"><small style="background:' + K[s.k].c + ';color:#fff">KGÜ ' + s.k + '</small><div><b>' + s.t + '</b><span>' + s.a.length + (s.a.length > 1 ? ' Animationen' : ' Animation') + '</span></div>' + ARROW + '</button>'; });
+  vL.innerHTML = h + '</div>'; show(vL);
+  $('lBack').onclick = unfocus;
+  vL.querySelectorAll('[data-s]').forEach(function (b) {
+    b.onclick = function () { select(b.dataset.s); };
+    b.onmouseenter = function () { hovStop = b.dataset.s; applyAct(); }; b.onmouseleave = function () { hovStop = null; applyAct(); };
+  });
+}
+
+// ---------- focus (dive into one layer) ----------
+function focusLayer(id, keepView) {
+  endStory(); focus = id;
+  stack.classList.add('flat'); labels.classList.add('flat');
+  LAYERS.forEach(function (L) { L.el.classList.toggle('foc', L.id === id); L.el.classList.remove('hov'); });
+  $('focBar').hidden = false; $('fx').style.opacity = 0;
+  if (!keepView) { sel = null; applyAct(); layerView(id); }
+}
+function unfocus() {
+  focus = null; sel = null; applyAct();
+  stack.classList.remove('flat'); labels.classList.remove('flat');
+  LAYERS.forEach(function (L) { L.el.classList.remove('foc'); });
+  $('focBar').hidden = true; $('fx').style.opacity = 1; show(vJ);
+}
+$('unfocus').onclick = unfocus;
+
+// ---------- KGÜ quick index ----------
+var chips = $('chips'), pop = $('pop'), popK = 0;
+for (var k = 1; k <= 5; k++) (function (k) {
+  var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.style.setProperty('--c', K[k].c);
+  b.innerHTML = 'KGÜ ' + k + '<i></i>'; b.setAttribute('aria-label', 'Kleingruppenübung ' + k + ': ' + K[k].n);
+  b.onmouseenter = function () { hovK = k; applyAct(); }; b.onmouseleave = function () { hovK = 0; applyAct(); };
+  b.onclick = function (e) {
+    e.stopPropagation();
+    if (popK === k) { closePop(); return; }
+    popK = k; [].forEach.call(chips.children, function (c, i) { c.classList.toggle('on', i + 1 === k); });
+    pop.innerHTML = '<div class="badge" style="--c:' + K[k].c + ';margin:0"><i></i>Kleingruppenübung ' + k + '</div><h3>' + K[k].n + '</h3><div class="anims">' + KG_ANIMS[k].map(animRow).join('') + '</div>';
+    pop.hidden = false; applyAct();
+    var r = chips.getBoundingClientRect(); pop.style.left = r.left + 'px'; pop.style.top = Math.max(70, r.top - pop.offsetHeight - 12) + 'px';
+  };
+  chips.appendChild(b);
+})(k);
+function closePop() { popK = 0; pop.hidden = true; applyAct(); [].forEach.call(chips.children, function (c) { c.classList.remove('on'); }); }
+document.addEventListener('click', function (e) { if (popK && !pop.contains(e.target)) closePop(); });
+
+// ---------- full list + mobile ----------
+function fullList(withIntro) {
+  var h = '';
+  for (var k = 1; k <= 5; k++) h += '<section><h3 style="--c:' + K[k].c + '"><i></i>Kleingruppenübung ' + k + ' · ' + K[k].n + '</h3><div class="anims">' + KG_ANIMS[k].map(animRow).join('') + '</div></section>';
+  return h;
+}
+$('listIn').innerHTML = '<h1>Alle Animationen</h1>' + fullList() + '<button class="btn" type="button" id="listClose">' + BACK + 'Zurück</button>';
+$('listBtn').onclick = function () { if (small.matches) { $('mobile').scrollIntoView(); return; } $('list').hidden = false; };
+$('listClose').onclick = function () { $('list').hidden = true; };
+$('mobile').innerHTML = '<h1>Ein Computer, Schicht für Schicht.</h1><p class="lead" style="max-width:none">Interaktive Animationen zu den Kleingruppenübungen in Grundgebiete der Informatik 3: erst die Theorie, dann die Lösungen. Auf einem großen Bildschirm siehst du hier den Computer als drei Schichten.</p>' + fullList() + '<p class="who"><b>Barış Kaan Datlı</b> · Tutor in Grundgebiete der Informatik 3, RWTH Aachen, WS 2026/27. Inoffizielle Begleitmaterialien. Maßgeblich sind Vorlesung, Übung und die Unterlagen im Moodle-Kurs.</p>';
+
+// ---------- layout ----------
+function layout() {
+  var w = stage.clientWidth, h = stage.clientHeight;
+  var s = Math.max(.46, Math.min(1.12, (h - 170) / 740, (w - 300) / 800));
+  stack.style.setProperty('--s', s.toFixed(3));
+  stack.style.setProperty('--ox', Math.round(Math.min(110, Math.max(40, (w - 800 * s) / 2 - 60))) + 'px');
+  stack.style.setProperty('--oy', '-30px');
+  stack.style.setProperty('--sf', Math.max(.6, Math.min(1.7, (w - 90) / 760, (h - 170) / 440)).toFixed(3));
+}
+addEventListener('resize', layout); layout();
+
+// ---------- story ----------
+var wpA = WP.map(function (w) { return anchor(w[0], w[1], w[2]); });
+var tl = [], playing = false, t0 = 0, done = false, curStep = -1, headIdx = 0, headF = 0;
+function buildTimeline() {
+  var P = wpA.map(pt); tl = []; var t = 300;
+  tl.push({ at: t, step: 0, i: 0 }); t += dwell(0);
+  for (var i = 1; i < WP.length; i++) {
+    var d = Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]), dur = Math.max(90, d / 0.5);
+    tl.push({ from: i - 1, to: i, t0: t, t1: t + dur }); t += dur;
+    if (WP[i][3] != null) { tl.push({ at: t, step: WP[i][3], i: i }); t += dwell(WP[i][3]); }
+  }
+  tl.end = t;
+}
+function dwell(s) { return 1150 + STEPS[s].x.length * 24; }
+function setStep(i) {
+  if (i === curStep) return; curStep = i;
+  STEPS.forEach(function (st, j) { st.li.classList.toggle('cur', j === i); st.li.classList.toggle('done', i < 0 ? done : j < i); });
+  var cap = $('cap');
+  if (i >= 0) {
+    var st = STEPS[i]; storyStops = st.s;
+    cap.querySelector('.n').textContent = i + 1; cap.querySelector('.t').textContent = st.x; cap.querySelector('em').textContent = 'KGÜ ' + st.k;
+    cap.classList.remove('off');
+  } else { storyStops = []; cap.classList.add('off'); }
+  applyAct();
+}
+function play() {
+  if (focus) unfocus(); sel = null; show(vJ);
+  buildTimeline(); playing = true; done = false; curStep = -2; headIdx = 0; headF = 0; t0 = performance.now();
+  STEPS.forEach(function (st) { st.li.classList.remove('done', 'cur'); });
+  $('route').setAttribute('stroke-opacity', '.28'); $('trail').style.opacity = 1; $('trail2').style.opacity = 1;
+  $('skip').hidden = false;
+}
+function endStory() {
+  if (!playing && done) return;
+  playing = false; done = true; headIdx = WP.length - 1; headF = 0;
+  setStep(-1); STEPS.forEach(function (st) { st.li.classList.add('done'); });
+  $('dot').setAttribute('opacity', 0); $('route').setAttribute('stroke-opacity', '.4');
+  $('trail').style.opacity = 0; $('trail2').style.opacity = 0; $('skip').hidden = true;
+}
+$('replay').onclick = play; $('skip').onclick = endStory;
+addEventListener('keydown', function (e) {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'w' || e.key === 'W') play();
+  if (e.key === 'Escape') { if (!$('list').hidden) $('list').hidden = true; else if (popK) closePop(); else if (sel) $('dBack').click(); else if (focus) unfocus(); else endStory(); }
+});
+
+// ---------- frame loop: project anchors, place labels, draw signal ----------
+function place(el, x, y, tx, ty) { el.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px) translate(' + tx + ',' + ty + ')'; }
+function frame(now) {
+  if (!small.matches) {
+    var flat = !!focus, sc = parseFloat(stack.style.getPropertyValue('--s')) || .85;
+    Object.keys(STOPS).forEach(function (id) {
+      var s = STOPS[id], off = flat && s.l !== focus;
+      s.lb.classList.toggle('off', off);
+      if (flat) { var p = pt(s.aT); place(s.lb, p[0], p[1], '-50%', '-62%'); }
+      else { var q = pt(s.aC), stem = Math.round(22 + 16 * sc); s.lb.style.setProperty('--stem', stem + 'px'); place(s.lb, q[0], q[1] - stem - 7, '-50%', '-100%'); }
+    });
+    LB.forEach(function (o) { var off = flat && o.layer !== focus; o.el.classList.toggle('off', off); var p = pt(o.a); place(o.el, p[0], p[1], '-50%', '-50%'); });
+    LAYERS.forEach(function (L) { L.lb.classList.toggle('off', flat); var p = pt(L.a); place(L.lb, p[0] - 16, p[1], '-100%', '-50%'); });
+    if (!flat) {
+      var g = '';
+      for (var i = 0; i < 2; i++) for (var c = 0; c < 2; c++) { var a = pt(LAYERS[i].c[c]), b = pt(LAYERS[i + 1].c[c]); g += 'M' + a[0].toFixed(1) + ' ' + (a[1] + 20 * sc).toFixed(1) + 'L' + b[0].toFixed(1) + ' ' + b[1].toFixed(1); }
+      $('guides').setAttribute('d', g);
+      var P = wpA.map(pt), d = '';
+      P.forEach(function (p, i) { d += (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); });
+      $('route').setAttribute('d', d);
+      if (playing) {
+        var t = now - t0, hx = P[0][0], hy = P[0][1], hi = 0, step = curStep < 0 ? -2 : curStep;
+        for (var j = 0; j < tl.length; j++) {
+          var e = tl[j];
+          if (e.at != null) { if (t >= e.at) { step = e.step; hi = e.i; hx = P[e.i][0]; hy = P[e.i][1]; } }
+          else if (t >= e.t0) { var f = Math.min(1, (t - e.t0) / (e.t1 - e.t0)); hi = e.from; hx = P[e.from][0] + (P[e.to][0] - P[e.from][0]) * f; hy = P[e.from][1] + (P[e.to][1] - P[e.from][1]) * f; if (f >= 1) hi = e.to; }
+        }
+        if (step >= 0) setStep(step);
+        var td = '';
+        for (var m = 0; m <= hi; m++) td += (m ? 'L' : 'M') + P[m][0].toFixed(1) + ' ' + P[m][1].toFixed(1);
+        td += 'L' + hx.toFixed(1) + ' ' + hy.toFixed(1);
+        $('trail').setAttribute('d', td); $('trail2').setAttribute('d', td);
+        $('dot').setAttribute('opacity', t > 250 ? 1 : 0); $('dot').setAttribute('transform', 'translate(' + hx.toFixed(1) + ' ' + hy.toFixed(1) + ')');
+        if (t >= tl.end) endStory();
+      }
+    }
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// ---------- entrance ----------
+LAYERS.slice().reverse().forEach(function (L, i) { setTimeout(function () { L.el.classList.remove('pre'); }, RM ? 0 : 120 + i * 190); });
+if (RM || small.matches) endStory(); else setTimeout(play, 1500);
 })();
 </script>
 </body>

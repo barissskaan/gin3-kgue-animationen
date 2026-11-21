@@ -14,4 +14,6 @@ Alles als Zip: [`KGUE-Animationen.zip`](KGUE-Animationen.zip) — entpacken und 
 | 4 | Allokationsstrategien und Speicherverwaltung | Speicher für Programme, Aufgabe 3 |
 | 5 | Scheduling | Scheduling, Aufgabe 1–3 |
 
+Die Startseite (`index.html` + `start/`) zeigt einen Computer als drei Schichten; die frühere Startseite liegt als `index-klassisch.html` daneben.
+
 Erstellt von Barış Kaan Datlı (Tutor). Inoffizielle Begleitmaterialien; maßgeblich sind Vorlesung, Übung und der Moodle-Kurs.

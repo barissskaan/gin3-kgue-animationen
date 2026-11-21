@@ -24,7 +24,7 @@ cp_ "KGÜ-05/KGÜ-5_Aufgabe-2.html"                 kgue-5/aufgabe-2.html
 cp_ "KGÜ-05/KGÜ-5_Aufgabe-3.html"                 kgue-5/aufgabe-3.html
 rm -f KGUE-Animationen.zip
 T=$(mktemp -d); mkdir "$T/KGUE-Animationen"
-cp -R index.html kgue-* "$T/KGUE-Animationen/"
+cp -R index.html start kgue-* "$T/KGUE-Animationen/"
 (cd "$T" && zip -qr -X KGUE-Animationen.zip KGUE-Animationen -x '*.DS_Store')
 mv "$T/KGUE-Animationen.zip" .
 echo "fertig: $(ls kgue-*/*.html | wc -l | tr -d ' ') Seiten, Zip $(du -h KGUE-Animationen.zip | cut -f1)"
