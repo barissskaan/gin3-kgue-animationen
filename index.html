@@ -112,7 +112,6 @@ body.flying .kart{transform-origin:0 0;will-change:transform}
   transform:translate(var(--ox,70px),var(--oy,0px)) scale(var(--s,.85)) rotateX(57deg) rotateZ(-10deg);transition:transform 1s var(--ease)}
 .stack.flat{transform:translate(0px,6px) scale(var(--sf,1.2)) rotateX(0deg) rotateZ(0deg)}
 .slab{position:absolute;inset:0;transform-style:preserve-3d;transform:translateZ(var(--z));transition:transform .9s var(--ease),opacity .5s ease;cursor:pointer}
-.slab.pre{opacity:0;transform:translateZ(calc(var(--z) + 260px))}
 .slab.hov{transform:translateZ(calc(var(--z) + 16px))}
 .stack.flat .slab{opacity:0;pointer-events:none;transform:translateZ(calc(var(--z) * 1.8))}
 .stack.flat .slab.foc{opacity:1;pointer-events:auto;transform:translateZ(0);cursor:default}
@@ -125,6 +124,28 @@ body.flying .kart{transform-origin:0 0;will-change:transform}
 .stack.notrans,.stack.notrans .slab,.stack.notrans .shadow{transition:none!important}
 .an{position:absolute;width:0;height:0;pointer-events:none}
 .face [data-stop]{cursor:pointer}
+
+/* ---------- laptop intro ---------- */
+.laptop,.lap-base,.lap-lid{position:absolute;inset:0;transform-style:preserve-3d}
+.laptop{pointer-events:none}
+.lap-lid{transform-origin:50% 0}
+.lap-deck,.lap-cover,.lap-screen,.lap-edge{position:absolute;inset:0;border-radius:22px}
+.lap-deck,.lap-cover{background:#d9d6cf;border:1.5px solid #88847d}
+.lap-deck svg{display:block;width:100%;height:100%}
+.lap-cover{transform:translateZ(4px);backface-visibility:hidden;box-shadow:inset 0 0 0 3px #e3e0d9}
+.lap-screen{transform:rotateX(180deg);backface-visibility:hidden;background:#15171c;border:16px solid #2d2f34}
+.lap-screen::before{content:"";position:absolute;top:-11px;left:calc(50% - 3px);width:6px;height:6px;border-radius:50%;background:#676a72}
+.lap-edge{background:#8e8a83;transform:translateZ(var(--edge-z))}
+.lap-terminal{position:absolute;backface-visibility:hidden;background:#15171c;border:1.5px solid #4b4e55;border-radius:10px;
+  overflow:hidden;color:#e9e7e0;font:500 20px/1.4 var(--mono)}
+.lap-terminal-bar{height:23px;background:#262a32;display:flex;align-items:center;padding-left:12px}
+.lap-terminal-bar::before{content:"";width:6px;height:6px;border-radius:50%;background:#6b7078;box-shadow:10px 0 #6b7078,20px 0 #6b7078}
+.lap-terminal-line{margin:26px 15px}
+.lap-cursor{display:inline-block;width:10px;height:19px;margin-left:6px;vertical-align:-3px;border-radius:1px;
+  background:#ffd400;animation:lap-blink .7s steps(1,end) infinite}
+@keyframes lap-blink{50%{opacity:0}}
+body.intro .slab,body.intro #labels,body.intro #fx{transition:none}
+body.intro #labels,body.intro #fx{opacity:0}
 
 /* ---------- overlay: labels + signal ---------- */
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:14;transition:opacity .2s}
@@ -196,7 +217,7 @@ body.instant-view #ueb,body.instant-view #labels,body.instant-view #fx,body.inst
     <p class="who"><b>Barış Kaan Datlı</b> · Tutor, RWTH Aachen · WS 2026/27<br>Inoffizielle Begleitmaterialien.</p>
   </section>
   <div class="stage-cell">
-    <section class="stage" id="stage" aria-label="Computer in drei Schichten"><div class="stack" id="stack"><div class="shadow"></div></div></section>
+    <section class="stage" id="stage" aria-label="Computer in drei Schichten"><div class="stack notrans" id="stack"><div class="shadow"></div></div></section>
     <div id="ueb" aria-label="Animationen nach Kleingruppenübung" inert></div>
   </div>
 </main>
@@ -283,7 +304,7 @@ function animRow(key, tag) {
 var stack = $('stack'), stage = $('stage'), slabs = {}, anchors = {};
 var ART = window.GIN3_ART || {}, artCss = '';
 LAYERS.forEach(function (L, i) {
-  var s = document.createElement('div'); s.className = 'slab pre'; s.style.setProperty('--z', L.z + 'px'); s.dataset.layer = L.id;
+  var s = document.createElement('div'); s.className = 'slab'; s.style.setProperty('--z', L.z + 'px'); s.dataset.layer = L.id;
   var art = ART[L.id];
   s.style.setProperty('--edge', art ? art.edge : '#b9b4a6');
   var h = '';
@@ -451,7 +472,7 @@ function holdStack() {
 function resetStack() {
   stack.classList.add('notrans');
   if (focus) unfocus();
-  LAYERS.forEach(function (L) { L.el.classList.remove('pre', 'hov'); });
+  LAYERS.forEach(function (L) { L.el.classList.remove('hov'); });
   [stack].concat(Array.from(stack.children)).forEach(function (el) {
     el.style.removeProperty('transform'); el.style.removeProperty('opacity');
   });
@@ -485,7 +506,7 @@ function finishFlight(to, id, flights) {
   flights.forEach(function (a) { a.cancel(); });
   transitioning = false; document.body.classList.remove('flying', 'to-sch'); ueb.inert = !isUeb;
   if (to && id) markCard(id);
-  if (replayPending && !isUeb) { replayPending = false; beginStory(); }
+  if (replayPending && !isUeb) { replayPending = false; if (!startIntro()) beginStory(); }
 }
 function switchView(to, k, id, immediate) {
   endStory();
@@ -566,6 +587,8 @@ function layout() {
   activeRow();
 }
 addEventListener('resize', layout); layout();
+stack.getBoundingClientRect();
+stack.classList.remove('notrans');
 
 // ---------- story ----------
 var wpA = WP.map(function (w) { return anchor(w[0], w[1], w[2]); });
@@ -586,6 +609,13 @@ function setStep(i) {
   storyStops = i >= 0 ? STORY[i] : []; applyAct();
 }
 var startTimer = 0;
+function queueStory() {
+  startTimer = setTimeout(function () {
+    startTimer = 0;
+    if (motion.matches || small.matches) endStory();
+    else beginStory();
+  }, 100);
+}
 function beginStory() {
   if (focus) unfocus();
   buildTimeline(); playing = true; done = false; curStep = -2; headIdx = 0; headF = 0; t0 = performance.now();
@@ -594,20 +624,23 @@ function beginStory() {
 function play() {
   if (transitioning) return;
   requestView(false); replayPending = true;
-  if (!transitioning && !isUeb) { replayPending = false; beginStory(); }
+  if (!transitioning && !isUeb) { replayPending = false; if (!startIntro()) beginStory(); }
 }
 function endStory() {
   clearTimeout(startTimer);
+  startTimer = 0;
+  stopIntro();
   if (!playing && done) return;
   playing = false; done = true; headIdx = WP.length - 1; headF = 0;
   setStep(-1);
   $('dot').setAttribute('opacity', 0); $('route').setAttribute('stroke-opacity', '.4');
   $('trail').style.opacity = 0; $('trail2').style.opacity = 0;
 }
-// Capture ends the old story before a replay button can start a new one.
+// Let the clicked control run after the intro or story has been skipped.
 document.addEventListener('click', function () { if (!transitioning) { endStory(); replayPending = false; } }, true);
 $('replay').onclick = play;
 addEventListener('keydown', function (e) {
+  if (intro) endStory();
   if (e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable) return;
   if (e.key === 'w' || e.key === 'W') { e.preventDefault(); play(); }
   if (/^[1-5]$/.test(e.key)) { e.preventDefault(); requestView(true, +e.key); }
@@ -655,14 +688,141 @@ function frame(now) {
 }
 requestAnimationFrame(frame);
 
-// ---------- entrance ----------
-var savedView = 'sch';
-try { savedView = localStorage['gin3-view']; } catch (e) {}
-if (savedView === 'ueb') switchView(true, 0, null, true);
-else {
-  LAYERS.slice().reverse().forEach(function (L, i) { setTimeout(function () { L.el.classList.remove('pre'); }, motion.matches ? 0 : 120 + i * 190); });
-  if (motion.matches || small.matches) endStory(); else startTimer = setTimeout(beginStory, 1500);
+// ---------- laptop intro ----------
+var intro = null;
+function laptopKeyboard() {
+  var rows = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+    [1.5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.5],
+    [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+    [1.25, 1.25, 1.25, 6.5, 1.25, 1.25, 1.25]
+  ];
+  var keys = rows.map(function (row, i) {
+    var gap = 6, x = 102;
+    var unit = (556 - gap * (row.length - 1)) / row.reduce(function (sum, key) { return sum + key; }, 0);
+    return row.map(function (key) {
+      var width = key * unit;
+      var rect = '<rect x="' + x.toFixed(1) + '" y="' + (i ? 89 + (i - 1) * 43 : 59) +
+        '" width="' + width.toFixed(1) + '" height="' + (i ? 36 : 23) + '" rx="5"/>';
+      x += width + gap;
+      return rect;
+    }).join('');
+  }).join('');
+  return '<svg viewBox="0 0 760 440" aria-hidden="true">' +
+    '<rect x="90" y="48" width="580" height="217" rx="12" fill="#aaa69e" stroke="#9a968e"/>' +
+    '<g fill="#282a30">' + keys + '</g>' +
+    '<rect x="251" y="285" width="258" height="120" rx="10" fill="#ccc9c2" stroke="#99958d" stroke-width="2"/>' +
+    '<path d="M328 436h104" stroke="#aaa69e" stroke-width="3" stroke-linecap="round"/>' +
+    '</svg>';
 }
+function makeLaptop() {
+  var laptop = document.createElement('div');
+  laptop.className = 'laptop';
+  laptop.setAttribute('aria-hidden', 'true');
+  laptop.innerHTML =
+    '<div class="lap-base">' +
+      '<div class="lap-edge" style="--edge-z:-9px"></div><div class="lap-edge" style="--edge-z:-6px"></div>' +
+      '<div class="lap-edge" style="--edge-z:-3px"></div><div class="lap-deck">' + laptopKeyboard() + '</div>' +
+    '</div>' +
+    '<div class="lap-lid">' +
+      '<div class="lap-edge" style="--edge-z:1px"></div><div class="lap-edge" style="--edge-z:2.5px"></div>' +
+      '<div class="lap-cover"></div><div class="lap-screen"></div>' +
+      '<div class="lap-terminal"><div class="lap-terminal-bar"></div>' +
+        '<p class="lap-terminal-line">$ ./hallo<span class="lap-cursor"></span></p>' +
+      '</div>' +
+    '</div>';
+  return laptop;
+}
+function startIntro() {
+  if (small.matches || motion.matches || !stack.animate) return false;
+  resetStack();
+
+  var laptop = makeLaptop(), animations = [];
+  var lid = laptop.querySelector('.lap-lid'), terminal = laptop.querySelector('.lap-terminal');
+  var baseZ = -36, hingeZ = baseZ + 6, angle = 105, radians = angle * Math.PI / 180;
+  var centerX = 380, centerY = 220, shell = STOPS.shell;
+  var appsZ = LAYERS[0].z;
+  laptop.querySelector('.lap-base').style.transform = 'translateZ(' + baseZ + 'px)';
+  terminal.style.width = shell.r[2] + 'px';
+  terminal.style.height = shell.r[3] + 'px';
+  terminal.style.left = (centerX - shell.r[2] / 2) + 'px';
+  terminal.style.top = (centerY - shell.r[3] / 2) + 'px';
+
+  function hinge(degrees) {
+    return 'translateZ(' + hingeZ + 'px) rotateX(' + degrees + 'deg)';
+  }
+  function terminalPose(x, y, z, degrees) {
+    return 'translate3d(' + (x - centerX) + 'px,' + (y - centerY) + 'px,' + z + 'px) rotateX(' + degrees + 'deg)';
+  }
+  function terminalInStack(x, y, z, degrees) {
+    // Map a point in the stack back through the open lid's hinge.
+    var dy = y * Math.cos(radians) + (z - hingeZ) * Math.sin(radians);
+    var dz = -y * Math.sin(radians) + (z - hingeZ) * Math.cos(radians);
+    return terminalPose(x, dy, dz, degrees - angle);
+  }
+  function animatePart(el, keyframes, from, to) {
+    var animation = el.animate(keyframes, {
+      delay: from, duration: to - from, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both'
+    });
+    animations.push(animation);
+    return animation;
+  }
+
+  intro = { laptop: laptop, animations: animations };
+  document.body.classList.add('intro');
+  labels.inert = stage.inert = true;
+  stack.appendChild(laptop);
+
+  animatePart(lid, [{ transform: hinge(0) }, { transform: hinge(angle) }], 500, 1190);
+  animatePart(terminal, [
+    { transform: terminalPose(centerX, centerY, -2, 180) },
+    { transform: terminalInStack(325, -40, 259, 307), offset: .38 },
+    { transform: terminalInStack(shell.cx, shell.cy, appsZ + 2, 360) }
+  ], 1190, 2180);
+  animatePart(terminal, [{ opacity: 1 }, { opacity: 0 }], 2180, 2400);
+
+  laptop.querySelectorAll('.lap-base > *, .lap-lid > :not(.lap-terminal)').forEach(function (part) {
+    animatePart(part, [{ opacity: 1 }, { opacity: 0 }], 1320, 2050);
+  });
+  LAYERS.slice(1).forEach(function (layer, i) {
+    animatePart(layer.el, [
+      { transform: 'translateZ(' + (baseZ - 2) + 'px)', opacity: 0 },
+      { transform: 'translateZ(' + layer.z + 'px)', opacity: 1 }
+    ], 1160 + i * 85, 2160 + i * 140);
+  });
+  animatePart(slabs.apps, [{ opacity: 0 }, { opacity: 1 }], 2120, 2400).onfinish = function () {
+    stopIntro();
+    queueStory();
+  };
+  return true;
+}
+function stopIntro() {
+  if (!intro) return;
+  intro.animations.forEach(function (animation) {
+    animation.onfinish = null;
+    animation.cancel();
+  });
+  intro.laptop.remove();
+  intro = null;
+  stack.getBoundingClientRect(); // Apply the rest pose before restoring slab transitions.
+  document.body.classList.remove('intro');
+  labels.inert = stage.inert = false;
+}
+function skipIntroIfNeeded(e) { if (intro && e.matches) endStory(); }
+small.addEventListener('change', skipIntroIfNeeded);
+motion.addEventListener('change', skipIntroIfNeeded);
+
+// ---------- entrance ----------
+var savedView = 'sch', firstVisit = true;
+try {
+  savedView = localStorage['gin3-view'];
+  firstVisit = localStorage['gin3-intro'] !== '1';
+  localStorage['gin3-intro'] = '1';
+} catch (e) {}
+if (savedView === 'ueb') switchView(true, 0, null, true);
+else if (motion.matches || small.matches) endStory();
+else if (!firstVisit || !startIntro()) queueStory();
 })();
 </script>
 </body>
