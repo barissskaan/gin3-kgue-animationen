@@ -110,8 +110,9 @@ body.flying .kart{transform-origin:0 0;will-change:transform}
 .stack.flat{transform:translate(0px,6px) scale(var(--sf,1.2)) rotateX(0deg) rotateZ(0deg)}
 .slab{position:absolute;inset:0;transform-style:preserve-3d;transform:translateZ(var(--z));transition:transform .9s var(--ease),opacity .5s ease;cursor:pointer}
 .slab.hov{transform:translateZ(calc(var(--z) + 16px))}
-.stack.flat .slab{opacity:0;pointer-events:none;transform:translateZ(calc(var(--z) * 1.8))}
-.stack.flat .slab.foc{opacity:1;pointer-events:auto;transform:translateZ(0);cursor:default}
+/* Hidden slabs never share the open slab's plane and are taken out of rendering once faded (iOS drew the middle slab over the open one). */
+.stack.flat .slab{opacity:0;visibility:hidden;pointer-events:none;transform:translateZ(calc(var(--z) * 1.8 - 60px));transition:transform .9s var(--ease),opacity .5s ease,visibility 0s .5s}
+.stack.flat .slab.foc{opacity:1;visibility:visible;pointer-events:auto;transform:translateZ(0);cursor:default;transition:transform .9s var(--ease),opacity .5s ease}
 .face,.ex{position:absolute;inset:0;border-radius:22px}
 .face{overflow:hidden;background:var(--card)}
 .face svg{display:block;width:100%;height:100%}
@@ -228,7 +229,7 @@ body.ueb .foc-bar{opacity:0;pointer-events:none}
   .kcard:only-child{grid-column:1 / -1}
 }
 body.instant-view #ueb,body.instant-view #labels,body.instant-view #fx,body.instant-view .foc-bar,body.instant-view .switch::before{transition:none}
-@media (prefers-reduced-motion:reduce){.stack,.slab,#ueb,#labels,#fx,.foc-bar,.switch::before{transition:none}}
+@media (prefers-reduced-motion:reduce){.stack,.slab,.stack.flat .slab,.stack.flat .slab.foc,#ueb,#labels,#fx,.foc-bar,.switch::before{transition:none}}
 </style>
 </head>
 <body>
