@@ -168,7 +168,7 @@ body.ueb #labels .lb{pointer-events:none}
 .lb.layer em{display:inline-flex;align-items:center;gap:5px;margin-top:5px;font:600 10.5px/1 var(--mono);font-style:normal;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:var(--card);border:1.5px solid var(--ink);border-radius:999px;padding:4px 7px 4px 9px;box-shadow:0 2px 0 var(--ink);transition:background-color .15s,transform .15s,box-shadow .15s}
 .lb.layer em svg{width:9px;height:9px}
 .lb.layer:hover em,.lb.layer.on em{background:var(--mark);transform:translateY(1px);box-shadow:0 1px 0 var(--ink)}
-.tap-hint{display:none}
+.opens{display:none}
 .lb.layer:hover b,.lb.layer.on b{background:linear-gradient(var(--mark),var(--mark)) no-repeat 0 88%/100% 42%}
 .foc-bar{position:fixed;left:calc(var(--col) + (100vw - var(--col)) / 2);top:82px;transform:translateX(-50%);z-index:18;transition:opacity .2s}
 body.ueb .foc-bar{opacity:0;pointer-events:none}
@@ -205,10 +205,12 @@ body.ueb .foc-bar{opacity:0;pointer-events:none}
   .layer-names button{font:inherit;color:var(--ink);border:1.5px solid var(--ink);background:var(--card);padding:9px 11px;border-radius:999px;box-shadow:0 3px 0 var(--ink);cursor:pointer;transition:transform .12s,box-shadow .12s,background-color .15s}
   .layer-names button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
   .layer-names button[aria-pressed="true"]{background:var(--mark);transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
-  .tap-hint{display:flex;position:absolute;left:0;right:0;bottom:0;justify-content:center;align-items:center;gap:7px;margin:0;font:600 11px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);pointer-events:none;transition:opacity .3s}
-  .tap-hint svg{width:18px;height:18px;overflow:visible}
-  .tap-hint .ring{transform-origin:9px 9px;animation:tap-ring 1.8s ease-out infinite}
-  body.knows .tap-hint,body.intro .tap-hint{opacity:0}
+  .opens{display:block;transition:opacity .3s}
+  .opens button{position:absolute;left:4px;transform:translateY(-50%);display:inline-flex;align-items:center;gap:5px;font:600 10.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:var(--card);border:1.5px solid var(--ink);border-radius:999px;padding:6px 8px 6px 10px;box-shadow:0 3px 0 var(--ink);cursor:pointer}
+  .opens button::before{content:"";position:absolute;inset:-10px}
+  .opens button:active{background:var(--mark);box-shadow:0 1px 0 var(--ink)}
+  .opens svg{width:9px;height:9px}
+  .stack.flat ~ .opens,body.intro .opens{opacity:0;pointer-events:none}
   #ueb{position:static;overflow:visible;scrollbar-gutter:auto;padding:0;visibility:visible;opacity:1;transition:none}
   .kcards{display:grid;justify-items:center;grid-template-columns:minmax(0,1fr)}
   .kcard,.kcard.wide{display:block;width:100%;max-width:520px;min-width:0}
@@ -229,8 +231,6 @@ body.ueb .foc-bar{opacity:0;pointer-events:none}
   .stack.hint .slab[data-layer="os"]{animation-delay:.1s}
   .stack.hint .slab[data-layer="hw"]{animation-delay:.2s}
 }
-@keyframes tap-ring{0%{transform:scale(.45);opacity:1}70%,100%{transform:scale(1.25);opacity:0}}
-@media (prefers-reduced-motion:reduce){.tap-hint .ring{animation:none}}
 @keyframes compact-lift{
   0%,100%{transform:translateZ(var(--z))}
   45%{transform:translateZ(calc(var(--z) + 12px))}
@@ -272,7 +272,7 @@ body.instant-view #ueb,body.instant-view #labels,body.instant-view #fx,body.inst
     <p class="who"><b>Barış Kaan Datlı</b> · Tutor, RWTH Aachen · WS 2026/27<br>Inoffizielle Begleitmaterialien.</p>
   </section>
   <div class="stage-cell">
-    <section class="stage" id="stage" aria-label="Computer in drei Schichten"><div class="stack notrans" id="stack"><div class="shadow"></div></div><p class="tap-hint" aria-hidden="true"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="2.6" fill="currentColor" stroke="none"/><circle class="ring" cx="9" cy="9" r="7"/></svg>Schicht antippen</p></section>
+    <section class="stage" id="stage" aria-label="Computer in drei Schichten"><div class="stack notrans" id="stack"><div class="shadow"></div></div><div class="opens" id="opens" aria-hidden="true"></div></section>
     <ul class="layer-names" id="layerNames" aria-label="Computerschichten"></ul>
     <div id="ueb" aria-label="Animationen nach Kleingruppenübung"></div>
   </div>
@@ -372,6 +372,11 @@ LAYERS.forEach(function (L) {
     if (e.detail === 0) $('unfocus').focus({ preventScroll: true });
   };
   item.appendChild(b); $('layerNames').appendChild(item); L.caption = b;
+  var o = document.createElement('button'); o.type = 'button'; o.tabIndex = -1;
+  o.style.top = { apps: '38%', os: '66%', hw: '90%' }[L.id];
+  o.innerHTML = 'Öffnen<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 1.5 7 5 3.5 8.5"/></svg>';
+  o.onclick = function () { focusLayer(L.id); };
+  $('opens').appendChild(o);
 });
 stack.addEventListener('animationend', function (e) {
   if (e.animationName === 'compact-lift' && e.target === slabs.hw) stack.classList.remove('hint');
@@ -459,7 +464,7 @@ function compactFocusState() {
 var knows = false;
 setInterval(function () {
   if (small.matches && !motion.matches && !focus && !intro && !knows && !document.hidden) stack.classList.add('hint');
-}, 6000);
+}, 3500);
 function focusLayer(id) {
   endStory(); focus = id;
   knows = true; document.body.classList.add('knows');
