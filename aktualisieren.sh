@@ -22,6 +22,12 @@ cp_ "KGÜ-05/KGÜ-5_Scheduling-Film.html"           kgue-5/scheduling.html
 cp_ "KGÜ-05/KGÜ-5_Aufgabe-1.html"                 kgue-5/aufgabe-1.html
 cp_ "KGÜ-05/KGÜ-5_Aufgabe-2.html"                 kgue-5/aufgabe-2.html
 cp_ "KGÜ-05/KGÜ-5_Aufgabe-3.html"                 kgue-5/aufgabe-3.html
+# Besuchszähler in jede Seite einbauen (läuft nur online, nicht im Zip)
+Z='<script src="../start/z.js" defer></script>'
+for f in kgue-*/*.html; do
+  grep -q 'start/z.js' "$f" && continue
+  if grep -q '</body>' "$f"; then perl -0pi -e "s{</body>(?!.*</body>)}{$Z\n</body>}s" "$f"; else print -r -- "$Z" >> "$f"; fi
+done
 rm -f KGUE-Animationen.zip
 T=$(mktemp -d); mkdir "$T/KGUE-Animationen"
 cp -R index.html start kgue-* "$T/KGUE-Animationen/"

@@ -242,6 +242,7 @@ body.ueb .foc-bar{opacity:0;pointer-events:none}
 body.instant-view #ueb,body.instant-view #labels,body.instant-view #fx,body.instant-view .foc-bar,body.instant-view .switch::before{transition:none}
 @media (prefers-reduced-motion:reduce){.stack,.slab,.stack.flat .slab,.stack.flat .slab.foc,#ueb,#labels,#fx,.foc-bar,.switch::before{transition:none}}
 </style>
+<script src="start/z.js" defer></script>
 </head>
 <body>
 
@@ -252,9 +253,9 @@ body.instant-view #ueb,body.instant-view #labels,body.instant-view #fx,body.inst
     <button id="uebBtn" type="button" aria-pressed="false"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="6" height="6" rx="1"/><rect x="12" y="2" width="6" height="6" rx="1"/><rect x="2" y="12" width="6" height="6" rx="1"/><rect x="12" y="12" width="6" height="6" rx="1"/></svg>Übungen</button>
   </div>
   <nav>
-    <a class="tb" href="KGUE-Animationen.zip" download>Zip</a>
-    <a class="tb opt" href="https://github.com/barissskaan/gin3-kgue-animationen">GitHub</a>
-    <a class="tb opt" href="https://bariskaandatli.com">bariskaandatli.com</a>
+    <a class="tb" data-z="zip" href="KGUE-Animationen.zip" download>Zip</a>
+    <a class="tb opt" data-z="github" href="https://github.com/barissskaan/gin3-kgue-animationen">GitHub</a>
+    <a class="tb opt" data-z="bariskaandatli" href="https://bariskaandatli.com">bariskaandatli.com</a>
   </nav>
 </header>
 
@@ -264,12 +265,12 @@ body.instant-view #ueb,body.instant-view #labels,body.instant-view #fx,body.inst
       <h1>Ein Computer,<br>Schicht für Schicht.</h1>
       <div class="journey">
         <p class="lead">Sieh zu, wie ein Programm beim Start durch alle drei Schichten läuft.</p>
-        <button class="btn" id="replay" type="button"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a5 5 0 1 0 1.6-3.7M2 2v3h3"/></svg>Nochmal <kbd>W</kbd></button>
+        <button class="btn" id="replay" data-z="nochmal" type="button"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a5 5 0 1 0 1.6-3.7M2 2v3h3"/></svg>Nochmal <kbd>W</kbd></button>
       </div>
       <h2 class="kg-caption">Kleingruppenübungen</h2>
       <nav class="kg" id="kg" aria-label="Kleingruppenübungen"></nav>
     </div>
-    <p class="who"><b>Barış Kaan Datlı</b> · Tutor, RWTH Aachen · WS 2026/27<br>Inoffizielle Begleitmaterialien.</p>
+    <p class="who"><b>Barış Kaan Datlı</b> · Tutor, RWTH Aachen · WS 2026/27<br>Inoffizielle Begleitmaterialien. Anonyme Besuchszählung, keine Cookies.</p>
   </section>
   <div class="stage-cell">
     <section class="stage" id="stage" aria-label="Computer in drei Schichten"><div class="stack notrans" id="stack"><div class="shadow"></div></div><div class="opens" id="opens" aria-hidden="true"></div></section>
@@ -468,6 +469,7 @@ setInterval(function () {
 function focusLayer(id) {
   endStory(); focus = id;
   knows = true; document.body.classList.add('knows');
+  if (window.zc) zc('schicht:' + id);
   stack.classList.add('flat'); labels.classList.add('flat');
   LAYERS.forEach(function (L) { L.el.classList.toggle('foc', L.id === id); L.el.classList.remove('hov'); });
   focBar.hidden = false; $('fx').style.opacity = 0;
@@ -549,6 +551,7 @@ function markCard(id) {
 var jumpFrame = 0;
 function openStop(id) {
   var stop = STOPS[id];
+  if (window.zc) zc('thema:' + id);
   if (!small.matches) { requestView(true, stop.k, id); return; }
   if (focus !== stop.l) return;
 
