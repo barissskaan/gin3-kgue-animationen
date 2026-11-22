@@ -165,6 +165,10 @@ body.ueb #labels .lb{pointer-events:none}
 .lb.layer .no{font:600 11px/1 var(--mono);letter-spacing:.1em;color:var(--muted)}
 .lb.layer b{display:block;font:700 19px/1.15 var(--disp);letter-spacing:-.02em;margin:4px 0 2px}
 .lb.layer span{display:block;font:400 12.5px/1.35 var(--sans);color:var(--muted);white-space:normal;width:170px;margin-left:auto}
+.lb.layer em{display:inline-flex;align-items:center;gap:5px;margin-top:5px;font:600 10.5px/1 var(--mono);font-style:normal;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:var(--card);border:1.5px solid var(--ink);border-radius:999px;padding:4px 7px 4px 9px;box-shadow:0 2px 0 var(--ink);transition:background-color .15s,transform .15s,box-shadow .15s}
+.lb.layer em svg{width:9px;height:9px}
+.lb.layer:hover em,.lb.layer.on em{background:var(--mark);transform:translateY(1px);box-shadow:0 1px 0 var(--ink)}
+.tap-hint{display:none}
 .lb.layer:hover b,.lb.layer.on b{background:linear-gradient(var(--mark),var(--mark)) no-repeat 0 88%/100% 42%}
 .foc-bar{position:fixed;left:calc(var(--col) + (100vw - var(--col)) / 2);top:82px;transform:translateX(-50%);z-index:18;transition:opacity .2s}
 body.ueb .foc-bar{opacity:0;pointer-events:none}
@@ -197,9 +201,14 @@ body.ueb .foc-bar{opacity:0;pointer-events:none}
   #labels .lb.stop{min-height:32px;gap:5px;font-size:12px;padding:5px 6px}
   #labels .lb.slot{font-size:10px;padding:4px 6px}
   .foc-bar{position:absolute;left:50%;top:calc(50% - var(--flat-half-height) - 6px);transform:translate(-50%,-100%);white-space:nowrap}
-  .layer-names{display:flex;justify-content:center;flex-wrap:wrap;gap:4px 12px;list-style:none;margin:0 0 26px;padding:0;color:var(--muted);font:600 11px/1.4 var(--mono)}
-  .layer-names button{border:0;background:none;padding:8px 4px;margin:-8px -4px;border-radius:999px;cursor:pointer}
-  .layer-names button[aria-pressed="true"]{background:var(--mark);color:var(--ink)}
+  .layer-names{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;list-style:none;margin:12px 0 28px;padding:0;font:600 11.5px/1 var(--mono)}
+  .layer-names button{font:inherit;color:var(--ink);border:1.5px solid var(--ink);background:var(--card);padding:9px 11px;border-radius:999px;box-shadow:0 3px 0 var(--ink);cursor:pointer;transition:transform .12s,box-shadow .12s,background-color .15s}
+  .layer-names button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+  .layer-names button[aria-pressed="true"]{background:var(--mark);transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+  .tap-hint{display:flex;position:absolute;left:0;right:0;bottom:0;justify-content:center;align-items:center;gap:7px;margin:0;font:600 11px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);pointer-events:none;transition:opacity .3s}
+  .tap-hint svg{width:18px;height:18px;overflow:visible}
+  .tap-hint .ring{transform-origin:9px 9px;animation:tap-ring 1.8s ease-out infinite}
+  body.knows .tap-hint,body.intro .tap-hint{opacity:0}
   #ueb{position:static;overflow:visible;scrollbar-gutter:auto;padding:0;visibility:visible;opacity:1;transition:none}
   .kcards{display:grid;justify-items:center;grid-template-columns:minmax(0,1fr)}
   .kcard,.kcard.wide{display:block;width:100%;max-width:520px;min-width:0}
@@ -220,6 +229,8 @@ body.ueb .foc-bar{opacity:0;pointer-events:none}
   .stack.hint .slab[data-layer="os"]{animation-delay:.1s}
   .stack.hint .slab[data-layer="hw"]{animation-delay:.2s}
 }
+@keyframes tap-ring{0%{transform:scale(.45);opacity:1}70%,100%{transform:scale(1.25);opacity:0}}
+@media (prefers-reduced-motion:reduce){.tap-hint .ring{animation:none}}
 @keyframes compact-lift{
   0%,100%{transform:translateZ(var(--z))}
   45%{transform:translateZ(calc(var(--z) + 12px))}
@@ -261,7 +272,7 @@ body.instant-view #ueb,body.instant-view #labels,body.instant-view #fx,body.inst
     <p class="who"><b>Barış Kaan Datlı</b> · Tutor, RWTH Aachen · WS 2026/27<br>Inoffizielle Begleitmaterialien.</p>
   </section>
   <div class="stage-cell">
-    <section class="stage" id="stage" aria-label="Computer in drei Schichten"><div class="stack notrans" id="stack"><div class="shadow"></div></div></section>
+    <section class="stage" id="stage" aria-label="Computer in drei Schichten"><div class="stack notrans" id="stack"><div class="shadow"></div></div><p class="tap-hint" aria-hidden="true"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="2.6" fill="currentColor" stroke="none"/><circle class="ring" cx="9" cy="9" r="7"/></svg>Schicht antippen</p></section>
     <ul class="layer-names" id="layerNames" aria-label="Computerschichten"></ul>
     <div id="ueb" aria-label="Animationen nach Kleingruppenübung"></div>
   </div>
@@ -398,7 +409,7 @@ SLOTS.forEach(function (sl) {
 });
 LAYERS.forEach(function (L, i) {
   var b = document.createElement('button'); b.type = 'button'; b.className = 'lb layer';
-  b.innerHTML = '<span class="no">SCHICHT 0' + (i + 1) + '</span><b>' + L.n + '</b>';
+  b.innerHTML = '<span class="no">SCHICHT 0' + (i + 1) + '</span><b>' + L.n + '</b><em>Öffnen<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 1.5 7 5 3.5 8.5"/></svg></em>';
   b.onclick = function () { focusLayer(L.id); };
   b.onmouseenter = function () { L.el.classList.add('hov'); }; b.onmouseleave = function () { L.el.classList.remove('hov'); };
   labels.appendChild(b); L.lb = b; L.a = anchor(L.id, 0, 250);
@@ -445,8 +456,13 @@ function compactFocusState() {
   Object.keys(STOPS).forEach(function (id) { var s = STOPS[id]; s.lb.classList.toggle('off', s.l !== focus); });
   LB.forEach(function (o) { o.el.classList.toggle('off', o.layer !== focus); });
 }
+var knows = false;
+setInterval(function () {
+  if (small.matches && !motion.matches && !focus && !intro && !knows && !document.hidden) stack.classList.add('hint');
+}, 6000);
 function focusLayer(id) {
   endStory(); focus = id;
+  knows = true; document.body.classList.add('knows');
   stack.classList.add('flat'); labels.classList.add('flat');
   LAYERS.forEach(function (L) { L.el.classList.toggle('foc', L.id === id); L.el.classList.remove('hov'); });
   focBar.hidden = false; $('fx').style.opacity = 0;
