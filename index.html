@@ -1094,10 +1094,11 @@ viewState(false);
 layout();
 stack.getBoundingClientRect();
 stack.classList.remove('notrans');
+// laptop intro on every real page load (F5, new visit); not when coming back via back/forward
 var firstVisit = true;
 try {
-  firstVisit = localStorage['gin3-intro'] !== '1';
-  localStorage['gin3-intro'] = '1';
+  var nav = performance.getEntriesByType('navigation')[0];
+  if (nav && nav.type === 'back_forward') firstVisit = false;
 } catch (e) {}
 if (!small.matches && savedExercises()) switchView(true, 0, null, true);
 else if (motion.matches) endStory();
