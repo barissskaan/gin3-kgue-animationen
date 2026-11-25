@@ -25,13 +25,29 @@
 
   window.__mScale = function (w, stageH) {
     var m = setMode();
-    if (!m) return 0;
-    if (m === 'hoch') return w / 1000;
-    // quer: Bühne so groß wie möglich, unter ihr bleibt Platz für Titel + 2-3 Zeilen Text + Knöpfe
+    if (!m) { root.classList.remove('m-side'); return 0; }
+    if (m === 'hoch') { root.classList.remove('m-side'); return w / 1000; }
+    // quer: Bühne so hoch wie möglich (bis über die Knopfleiste), Text klein rechts daneben
+    var W = document.documentElement.clientWidth;
+    var cs = getComputedStyle(document.querySelector('.wrap') || document.body);
+    var inner = W - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     var top = h('.top') || h('.topline') || 0;
-    var ctl = h('.ctl') || h('.ctrl') || 48;
-    var rest = window.innerHeight - top - ctl - (document.querySelector('.cap') ? 96 : 10);
-    return Math.max(0.3, Math.min(w / 1000, rest / stageH));
+    var ctl = h('.ctl') || h('.ctrl') || 44;
+    var avail = window.innerHeight - top - ctl - 8;
+    var sH = avail / stageH;
+    var hasCap = !!document.querySelector('.cap');
+    var s;
+    if (hasCap) {
+      var CAPMIN = 210, GAP = 14;
+      s = Math.min(sH, (inner - CAPMIN - GAP) / 1000);
+      root.classList.add('m-side');
+      root.style.setProperty('--m-stw', Math.floor(1000 * s) + 'px');
+      root.style.setProperty('--m-sth', Math.floor(stageH * s) + 'px');
+    } else {
+      root.classList.remove('m-side');
+      s = Math.min(sH, inner / 1000);
+    }
+    return Math.max(0.25, s);
   };
 
   var ARROW = '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 L5 8 L10 13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
