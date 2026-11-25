@@ -28,6 +28,11 @@ for f in kgue-*/*.html; do
   grep -q 'start/z.js' "$f" && continue
   if grep -q '</body>' "$f"; then perl -0pi -e "s{</body>(?!.*</body>)}{$Z\n</body>}s" "$f"; else print -r -- "$Z" >> "$f"; fi
 done
+# Handy-Schicht + Zurück-Knopf (start/mobil.css + start/mobil.js) in jede Seite
+for f in kgue-*/*.html; do
+  grep -q 'start/mobil.js' "$f" || perl -0pi -e 's{(<meta name="viewport"[^>]*>)}{$1\n<link rel="stylesheet" href="../start/mobil.css">\n<script src="../start/mobil.js"></script>}' "$f"
+  perl -0pi -e 's{s = Math\.max\(0\.5, Math\.min\(w / 1000, \(window\.innerHeight - 250\) / 380, 1\.6\)\)}{s = (window.__mScale && window.__mScale(w, 380)) || Math.max(0.5, Math.min(w / 1000, (window.innerHeight - 250) / 380, 1.6))}g; s{K = Math\.max\(0\.4, }{K = (window.__mScale && window.__mScale(w, 548)) || Math.max(0.4, }g' "$f"
+done
 rm -f KGUE-Animationen.zip
 T=$(mktemp -d); mkdir "$T/KGUE-Animationen"
 cp -R index.html start kgue-* "$T/KGUE-Animationen/"

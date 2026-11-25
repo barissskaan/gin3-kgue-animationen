@@ -1,0 +1,89 @@
+/* Handy-Schicht für alle KGÜ-Seiten (siehe mobil.js) */
+
+/* Zurück-Knopf: auf allen Bildschirmen, klein, in der Kopfzeile */
+.m-grp { display: inline-flex; align-items: baseline; gap: 12px; min-width: 0; }
+.m-back {
+  display: inline-flex; align-items: center; gap: 4px; flex: none;
+  font: 600 12px/1 var(--font-body, system-ui, sans-serif); letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted, #6b6b6b); text-decoration: none;
+  border: 1.5px solid currentColor; border-radius: 999px; padding: 3px 9px 3px 6px;
+  align-self: center;
+}
+.m-back:hover { color: var(--fg, #111); }
+.m-back svg { flex: none; }
+.hdr .m-grp { align-items: center; }
+.m-turn { display: none; }
+
+/* ---------- Handy hochkant ---------- */
+.m-hoch body { font-size: 16px; padding-bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
+.m-hoch .wrap { padding: 0 0 8px !important; max-width: none !important; }
+.m-hoch .top, .m-hoch .topline {
+  position: sticky; top: 0; z-index: 20; background: var(--bg, #fff);
+  height: auto !important; min-height: 44px; display: flex !important; align-items: center !important;
+  justify-content: space-between; gap: 8px; flex-wrap: wrap;
+  padding: 6px max(14px, env(safe-area-inset-right, 0px)) 6px max(14px, env(safe-area-inset-left, 0px)) !important;
+  font-size: 11px !important; border-bottom: 1px solid var(--soft, #e6e6e6);
+}
+.m-hoch .top .legend, .m-hoch .topline .model { display: none !important; }
+.m-hoch .m-grp { align-items: center; flex-wrap: wrap; row-gap: 4px; }
+.m-hoch .m-back { font-size: 12px; padding: 6px 11px 6px 8px; }
+.m-hoch .stagebox { margin-top: 0 !important; overflow: hidden; }
+.m-hoch .stage { border-radius: 0 !important; }
+.m-hoch .m-turn {
+  display: flex; align-items: center; gap: 8px; margin: 8px 16px 0;
+  font-size: 12.5px; color: var(--muted, #6b6b6b);
+}
+.m-hoch .m-turn svg { flex: none; }
+.m-hoch .cap { padding: 6px 16px 0; min-height: 0 !important; margin-top: 4px !important; }
+.m-hoch .cap h1 { font-size: 20px !important; line-height: 1.25 !important; }
+.m-hoch .cap p, .m-hoch .cap .lines, .m-hoch .cap .say { font-size: 17px !important; line-height: 1.45 !important; max-width: none !important; }
+
+/* Knöpfe fest unten: oben die Schritte (wischbar), unten Zurück / Neu / Weiter */
+.m-handy .ctl, .m-handy .ctrl {
+  position: fixed !important; left: 0; right: 0; bottom: 0; z-index: 30; margin: 0 !important;
+  background: var(--bg, #fff); border-top: 1px solid var(--soft, #e6e6e6);
+  display: flex !important; flex-wrap: wrap; align-items: center; gap: 8px !important;
+  padding: 8px max(12px, env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px)) !important;
+  box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.06);
+}
+.m-hoch #dots, .m-hoch .dots, .m-hoch .steps, .m-hoch .parts {
+  order: -1; flex: 1 0 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  padding-bottom: 2px; display: flex !important; flex-wrap: nowrap !important;
+}
+.m-hoch #dots::-webkit-scrollbar, .m-hoch .steps::-webkit-scrollbar, .m-hoch .parts::-webkit-scrollbar { display: none; }
+.m-hoch #dots > *, .m-hoch .steps > *, .m-hoch .parts > * { flex: none; }
+.m-hoch .parts { gap: 6px; }
+.m-handy .ctl button, .m-handy .ctrl button { min-height: 42px; min-width: 44px; }
+.m-handy #next { margin-left: auto; min-width: 118px; }
+.m-handy #again:has(svg) { font-size: 0 !important; gap: 0 !important; }
+.m-handy #again svg { width: 18px; height: 18px; }
+.m-hoch .speed { order: 5; }
+
+/* ---------- Handy quer ---------- */
+.m-quer body { padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
+.m-quer .wrap { max-width: none !important; padding: 0 max(12px, env(safe-area-inset-right, 0px)) 6px max(12px, env(safe-area-inset-left, 0px)) !important; }
+.m-quer .top, .m-quer .topline { height: auto !important; min-height: 34px; align-items: center !important; font-size: 11px !important; }
+.m-quer .top .legend, .m-quer .topline .model { display: none !important; }
+.m-quer .cap { min-height: 0 !important; margin-top: 4px !important; }
+.m-quer .cap h1 { font-size: 16px !important; margin-bottom: 2px !important; }
+.m-quer .cap p, .m-quer .cap .lines, .m-quer .cap .say { font-size: 15px !important; line-height: 1.35 !important; }
+.m-quer .ctl, .m-quer .ctrl { flex-wrap: nowrap; padding-top: 6px !important; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)) !important; }
+.m-quer #dots, .m-quer .dots, .m-quer .steps, .m-quer .parts { overflow-x: auto; scrollbar-width: none; display: flex !important; flex-wrap: nowrap !important; min-width: 0; flex: 0 1 auto; }
+.m-quer #dots > *, .m-quer .steps > * { flex: none; }
+.m-quer .ctl button, .m-quer .ctrl button { min-height: 38px; }
+
+/* Einzelfälle */
+.m-handy #lensbtn { height: 42px !important; margin-left: 0 !important; font-size: 14px !important; gap: 6px !important; padding: 0 6px 0 9px !important; }
+.m-hoch .wrap:not(:has(.stagebox)) { padding: 0 max(14px, env(safe-area-inset-right, 0px)) 8px max(14px, env(safe-area-inset-left, 0px)) !important; }
+.m-hoch .hdr { flex-wrap: wrap; row-gap: 6px; padding: 8px 0 6px !important; position: sticky; top: 0; z-index: 20; background: var(--bg, #fff); }
+.m-hoch .hdr h1 { font-size: 20px !important; }
+.m-hoch .hdr .topic { font-size: 15px !important; }
+.m-hoch .ctl:has(#lensbtn) #next { min-width: 0; }
+.m-hoch #lensbtn { font-size: 13px !important; }
+.m-explain { display: none; }
+.m-hoch .m-explain { display: grid; gap: 6px; padding: 8px 16px 0; font-size: 17px; line-height: 1.45; }
+.m-hoch .m-explain h3 { margin: 0; font-size: 20px; line-height: 1.25; }
+.m-hoch .m-explain ul, .m-hoch .m-explain ol { margin: 0; padding-left: 22px; display: grid; gap: 4px; }
+.m-hoch .m-explain * { animation: none !important; opacity: 1 !important; }
+.m-handy .parts button { white-space: nowrap; }
+.m-hoch .top .tabs { order: 3; flex-basis: 100%; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }

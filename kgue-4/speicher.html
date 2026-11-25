@@ -1,6 +1,8 @@
 <meta charset="utf-8">
 <title>KGÜ 4 · Speicher für Programme</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../start/mobil.css">
+<script src="../start/mobil.js"></script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -1534,7 +1536,7 @@ ul.log li.now { animation: tin 0.45s ease-out; }
   // Wie KGÜ 5: Die Bühne wird so skaliert, dass alles ohne Scrollen auf den Bildschirm passt.
   function fit() {
     const w = box.clientWidth, rest = document.querySelector(".topline").offsetHeight + document.querySelector('.ctl').offsetHeight + 30;
-    K = Math.max(0.4, Math.min(w / 1000, (window.innerHeight - rest) / 548, 1.6));
+    K = (window.__mScale && window.__mScale(w, 548)) || Math.max(0.4, Math.min(w / 1000, (window.innerHeight - rest) / 548, 1.6));
     stage.style.transform = 'scale(' + K + ')'; stage.style.left = (w - 1000 * K) / 2 + 'px'; box.style.height = 548 * K + 'px';
   }
   window.addEventListener('resize', () => { fit(); placePc(S[cur].pc); });

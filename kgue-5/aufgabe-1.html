@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../start/mobil.css">
+<script src="../start/mobil.js"></script>
 <title>KGÜ 5 · Aufgabe 1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -548,7 +550,7 @@ button:focus-visible { outline: 3px solid var(--cand); outline-offset: 2px; }
   });
 
   function fit() {
-    const w = box.clientWidth, s = Math.max(0.5, Math.min(w / 1000, (window.innerHeight - 250) / 380, 1.6));
+    const w = box.clientWidth, s = (window.__mScale && window.__mScale(w, 380)) || Math.max(0.5, Math.min(w / 1000, (window.innerHeight - 250) / 380, 1.6));
     stage.style.transform = 'scale(' + s + ')'; stage.style.left = (w - 1000 * s) / 2 + 'px'; box.style.height = 380 * s + 'px';
   }
   window.addEventListener('resize', fit);
