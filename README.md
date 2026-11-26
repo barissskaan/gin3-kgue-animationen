@@ -13,6 +13,7 @@ Alles als Zip: [`KGUE-Animationen.zip`](KGUE-Animationen.zip) — entpacken und 
 | 3 | Rust und Git | Git-Grundlagen, Aufgabe 1–3 |
 | 4 | Allokationsstrategien und Speicherverwaltung | Speicher für Programme, Aufgabe 3 |
 | 5 | Scheduling | Scheduling, Aufgabe 1–3 |
+| 6 | Threads | Threads: Prozess und Thread, pthread_create und pthread_join |
 
 Die Startseite (`index.html` + `start/`) zeigt einen Computer als drei Schichten; die frühere Startseite liegt als `index-klassisch.html` daneben.
 

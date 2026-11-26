@@ -100,3 +100,8 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .m-quer.m-side .cap { grid-area: cap; margin: 0 !important; padding: 0; max-height: var(--m-sth); overflow-y: auto; }
 .m-quer .ctl, .m-quer .ctrl { flex-wrap: nowrap; }
 .m-quer #dots, .m-quer .dots, .m-quer .steps, .m-quer .parts { flex: 0 1 auto; }
+
+/* KGÜ-6-Bauart: Bühne nicht nach oben/unten auseinanderziehen */
+.m-handy .wrap { min-height: 0 !important; }
+.m-handy .stagebox { margin-bottom: 0 !important; }
+.m-handy .caption.cap { min-height: 0 !important; padding-top: 6px; }
