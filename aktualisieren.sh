@@ -23,6 +23,7 @@ cp_ "KGÜ-05/KGÜ-5_Aufgabe-1.html"                 kgue-5/aufgabe-1.html
 cp_ "KGÜ-05/KGÜ-5_Aufgabe-2.html"                 kgue-5/aufgabe-2.html
 cp_ "KGÜ-05/KGÜ-5_Aufgabe-3.html"                 kgue-5/aufgabe-3.html
 cp_ "KGÜ-06/KGÜ-6_Threads.html"                   kgue-6/threads.html
+cp_ "KGÜ-06/KGÜ-6_Race-Condition-Mutex.html"      kgue-6/mutex.html
 # Besuchszähler in jede Seite einbauen (läuft nur online, nicht im Zip)
 Z='<script src="../start/z.js" defer></script>'
 for f in kgue-*/*.html; do
@@ -33,6 +34,8 @@ done
 for f in kgue-*/*.html; do
   grep -q 'start/mobil.js' "$f" || perl -0pi -e 's{(<meta name="viewport"[^>]*>)}{$1\n<link rel="stylesheet" href="../start/mobil.css">\n<script src="../start/mobil.js"></script>}' "$f"
   perl -0pi -e 's{s = Math\.max\(0\.5, Math\.min\(w / 1000, \(window\.innerHeight - 250\) / 380, 1\.6\)\)}{s = (window.__mScale && window.__mScale(w, 380)) || Math.max(0.5, Math.min(w / 1000, (window.innerHeight - 250) / 380, 1.6))}g; s{K = Math\.max\(0\.4, }{K = (window.__mScale && window.__mScale(w, 548)) || Math.max(0.4, }g' "$f"
+  # KGÜ-6 Race-Condition-Bauart: fit() mit fester Höhe 400
+  perl -0pi -e 's{const scale = Math\.min\(1, width / 1000, Math\.max\(\.25, \(innerHeight - 226\) / 400\)\);}{const scale = (window.__mScale && window.__mScale(width, 400)) || Math.min(1, width / 1000, Math.max(.25, (innerHeight - 226) / 400));}g' "$f"
   # KGÜ-6-Bauart (caption/controls, fit mit Teilhöhe H): Klassen für die Handy-Schicht + Hook in fit()
   perl -0pi -e 's{<div class="caption" }{<div class="caption cap" }g; s{<nav class="controls" }{<nav class="controls ctl" }g; s{const scale = Math\.max\(0, Math\.min\(box\.clientWidth / 1000, availableHeight / H\)\);}{const scale = (window.__mScale && window.__mScale(box.clientWidth, H)) || Math.max(0, Math.min(box.clientWidth / 1000, availableHeight / H));}g' "$f"
 done

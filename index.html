@@ -321,9 +321,10 @@ var A = {
   k5a1: ['L', 'kgue-5/aufgabe-1.html', 'Aufgabe 1'],
   k5a2: ['L', 'kgue-5/aufgabe-2.html', 'Aufgabe 2'],
   k5a3: ['L', 'kgue-5/aufgabe-3.html', 'Aufgabe 3'],
-  thr: ['T', 'kgue-6/threads.html', 'Threads']
+  thr: ['T', 'kgue-6/threads.html', 'Threads'],
+  mtx: ['T', 'kgue-6/mutex.html', 'Race Condition und Mutex']
 };
-var KG_ANIMS = [null, ['shell', 'gcc'], ['ram', 'nasm', 'k2a'], ['git', 'k3a1', 'k3a2', 'k3a3'], ['sp', 'k4a3'], ['sch', 'k5a1', 'k5a2', 'k5a3'], ['thr']];
+var KG_ANIMS = [null, ['shell', 'gcc'], ['ram', 'nasm', 'k2a'], ['git', 'k3a1', 'k3a2', 'k3a3'], ['sp', 'k4a3'], ['sch', 'k5a1', 'k5a2', 'k5a3'], ['thr', 'mtx']];
 // stops: rect = [x, y, w, h] on the 760x440 slab
 var STOPS = {
   shell: { l: 'apps', r: [40, 56, 300, 210], t: 'Shell', k: 1, a: ['shell'], d: 'Die Shell liest deinen Befehl, sucht das passende Programm und startet es als neuen Prozess.' },
@@ -333,12 +334,13 @@ var STOPS = {
   sched: { l: 'os', r: [40, 50, 330, 190], t: 'Scheduling', k: 5, a: ['sch', 'k5a1', 'k5a2', 'k5a3'], d: 'Viele Prozesse, eine CPU: der Scheduler entscheidet, wer wann rechnen darf.' },
   speicher: { l: 'os', la: [470, 98], r: [400, 50, 320, 96], t: 'Speicher', k: 4, a: ['sp'], d: 'Viele Programme, ein Arbeitsspeicher: wie das Betriebssystem den Speicher an Programme verteilt.' },
   alloc: { l: 'os', la: [660, 201], r: [400, 162, 320, 78], t: 'Allokation', k: 4, a: ['k4a3'], d: 'First Fit, Best Fit und Co.: welche Lücke bekommt eine neue Anfrage?' },
+  mutex: { l: 'os', r: [570, 262, 150, 122], t: 'Mutex', k: 6, a: ['mtx'], d: 'Zwei Threads ändern dieselbe Variable: Erhöhungen gehen verloren (Race Condition). Ein Mutex lässt immer nur einen Thread in den kritischen Abschnitt.' },
   threads: { l: 'os', r: [400, 262, 150, 122], t: 'Threads', k: 6, a: ['thr'], d: 'Ein Prozess, mehrere Ausführungsstränge: Threads teilen Code, Daten und Heap, jeder hat seinen eigenen Stack. Dazu pthread_create und pthread_join.' },
   frei: { l: 'os', r: [40, 262, 330, 122], t: 'Freiliste', k: 3, a: ['k3a3'], d: 'Das Betriebssystem merkt sich die freien Speicherbereiche in einer Liste und vergibt sie daraus.' },
   cpu: { l: 'hw', r: [80, 100, 250, 230], t: 'CPU und Assembler', short: 'CPU &amp; ASM', k: 2, a: ['nasm', 'k2a'], d: 'Die CPU führt Befehl für Befehl aus. Assembler zeigt dir genau diese Befehle: mov, add, cmp und Sprünge.' },
   ram: { l: 'hw', r: [430, 70, 270, 210], t: 'RAM und Adressen', short: 'RAM', k: 2, a: ['ram'], d: 'Register, Arbeitsspeicher, SSD: wo Daten liegen, wie schnell man an sie herankommt und was eine Adresse ist.' }
 };
-var SLOTS = [['apps', 190, 337], ['os', 645, 323]];
+var SLOTS = [['apps', 190, 337]];
 var STORY = [['gcc'], ['shell'], ['frei'], ['alloc', 'speicher'], ['sched'], ['cpu', 'ram'], ['shell']];
 // signal route: [layer, x, y, step reached on arrival]
 var WP = [
@@ -496,7 +498,7 @@ $('unfocus').onclick = unfocus;
 
 // ---------- exercises and live artwork ----------
 var ueb = $('ueb'), rows = [], cards = [], kgButtons = [];
-var KG_STOPS = [null, ['shell', 'gcc'], ['ram', 'cpu'], ['git', 'rust', 'frei'], ['speicher', 'alloc'], ['sched'], ['threads']];
+var KG_STOPS = [null, ['shell', 'gcc'], ['ram', 'cpu'], ['git', 'rust', 'frei'], ['speicher', 'alloc'], ['sched'], ['threads', 'mutex']];
 for (var k = 1; k <= 6; k++) (function (k) {
   var b = document.createElement('button'); b.type = 'button'; b.style.setProperty('--c', K[k].c);
   var bars = ''; KG_ANIMS[k].forEach(function () { bars += '<i></i>'; });

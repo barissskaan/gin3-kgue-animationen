@@ -1,0 +1,1131 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../start/mobil.css">
+<script src="../start/mobil.js"></script>
+<title>KGÜ 6 · Race Condition und Mutex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #fff; --fg: #16181d; --muted: #5d6370; --line: #c9ced8; --soft: #f1f2f5;
+  --yellow: #ffd400; --light-yellow: #fff1a8; --chip: #2b303b; --chip2: #4a5163; --chip-edge: #8a909c;
+  --t1: #2f5fb8; --t1-light: #eaf1fb; --t2: #7a4fd0; --t2-light: #f1eafc;
+  --red: #a52a21; --red-light: #fff0ed; --green: #2f6b1a; --green-light: #edf6e5; --pcb: #1f7a4d;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--fg); font: 18px/1.4 var(--sans); }
+.wrap { max-width: 1064px; margin: 0 auto; padding: 10px 16px; }
+.top { height: 26px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  border-bottom: 1px solid var(--line); color: var(--muted); font-size: 13px; font-weight: 600;
+  letter-spacing: .065em; text-transform: uppercase; }
+.top strong { color: var(--fg); }
+.top span { white-space: nowrap; }
+.stagebox { position: relative; margin: 8px 0 0; overflow: hidden; }
+.stage { position: absolute; top: 0; left: 0; width: 1000px; height: 400px; transform-origin: top left; }
+.scene { position: absolute; inset: 0; opacity: 0; visibility: hidden;
+  transition: opacity .3s, visibility 0s .3s; }
+.scene.on { opacity: 1; visibility: visible; transition-delay: 0s; }
+.reveal { opacity: 0; visibility: hidden; transition: opacity .45s, visibility 0s .45s; }
+.reveal.on { opacity: 1; visibility: visible; transition-delay: 0s; }
+.instant *, .instant { animation: none !important; transition: none !important; }
+svg { display: block; }
+svg.icon { width: 27px; height: 27px; fill: none; stroke: currentColor; stroke-width: 2.4;
+  stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.definitions { position: absolute; width: 0; height: 0; overflow: hidden; }
+h2, h3, p, pre, ol { margin: 0; }
+code, .mono { font-family: var(--mono); font-variant-ligatures: none; }
+.panel { border: 2px solid var(--fg); border-radius: 12px; background: #fff; }
+.label { color: var(--muted); font-size: 12.5px; font-weight: 600; letter-spacing: .075em; text-transform: uppercase; }
+.t1 { --tc: var(--t1); --tl: var(--t1-light); }
+.t2 { --tc: var(--t2); --tl: var(--t2-light); }
+
+/* ---------- Code-Fenster ---------- */
+.editor { overflow: hidden; }
+.editor h3 { background: var(--soft); border-bottom: 1px solid var(--line); padding: 5px 13px; font-size: 13.5px; font-weight: 600; color: var(--muted); }
+.editor pre { padding: 8px 7px; font-size: 13.5px; line-height: 21px; }
+.editor code > span { display: block; height: 21px; padding: 0 6px; border-radius: 4px; white-space: pre;
+  transition: background .3s, opacity .45s; border-left: 3px solid transparent; }
+.editor code > span.active { background: var(--light-yellow); }
+.editor code > span.new { box-shadow: inset 4px 0 0 var(--t1); border-radius: 0 4px 4px 0; }
+.editor code > span.hid { opacity: 0; }
+
+/* ---------- Teil 1, letzter Schritt: selbst ausführen ---------- */
+.editor h3 { display: flex; align-items: center; min-height: 32px; }
+.cpbtn { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border: 0; border-radius: 7px; background: var(--fg); color: #fff; font: 600 12.5px var(--sans); cursor: pointer; }
+.cpbtn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cpbtn.ok, .tcmd button.ok { background: #267364; }
+.tryit { position: absolute; inset: 0; z-index: 3; padding: 12px 16px; display: flex; flex-direction: column; gap: 9px; }
+.tryit h2 { font-size: 22px; line-height: 1.1; }
+.tryit ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; counter-reset: st; }
+.tryit li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; align-items: center; font-size: 14.5px; counter-increment: st; }
+.tryit li::before { content: counter(st); display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--yellow); font: 600 12px/1 var(--mono); }
+.tcmd { display: flex; align-items: center; gap: 6px; min-width: 0; padding: 4px 4px 4px 8px; border-radius: 7px; background: var(--chip); color: #e8eaef; font: 11.5px/1.3 var(--mono); }
+.tcmd code { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; user-select: all; }
+.tcmd button { flex: none; padding: 2px 6px; border-radius: 5px; border: 1px solid #5d6370; background: #3a4050; color: #fff; font: 600 11.5px var(--sans); cursor: pointer; }
+.tryit .note { margin: 0; font-size: 13px; line-height: 1.35; color: var(--muted); }
+.tryit .note b { color: var(--fg); }
+
+/* ---------- Teil 1: Ausgangslage ---------- */
+.sit .editor { position: absolute; left: 20px; top: 12px; width: 530px; }
+.sit .right { position: absolute; left: 576px; top: 12px; width: 404px; height: 376px; }
+.shared { position: absolute; left: 0; top: 0; width: 404px; height: 100px; padding: 9px 14px; background: var(--soft); }
+.shared .cellrow { display: flex; align-items: center; gap: 10px; margin-top: 7px; }
+.shared .cellrow small { font-size: 14px; color: var(--muted); }
+.memcell { display: grid; grid-template-columns: auto 86px; border: 2px solid var(--fg); border-radius: 7px; overflow: hidden; background: #fff; margin-left: auto; }
+.memcell code { padding: 6px 12px; font-size: 18px; background: var(--light-yellow); border-right: 2px solid var(--fg); }
+.memcell b { font: 600 22px/1 var(--mono); display: grid; place-items: center; }
+.sit .links { position: absolute; left: 0; top: 100px; width: 404px; height: 54px; }
+.thr { position: absolute; top: 154px; width: 192px; height: 96px; padding: 8px 12px; border: 2px solid var(--tc); border-radius: 10px; background: var(--tl); }
+.thr.t1 { left: 0; } .thr.t2 { left: 212px; }
+.thr b { color: var(--tc); font-size: 18px; }
+.thr small { display: block; font-size: 13px; line-height: 1.3; color: var(--fg); }
+.thr code { display: block; margin-top: 3px; font-size: 12.5px; }
+.ask { position: absolute; left: 0; top: 270px; width: 404px; height: 106px; padding: 10px 16px; }
+.ask .big { position: absolute; left: 16px; top: 30px; font: 600 36px/1.2 var(--mono); white-space: nowrap; }
+.ask .big small { display: block; font: 400 15px var(--sans); color: var(--muted); }
+
+/* ---------- Experiment ---------- */
+.exp .info { position: absolute; left: 20px; top: 12px; width: 236px; height: 376px; padding: 16px 16px; background: var(--chip); color: #fff; border-color: var(--fg); }
+.exp .info .label { color: #c9ced8; }
+.exp .info h2 { font-size: 21px; margin: 3px 0 12px; }
+.exp .info ul { margin: 0; padding: 0; list-style: none; }
+.exp .info li { padding: 8px 0; border-top: 1px solid #555c6c; font-size: 15.5px; line-height: 1.3; }
+.exp .info li code { font-size: 14.5px; color: var(--yellow); }
+.exp .info li.mode b { display: inline-block; padding: 1px 9px; border-radius: 6px; background: var(--red-light); color: var(--red); }
+.exp .info li.mode { display: none; }
+.exp.withmutex .info li.mode { display: block; }
+.exp.withmutex .info li.mode b { background: var(--green-light); color: var(--green); }
+.exp .chart { position: absolute; left: 272px; top: 12px; width: 708px; height: 376px; padding: 12px 18px; }
+.exp .chart h2 { font-size: 19px; }
+.rows { margin-top: 8px; display: grid; gap: 8px; }
+.run { display: grid; grid-template-columns: 76px 426px 1fr; gap: 12px; align-items: center; height: 46px; }
+.run > span { font-size: 16px; font-weight: 600; }
+.run > strong { font: 600 21px/1 var(--mono); white-space: nowrap; opacity: 0; transition: opacity .3s .95s; }
+.run.on > strong, .run.expect > strong { opacity: 1; }
+.track { position: relative; height: 34px; border: 2px solid var(--fg); border-radius: 6px; background: #fff; overflow: hidden; }
+.track .solid { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--chip); transition: width .9s cubic-bezier(.3,.6,.3,1); }
+.run.on .solid { width: var(--ratio); }
+.track .lost { position: absolute; top: 0; bottom: 0; right: 0; left: var(--ratio); opacity: 0; transition: opacity .4s 1s;
+  background: repeating-linear-gradient(135deg, #d9544a 0 3px, #fff0ed 3px 9px); border-left: 2px solid var(--fg);
+  display: grid; place-items: center; }
+.track .lost b { background: #fff; border: 1.5px solid var(--red); color: var(--red); border-radius: 5px; padding: 0 7px; font-size: 13.5px; white-space: nowrap; }
+.run.on .lost { opacity: 1; }
+.run.expect .track { border-style: dashed; }
+.run.expect .solid { width: 100%; background: #b9bfca; transition: none; }
+.run.expect > span, .run.expect > strong { color: var(--muted); }
+.exp.withmutex .run:not(.expect) .solid { background: var(--green); }
+.exp.withmutex .run:not(.expect) { --ratio: 100% !important; }
+.exp.withmutex .lost { display: none; }
+.run .v-mutex, .exp.withmutex .run .v-race { display: none; }
+.exp.withmutex .run .v-mutex { display: inline; color: var(--green); }
+.run .v-race { color: var(--red); }
+.axis { margin: 4px 0 0 88px; width: 426px; display: flex; justify-content: space-between; color: var(--muted); font: 12.5px var(--mono); }
+.concl { position: absolute; left: 18px; right: 18px; bottom: 12px; height: 58px; display: flex; align-items: center; gap: 12px; padding: 0 14px;
+  border: 2px solid var(--red); border-radius: 10px; background: var(--red-light); color: var(--red); font-size: 17px; font-weight: 600; line-height: 1.25; }
+.concl.good { border-color: var(--green); background: var(--green-light); color: var(--green); }
+.exp:not(.withmutex) .concl.good, .exp.withmutex .concl.bad { display: none; }
+
+/* ---------- CPU und RAM ---------- */
+.cpu { position: absolute; left: 100px; top: 16px; width: 800px; height: 222px; background: var(--chip); border: 3px solid var(--fg); border-radius: 16px; color: #fff; }
+.cpu::before { content: ""; position: absolute; inset: 8px; border: 1.5px solid #555c6c; border-radius: 10px; pointer-events: none; }
+.cpu::after { content: ""; position: absolute; left: 14px; bottom: 14px; border: 7px solid transparent; border-left-color: #8a909c; border-bottom-color: #8a909c; border-radius: 2px; }
+.pin { position: absolute; background: repeating-linear-gradient(var(--dir, 0deg), #8a909c 0 8px, transparent 8px 20px); }
+.pin.l, .pin.r { top: 22px; bottom: 22px; width: 12px; }
+.pin.l { left: -15px; } .pin.r { right: -15px; }
+.pin.t, .pin.b { left: 24px; right: 24px; height: 12px; --dir: 90deg; }
+.pin.t { top: -15px; } .pin.b { bottom: -15px; }
+.cpu .name { position: absolute; left: 22px; top: 13px; font: 600 15px var(--mono); }
+.cpu .name small { font: 400 12.5px var(--sans); color: #c9ced8; margin-left: 8px; }
+.core { position: absolute; top: 40px; width: 368px; height: 162px; background: var(--chip2); border: 2px solid var(--chip-edge); border-radius: 10px;
+  transition: background .35s, opacity .35s; }
+.core.c0 { left: 22px; } .core.c1 { right: 22px; }
+.core-h { display: flex; align-items: center; gap: 8px; height: 27px; padding: 0 10px; border-bottom: 1.5px solid #6a7285; }
+.core-h .kern { font: 600 12px var(--mono); letter-spacing: .08em; color: var(--yellow); }
+.core-h .who { margin-left: auto; font-size: 13px; font-weight: 600; border-radius: 6px; padding: 0 9px; background: #737a88; color: #fff; transition: background .3s; }
+.core.c0.busy .who { background: var(--t1); } .core.c1.busy .who { background: var(--t2); }
+.core.waiting { background: #3a3f4b; }
+.core.waiting .who { background: #b45309 !important; }
+.chains { position: absolute; left: 0; right: 0; top: 27px; bottom: 0; pointer-events: none; overflow: hidden; border-radius: 0 0 8px 8px;
+  background: rgba(16,18,24,0); transition: background .4s ease; }
+.chains svg { width: 100%; height: 100%; display: block; }
+.core.waiting .chains { background: rgba(16,18,24,.42); }
+.chains .ch, .chains .lk { opacity: 0; }
+.chains .ca { transform: translate(-330px, -40px); transition: transform .55s cubic-bezier(.2,.8,.2,1), opacity .3s ease; }
+.chains .cb { transform: translate(330px, -40px); transition: transform .55s .08s cubic-bezier(.2,.8,.2,1), opacity .3s .08s ease; }
+.chains .lk { transform: translateY(-120px); transition: transform .5s .45s cubic-bezier(.3,1.45,.5,1), opacity .25s .45s ease; }
+.chains .shk { transform: translateY(-9px); transition: transform .18s 1.0s ease-in; }
+.core.waiting .chains .ch, .core.waiting .chains .lk { opacity: 1; transform: none; }
+.core.waiting .chains .shk { transform: none; }
+.core:not(.waiting) .chains .shk { transition-delay: 0s; }
+.core:not(.waiting) .chains .lk { transition: transform .45s .15s ease-in, opacity .3s .25s ease; }
+.core:not(.waiting) .chains .ca, .core:not(.waiting) .chains .cb { transition: transform .5s .25s ease-in, opacity .35s .3s ease; }
+.core-b { display: grid; grid-template-columns: 1fr 96px; gap: 8px; padding: 6px 8px 0 6px; height: 133px; align-items: center; }
+.prog { list-style: none; padding: 0; transition: opacity .45s; }
+.prog.off { opacity: 0; }
+.prog li { display: flex; align-items: center; height: 24px; padding: 0 7px; border-radius: 5px; border-left: 3px solid transparent;
+  font: 14px/1 var(--mono); white-space: nowrap; transition: background .2s, color .2s, opacity .3s; }
+.prog li[hidden] { display: none; }
+.prog li em { margin-left: auto; font: 400 12.5px var(--sans); color: #c9ced8; }
+.prog li.crit { border-left-color: var(--yellow); border-radius: 0 5px 5px 0; }
+.prog li.done { opacity: .6; }
+.prog li.active { background: var(--light-yellow); color: var(--fg); opacity: 1; font-weight: 600; }
+.prog li.active em { color: var(--fg); }
+.prog li.waitline { background: repeating-linear-gradient(135deg, #b45309 0 4px, #6b3a12 4px 9px); color: #fff; opacity: 1; }
+.prog li.waitline em { color: #fff; font-weight: 600; }
+.regbox { border: 1.5px solid var(--chip-edge); border-radius: 8px; background: #3a4050; padding: 5px 7px 8px; text-align: center; }
+.regbox small { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #c9ced8; }
+.regbox b { display: block; font: 600 17px/1.3 var(--mono); color: var(--yellow); }
+.regbox .rv { display: grid; place-items: center; height: 44px; margin-top: 2px; border-radius: 6px; background: #20242c; font: 600 27px/1 var(--mono); color: #fff; }
+.bus { position: absolute; left: 440px; top: 254px; width: 120px; height: 30px; background: repeating-linear-gradient(90deg, #8a909c 0 4px, transparent 4px 10px); }
+.buslab { position: absolute; left: 570px; top: 259px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.ramlab { position: absolute; left: 200px; top: 262px; font-size: 13px; color: var(--muted); font-weight: 600; letter-spacing: .06em; }
+.ram { position: absolute; left: 200px; top: 284px; width: 600px; height: 104px; background: var(--pcb); border: 2.5px solid var(--fg); border-radius: 6px; }
+.ram::before { content: ""; position: absolute; left: 10px; right: 10px; bottom: 0; height: 13px;
+  background: repeating-linear-gradient(90deg, #e8b923 0 6px, var(--pcb) 6px 9px); border-top: 1.5px solid #14573a; }
+.ram::after { content: ""; position: absolute; left: 352px; bottom: -3px; width: 12px; height: 17px; background: var(--bg); border: 2.5px solid var(--fg); border-bottom: 0; border-radius: 5px 5px 0 0; }
+.ram u { position: absolute; top: 12px; width: 50px; height: 66px; background: #16181d; border-radius: 4px; box-shadow: inset 0 0 0 2px #3a3f4b; }
+.ram u::after { content: ""; position: absolute; left: 9px; top: 9px; width: 5px; height: 5px; border-radius: 50%; background: #4a5163; }
+.ram i.hole { position: absolute; top: 34px; width: 9px; height: 18px; background: var(--bg); border: 2.5px solid var(--fg); }
+.ram i.hole.a { left: -2.5px; border-left: 0; border-radius: 0 9px 9px 0; } .ram i.hole.b { right: -2.5px; border-right: 0; border-radius: 9px 0 0 9px; }
+.sticker { position: absolute; left: 136px; top: 9px; width: 328px; height: 72px; background: #fff; border: 1.5px solid var(--fg); border-radius: 4px; padding: 4px 8px;
+  display: grid; grid-template-rows: 1fr 1fr; gap: 4px; }
+.sticker.single { grid-template-rows: 1fr; padding: 12px 8px; }
+.mrow { display: grid; grid-template-columns: 66px 1fr 122px; align-items: center; gap: 6px; font-family: var(--mono); }
+.mrow[hidden] { display: none; }
+.mrow small { font-size: 12.5px; color: var(--muted); }
+.mrow code { font-size: 17px; font-weight: 600; }
+.mrow .mv { display: grid; place-items: center; height: 28px; border: 2px solid var(--fg); border-radius: 5px; background: #fff; font: 600 20px/1 var(--mono); }
+.sticker.single .mrow .mv { height: 40px; font-size: 26px; }
+.mrow .mv.lockv { font: 600 13.5px/1 var(--sans); display: flex; justify-content: center; gap: 5px; transition: background .3s, color .3s; }
+.mrow .mv.lockv svg { width: 17px; height: 17px; }
+.mrow .mv.lockv .lc, .mrow .mv.lockv.held .lo { display: none; }
+.mrow .mv.lockv.held .lc { display: block; }
+.mrow .mv.lockv.h0 { background: var(--t1); color: #fff; border-color: var(--fg); }
+.mrow .mv.lockv.h1 { background: var(--t2); color: #fff; border-color: var(--fg); }
+.legend { position: absolute; left: 14px; top: 300px; width: 172px; font-size: 13px; line-height: 1.3; color: var(--muted); display: flex; gap: 8px; }
+.legend::before { content: ""; flex: none; width: 4px; height: 34px; background: var(--yellow); border: 1px solid #b7790c; }
+.cpu-note { position: absolute; left: 816px; top: 288px; width: 170px; height: 96px; padding: 8px 11px;
+  border: 2px solid var(--red); border-radius: 10px; background: var(--red-light); color: var(--red); }
+.cpu-note.good { border-color: var(--green); background: var(--green-light); color: var(--green); }
+.cpu-note strong { display: block; font-size: 22px; line-height: 1.2; }
+.cpu-note span { display: block; font-size: 14px; line-height: 1.25; }
+.flight { position: absolute; top: 0; left: 0; z-index: 5; display: grid; place-items: center; width: 44px; height: 38px;
+  background: var(--yellow); color: var(--fg); border: 2px solid #b7790c; border-radius: 7px; box-shadow: 0 3px 8px rgba(0,0,0,.3);
+  font: 600 24px/1 var(--mono); opacity: 0; pointer-events: none; }
+
+/* ---------- Begriffe ---------- */
+.terms { padding: 14px 20px; display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 18px; }
+.term { padding: 16px 20px; height: 372px; }
+.term h2 { font-size: 30px; margin: 2px 0 10px; }
+.term p { font-size: 20px; line-height: 1.4; }
+.term .ex { margin-top: 16px; padding: 10px 13px; border-radius: 8px; background: var(--soft); font-size: 16.5px; line-height: 1.45; }
+.term .ex b { font-family: var(--mono); white-space: nowrap; }
+.term.first { background: var(--light-yellow); }
+.term.first > p:not(.ex):not(.label) { font-size: 18.5px; }
+.term.first .ex { font-size: 15.5px; }
+.term.first .ex { background: #fff; border: 1.5px solid var(--fg); }
+.critbox { margin-top: 14px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
+.critbox ol { list-style: none; padding: 8px 12px; background: var(--chip); color: #fff; border-radius: 8px; border-left: 6px solid var(--yellow); font: 17px/1.8 var(--mono); }
+.critbox span { font-size: 14px; color: var(--muted); max-width: 120px; line-height: 1.3; }
+.term p.crit-def { font-size: 16.5px; line-height: 1.35; }
+.crit2 { margin-top: 10px; display: grid; grid-template-columns: 1.05fr auto 1fr; align-items: end; gap: 8px; }
+.crit-col { display: grid; gap: 5px; min-width: 0; }
+.crit-tag { font: 600 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.crit-c { margin: 0; padding: 8px 10px; background: var(--soft); border: 1.5px solid var(--line); border-radius: 8px; font: 12.5px/1.55 var(--mono); white-space: pre; overflow: hidden; }
+.crit-c .dim { color: var(--muted); }
+.crit-c .dim i { font-style: normal; color: #8a909c; }
+.crit-c .hot { display: block; margin: 1px -10px; padding: 0 10px; background: var(--light-yellow); border-left: 5px solid var(--yellow); color: var(--fg); font-weight: 600; }
+.crit-arrow { display: grid; justify-items: center; gap: 2px; color: var(--fg); padding-bottom: 26px; }
+.crit-arrow svg { width: 34px; height: 18px; }
+.crit-arrow small { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.crit-asm { list-style: none; margin: 0; padding: 8px 10px; background: var(--chip); color: #fff; border-radius: 8px; border-left: 6px solid var(--yellow); font: 13px/1.75 var(--mono); white-space: nowrap; }
+.term p.crit-why { margin-top: 10px; font-size: 14px; line-height: 1.4; color: var(--fg); }
+.term p.crit-why code { font-family: var(--mono); font-size: 13.5px; background: var(--soft); padding: 0 4px; border-radius: 4px; }
+
+/* ---------- Mutex-Idee: Zeitleiste ---------- */
+.idea .def { position: absolute; left: 20px; top: 12px; width: 960px; height: 104px; display: grid; grid-template-columns: 64px 1fr 1fr; gap: 16px; align-items: center; padding: 10px 18px; }
+.idea .def .lockbig { width: 56px; height: 56px; color: var(--fg); }
+.idea .def h2 { font-size: 24px; } .idea .def h2 small { display: block; font-size: 14.5px; font-weight: 400; color: var(--muted); }
+.idea .def ul { margin: 0; padding: 0; list-style: none; font-size: 15.5px; line-height: 1.35; }
+.idea .def li { display: grid; grid-template-columns: 66px 1fr; gap: 8px; padding: 2px 0; }
+.idea .def li code { font-weight: 600; }
+.lanes { position: absolute; left: 20px; top: 132px; width: 960px; height: 256px; }
+.lane { position: absolute; left: 0; width: 960px; height: 58px; }
+.lane .ln { position: absolute; left: 0; top: 0; width: 126px; height: 58px; display: flex; align-items: center; font-size: 17px; font-weight: 600; }
+.lane.t1 .ln, .lane.t2 .ln { color: var(--tc); }
+.lane .bg { position: absolute; left: 136px; top: 6px; width: 820px; height: 46px; border-radius: 6px; background: var(--soft); border: 1px solid var(--line); }
+.sweep { position: absolute; left: 136px; top: 0; height: 236px; width: 0; overflow: hidden; border-right: 2px dashed transparent; transition: width var(--dur, 1s) linear; }
+.sweep.moving { border-right-color: var(--fg); }
+.sweep .in { position: absolute; left: 0; top: 0; width: 820px; height: 236px; }
+.blk { position: absolute; height: 46px; display: grid; place-items: center; border: 2px solid var(--fg); border-radius: 6px; font-size: 14.5px; font-weight: 600; white-space: nowrap; overflow: hidden; }
+.blk.call { background: var(--chip); color: #fff; font-family: var(--mono); }
+.blk.crit { background: var(--light-yellow); font-family: var(--mono); }
+.blk.crit { line-height: 1.15; text-align: center; }
+.blk.crit small { font: 400 12px/1.2 var(--sans); display: block; }
+.blk.waitb { justify-items: start; padding-left: 10px; background: repeating-linear-gradient(135deg, #f0b98a 0 4px, #fff5ec 4px 10px); color: #7c2d12; }
+.blk.waitb span { background: #fff; border-radius: 4px; padding: 0 7px; border: 1.5px solid #b45309; }
+.blk.free { background: #fff; border-style: dashed; color: var(--muted); }
+.blk.held { color: #fff; background: var(--tc); gap: 6px; display: flex; justify-content: center; align-items: center; }
+.blk.held svg { width: 19px; height: 19px; }
+/* Zeitleiste: Beschriftung links ausrichten, damit sie auch lesbar ist, wenn der Block erst teilweise gezeichnet ist */
+.sweep .blk.crit { justify-items: start; text-align: left; padding-left: 12px; }
+.sweep .blk.held { justify-content: flex-start; padding-left: 12px; }
+.timeax { position: absolute; left: 136px; top: 234px; width: 820px; height: 20px; border-top: 2px solid var(--fg); font-size: 13px; color: var(--muted); text-align: right; padding-right: 14px; }
+.timeax::after { content: ""; position: absolute; right: -2px; top: -6px; border: 5px solid transparent; border-left: 9px solid var(--fg); }
+
+/* ---------- Mutex in C ---------- */
+.cmx .editor.fn { position: absolute; left: 20px; top: 10px; width: 428px; }
+.cmx .editor.mn { position: absolute; left: 462px; top: 10px; width: 518px; }
+.strip { position: absolute; left: 20px; top: 300px; width: 960px; height: 90px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.fcard { border: 2px solid var(--fg); border-radius: 10px; padding: 8px 11px; background: #fff; transition: background .3s, opacity .45s, visibility 0s .45s; }
+.fcard.current { background: var(--light-yellow); }
+.fcard code { display: block; font-size: 14px; font-weight: 600; }
+.fcard p { font-size: 14px; line-height: 1.3; margin-top: 3px; }
+/* Kurzform: pthread_mutex_init in main wird durchgestrichen */
+.cmx [data-line="init"] { position: relative; transition: opacity .4s ease, background .3s; }
+.cmx [data-line="init"]::after { content: ""; position: absolute; left: 38px; top: 10px; width: 0; height: 2.5px; border-radius: 2px; background: var(--red); transition: width .45s ease .15s; }
+.cmx [data-line="init"]::before { content: "entfällt"; position: absolute; right: 8px; top: 2px; padding: 0 7px; border-radius: 4px; background: var(--red); color: #fff; font: 600 11.5px/17px var(--sans); opacity: 0; transition: opacity .3s ease .45s; }
+.cmx [data-line="init"].struck { color: #8a909c; }
+.cmx [data-line="init"].struck::after { width: 268px; }
+.cmx [data-line="init"].struck::before { opacity: 1; }
+.short { position: absolute; left: 20px; top: 300px; width: 960px; height: 90px; padding: 9px 16px; background: var(--light-yellow); }
+.short > code { display: block; font-size: 19px; font-weight: 600; margin-top: 2px; }
+.short p { font-size: 14.5px; margin-top: 3px; }
+
+/* ---------- Merke ---------- */
+.summary { display: grid; gap: 12px; padding: 14px 20px; }
+.rule { height: 116px; display: grid; grid-template-columns: 48px 1fr; align-items: center; gap: 16px; padding: 10px 20px; }
+.rule .icon { width: 40px; height: 40px; }
+.rule h2 { font-size: 22px; }
+.rule p { font-size: 17.5px; line-height: 1.35; }
+.rule.first { background: var(--light-yellow); }
+
+/* ---------- Text und Steuerung ---------- */
+.cap { margin-top: 8px; min-height: 116px; }
+.cap h1 { margin: 0 0 3px; font-size: 23px; line-height: 1.2; font-weight: 600; }
+.cap p { font-size: 20px; line-height: 1.36; }
+.cap code { background: var(--soft); border-radius: 4px; padding: 0 4px; font-size: .88em; }
+.controls { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+button { font: 600 16px/1.3 var(--sans); cursor: pointer; border: 1.5px solid var(--fg); border-radius: 8px;
+  background: #fff; color: var(--fg); padding: 6px 13px; }
+button:hover:not(:disabled) { box-shadow: inset 0 0 0 1px currentColor; }
+button:disabled { opacity: .35; cursor: default; }
+button:focus-visible { outline: 3px solid var(--t1); outline-offset: 2px; }
+.dots { display: flex; flex-wrap: wrap; gap: 5px; }
+.dot { width: 30px; height: 30px; padding: 0; border-radius: 50%; border-color: var(--line); font: 600 14px var(--mono); }
+.dot[aria-current="step"] { background: var(--fg); color: #fff; border-color: var(--fg); }
+#next { min-width: 210px; background: var(--fg); color: #fff; margin-left: auto; }
+#next.play { background: var(--yellow); color: var(--fg); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<svg class="definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <symbol id="i-closed" viewBox="0 0 32 32">
+      <rect x="6" y="14" width="20" height="14" rx="3"/><path d="M10 14V9a6 6 0 0 1 12 0v5m-6 5v4"/>
+    </symbol>
+    <symbol id="i-open" viewBox="0 0 32 32">
+      <rect x="6" y="14" width="20" height="14" rx="3"/><path d="M10 14V9a6 6 0 0 1 12 0m-6 10v4"/>
+    </symbol>
+    <symbol id="i-paths" viewBox="0 0 32 32">
+      <path d="M4 8h5c6 0 6 16 12 16h6m-4-4 4 4-4 4M4 24h5c6 0 6-16 12-16h6m-4-4 4 4-4 4"/>
+    </symbol>
+    <symbol id="i-time" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="11"/><path d="M16 9v7l5 3"/>
+    </symbol>
+    <symbol id="i-warn" viewBox="0 0 32 32">
+      <path d="M16 5 3 27h26zM16 13v7m0 3.5v.5"/>
+    </symbol>
+    <symbol id="i-ok" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="12"/><path d="m10 16.5 4.5 4.5 8-9"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main class="wrap">
+  <header class="top">
+    <span><strong>KGÜ 6</strong> · Race Condition und Mutex</span>
+    <span id="progress"></span>
+  </header>
+
+  <div class="stagebox" id="stagebox">
+    <div class="stage" id="stage">
+
+      <!-- Teil 1 -->
+      <section class="scene sit" data-scene="sit" aria-label="Die Ausgangslage">
+        <div class="panel editor">
+          <h3>zaehler.c<button type="button" class="cpbtn reveal" data-from="5" data-copy="code"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg><span>Code kopieren</span></button></h3>
+          <pre><code id="sit-code"><span data-from="0" data-hl="0">int counter = 0;</span><span data-from="1"> </span><span data-from="1">void* increment_counter(void* arg) {</span><span data-from="1" data-hl="1">    for (int i = 0; i &lt; 1000000; i++)</span><span data-from="1" data-hl="1">        counter++;</span><span data-from="1">    return NULL;</span><span data-from="1">}</span><span data-from="2"> </span><span data-from="2">int main() {</span><span data-from="2">    pthread_t thread1, thread2;</span><span data-from="2" data-hl="2">    pthread_create(&amp;thread1, NULL, increment_counter, NULL);</span><span data-from="2" data-hl="2">    pthread_create(&amp;thread2, NULL, increment_counter, NULL);</span><span data-from="2" data-hl="3">    pthread_join(thread1, NULL);</span><span data-from="2" data-hl="3">    pthread_join(thread2, NULL);</span><span data-from="2" data-hl="3">    printf("Final counter value: %d\n", counter);</span><span data-from="2">}</span></code></pre>
+        </div>
+        <div class="right">
+          <div class="panel shared">
+            <p class="label">Gemeinsamer Speicher des Prozesses</p>
+            <div class="cellrow"><small>Globale Daten</small>
+              <div class="memcell"><code>counter</code><b>0</b></div>
+            </div>
+          </div>
+          <svg class="links reveal" data-from="2" viewBox="0 0 404 54" aria-hidden="true">
+            <g fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M96 52C96 26 262 34 286 6m-12 2 12-2-1 12" stroke="#2f5fb8"/>
+              <path d="M308 52C308 34 322 26 322 6m-7 9 7-9 7 9" stroke="#7a4fd0"/>
+            </g>
+          </svg>
+          <div class="thr t1 reveal" data-from="2"><b>Thread 1</b><small>eigener Stack, eigene Register</small><code>increment_counter()</code></div>
+          <div class="thr t2 reveal" data-from="2"><b>Thread 2</b><small>eigener Stack, eigene Register</small><code>increment_counter()</code></div>
+          <div class="panel ask reveal" data-from="3">
+            <p class="label">Am Ende in counter</p>
+            <span class="big reveal" data-only="3">?</span>
+            <span class="big reveal" data-from="4">2 000 000 ?<small>1 000 000 + 1 000 000</small></span>
+          </div>
+          <div class="panel tryit reveal" data-from="5">
+            <p class="label">Live ausprobieren</p>
+            <h2>Probier es selbst</h2>
+            <ol>
+              <li><span>Code kopieren, als <code>zaehler.c</code> speichern</span></li>
+              <li><div class="tcmd"><code>gcc -O0 zaehler.c -o zaehler -pthread</code><button type="button" data-copy="gcc -O0 zaehler.c -o zaehler -pthread">kopieren</button></div></li>
+              <li><div class="tcmd"><code>./zaehler</code><button type="button" data-copy="./zaehler">kopieren</button></div></li>
+              <li><div class="tcmd"><code>for i in 1 2 3; do ./zaehler; done</code><button type="button" data-copy="for i in 1 2 3; do ./zaehler; done">kopieren</button></div></li>
+            </ol>
+            <p class="note"><b>Wichtig: -O0.</b> Mit Optimierung (<code>-O2</code>) rechnet der Compiler die Schleife zusammen, dann siehst du den Fehler nicht.</p>
+            <p class="note">Die kopierte Datei enthält zusätzlich <code>#include &lt;stdio.h&gt;</code> und <code>#include &lt;pthread.h&gt;</code>. Läuft unter Linux und macOS, unter Windows in WSL.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Experiment (Teil 2 und Messung mit Mutex) -->
+      <section class="scene exp" data-scene="exp" id="exp" aria-label="Das Experiment">
+        <div class="panel info">
+          <p class="label">Das Experiment</p>
+          <h2>Programm wirklich ausgeführt</h2>
+          <ul>
+            <li>2 Threads, jeder<br><code>1 000 000 × counter++</code></li>
+            <li class="mode"><b id="exp-mode">ohne Mutex</b></li>
+            <li>3 Läufe hintereinander</li>
+            <li>MacBook, <code>gcc -O0</code></li>
+          </ul>
+        </div>
+        <div class="panel chart">
+          <h2>Wert von <code>counter</code> am Ende des Programms</h2>
+          <div class="rows">
+            <div class="run expect"><span>erwartet</span><div class="track"><i class="solid"></i></div><strong>2 000 000</strong></div>
+            <div class="run" style="--ratio: 50.76%"><span>Lauf 1</span><div class="track"><i class="solid"></i><i class="lost"><b>984 799 verloren</b></i></div><strong><span class="v-race">1 015 201</span><span class="v-mutex">2 000 000</span></strong></div>
+            <div class="run" style="--ratio: 51.18%"><span>Lauf 2</span><div class="track"><i class="solid"></i><i class="lost"><b>976 482 verloren</b></i></div><strong><span class="v-race">1 023 518</span><span class="v-mutex">2 000 000</span></strong></div>
+            <div class="run" style="--ratio: 51.56%"><span>Lauf 3</span><div class="track"><i class="solid"></i><i class="lost"><b>968 829 verloren</b></i></div><strong><span class="v-race">1 031 171</span><span class="v-mutex">2 000 000</span></strong></div>
+          </div>
+          <div class="axis" aria-hidden="true"><span>0</span><span>1 000 000</span><span>2 000 000</span></div>
+          <div class="concl bad reveal" id="concl-bad"><svg class="icon" aria-hidden="true"><use href="#i-warn"/></svg><span>Fast jede zweite Erhöhung ist verloren gegangen, und jedes Mal kommt ein anderes Ergebnis heraus.</span></div>
+          <div class="concl good reveal" id="concl-good"><svg class="icon" aria-hidden="true"><use href="#i-ok"/></svg><span>Mit Mutex: in jedem Lauf genau 2 000 000. Keine Erhöhung geht verloren.</span></div>
+        </div>
+      </section>
+
+      <!-- CPU und RAM -->
+      <section class="scene" data-scene="cpu" aria-label="CPU mit zwei Kernen und RAM">
+        <div class="cpu" id="cpu"><i class="pin l"></i><i class="pin r"></i><i class="pin t"></i><i class="pin b"></i>
+          <span class="name">CPU<small>2 Kerne</small></span>
+        </div>
+        <div class="bus"></div><span class="buslab">Bus</span>
+        <span class="ramlab">RAM · ARBEITSSPEICHER</span>
+        <div class="ram"><i class="hole a"></i><i class="hole b"></i>
+          <u style="left:16px"></u><u style="left:74px"></u><u style="left:476px"></u><u style="left:534px"></u>
+          <div class="sticker" id="sticker">
+            <div class="mrow"><small>0x1000</small><code>counter</code><span class="mv" id="ram-value">0</span></div>
+            <div class="mrow" id="ram-mutex-row"><small>0x1008</small><code>mutex</code><span class="mv lockv" id="ram-mutex">
+              <svg class="icon lo" aria-hidden="true"><use href="#i-open"/></svg><svg class="icon lc" aria-hidden="true"><use href="#i-closed"/></svg><span id="ram-mutex-text">frei</span></span></div>
+          </div>
+        </div>
+        <p class="legend reveal" id="legend">gelber Rand: kritischer Abschnitt</p>
+        <div class="cpu-note reveal" id="cpu-note"><strong></strong><span></span></div>
+        <div class="flight" id="flight" aria-hidden="true"></div>
+      </section>
+
+      <!-- Begriffe -->
+      <section class="scene terms" data-scene="terms" aria-label="Die Begriffe">
+        <div class="panel term first">
+          <p class="label">Begriff 1</p>
+          <h2>Race Condition</h2>
+          <p>Zwei oder mehr Threads greifen <b>gleichzeitig</b> auf eine <b>gemeinsame Ressource</b> zu und <b>ändern</b> sie. Das Ergebnis hängt davon ab, wer zuerst zugreift, und ist möglicherweise falsch.</p>
+          <p class="ex">Bei uns: Ressource = <b>counter</b>. Ergebnis <b>1 015 201</b>, <b>1 023 518</b> oder <b>1 031 171</b> statt <b>2 000 000</b>.</p>
+        </div>
+        <div class="panel term reveal" data-from="1">
+          <p class="label">Begriff 2</p>
+          <h2>Kritischer Abschnitt</h2>
+          <p class="crit-def">Der Teil des Codes, der auf die gemeinsame Ressource zugreift. Dort darf immer nur <b>ein</b> Thread gleichzeitig sein.</p>
+          <div class="crit2">
+            <div class="crit-col">
+              <span class="crit-tag">In C</span>
+              <pre class="crit-c"><span class="dim">int counter = 0;   <i>// global</i></span>
+<span class="dim">void* increment_counter(…) {</span>
+<span class="dim">  for (…)</span>
+<span class="hot">    counter++;</span><span class="dim">}</span></pre>
+            </div>
+            <div class="crit-arrow" aria-hidden="true"><svg viewBox="0 0 40 20"><path d="M2 10h32M27 4l7 6-7 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><small>auf der CPU</small></div>
+            <div class="crit-col">
+              <span class="crit-tag">In Assembler</span>
+              <ol class="crit-asm"><li>mov eax, [counter]</li><li>add eax, 1</li><li>mov [counter], eax</li></ol>
+            </div>
+          </div>
+          <p class="crit-why"><b>Warum kritisch?</b> <code>counter</code> ist global: Beide Threads lesen und schreiben dieselbe Variable, und aus einer C-Zeile werden drei Befehle.</p>
+        </div>
+      </section>
+
+      <!-- Mutex-Idee -->
+      <section class="scene idea" data-scene="idea" aria-label="Die Idee des Mutex">
+        <div class="panel def">
+          <svg class="icon lockbig" aria-hidden="true"><use href="#i-closed"/></svg>
+          <h2>Mutex<small><b>mut</b>ual <b>ex</b>clusion = gegenseitiger Ausschluss</small></h2>
+          <ul>
+            <li><code>lock</code><span>abschließen. Schon abgeschlossen? Dann warten.</span></li>
+            <li><code>unlock</code><span>wieder aufschließen.</span></li>
+          </ul>
+        </div>
+        <div class="lanes">
+          <div class="lane t1" style="top:0"><span class="ln">Thread 1</span><i class="bg"></i></div>
+          <div class="lane t2" style="top:66px"><span class="ln">Thread 2</span><i class="bg"></i></div>
+          <div class="lane" style="top:148px"><span class="ln">Mutex</span><i class="bg"></i></div>
+          <div class="sweep" id="sweep"><div class="in">
+            <div class="blk call" style="left:30px;top:6px;width:60px">lock</div>
+            <div class="blk crit" style="left:90px;top:6px;width:300px"><div>counter++<small>kritischer Abschnitt</small></div></div>
+            <div class="blk call" style="left:390px;top:6px;width:66px">unlock</div>
+            <div class="blk call" style="left:250px;top:72px;width:60px">lock</div>
+            <div class="blk waitb" style="left:310px;top:72px;width:146px"><span>wartet</span></div>
+            <div class="blk crit" style="left:456px;top:72px;width:234px"><div>counter++<small>kritischer Abschnitt</small></div></div>
+            <div class="blk call" style="left:690px;top:72px;width:66px">unlock</div>
+            <div class="blk free" style="left:0;top:154px;width:90px">frei</div>
+            <div class="blk held t1" style="left:90px;top:154px;width:366px"><svg class="icon" aria-hidden="true"><use href="#i-closed"/></svg>gehört Thread 1</div>
+            <div class="blk held t2" style="left:456px;top:154px;width:300px"><svg class="icon" aria-hidden="true"><use href="#i-closed"/></svg>gehört Thread 2</div>
+            <div class="blk free" style="left:756px;top:154px;width:64px">frei</div>
+          </div></div>
+          <div class="timeax">Zeit</div>
+        </div>
+      </section>
+
+      <!-- Mutex in C -->
+      <section class="scene cmx" data-scene="cmx" aria-label="Mutex in C">
+        <div class="panel editor fn">
+          <h3>Globale Variablen und Thread-Funktion</h3>
+          <pre><code><span>int counter = 0;</span><span class="new" data-line="decl">pthread_mutex_t mutex;</span><span> </span><span>void* increment_counter(void* arg) {</span><span>    for (int i = 0; i &lt; 1000000; i++) {</span><span class="new" data-line="lock">        pthread_mutex_lock(&amp;mutex);</span><span>        counter++;</span><span class="new" data-line="unlock">        pthread_mutex_unlock(&amp;mutex);</span><span>    }</span><span>    return NULL;</span><span>}</span></code></pre>
+        </div>
+        <div class="panel editor mn">
+          <h3>main</h3>
+          <pre><code><span>int main() {</span><span class="new" data-line="init">    pthread_mutex_init(&amp;mutex, NULL);</span><span>    pthread_t thread1, thread2;</span><span>    pthread_create(&amp;thread1, NULL, increment_counter, NULL);</span><span>    pthread_create(&amp;thread2, NULL, increment_counter, NULL);</span><span>    pthread_join(thread1, NULL);</span><span>    pthread_join(thread2, NULL);</span><span class="new" data-line="destroy">    pthread_mutex_destroy(&amp;mutex);</span><span>    printf("Final counter value: %d\n", counter);</span><span>}</span><span> </span></code></pre>
+        </div>
+        <div class="strip" id="strip">
+          <div class="fcard reveal" data-card="init"><code>pthread_mutex_init</code><p>Mutex einrichten.<br>Danach ist er frei.</p></div>
+          <div class="fcard reveal" data-card="lock"><code>pthread_mutex_lock</code><p>Abschließen. Schon gesperrt? Dann hier warten.</p></div>
+          <div class="fcard reveal" data-card="unlock"><code>pthread_mutex_unlock</code><p>Aufschließen. Ein Wartender darf weiter.</p></div>
+          <div class="fcard reveal" data-card="destroy"><code>pthread_mutex_destroy</code><p>Mutex aufräumen, wenn ihn niemand mehr braucht.</p></div>
+        </div>
+        <div class="panel short reveal" id="short">
+          <p class="label">Kurzform bei der Deklaration</p>
+          <code>pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;</code>
+          <p>Ersetzt <code>pthread_mutex_init(&amp;mutex, NULL)</code>. Der Mutex ist sofort eingerichtet und frei.</p>
+        </div>
+      </section>
+
+      <!-- Merke -->
+      <section class="scene summary" data-scene="summary" aria-label="Merke">
+        <div class="panel rule first">
+          <svg class="icon" aria-hidden="true"><use href="#i-paths"/></svg>
+          <div><h2>Race Condition</h2><p>Mehrere Threads greifen gleichzeitig auf gemeinsame Daten zu und ändern sie. Das Ergebnis hängt davon ab, wer zuerst zugreift, und kann falsch sein.</p></div>
+        </div>
+        <div class="panel rule reveal" data-from="1">
+          <svg class="icon" aria-hidden="true"><use href="#i-closed"/></svg>
+          <div><h2>Mutex</h2><p><code>lock</code> vor dem kritischen Abschnitt, <code>unlock</code> danach. Immer nur ein Thread ist drin, alle anderen warten.</p></div>
+        </div>
+        <div class="panel rule reveal" data-from="2">
+          <svg class="icon" aria-hidden="true"><use href="#i-time"/></svg>
+          <div><h2>Der Preis</h2><p>Warten kostet Zeit. Halte den kritischen Abschnitt deshalb so klein wie möglich.</p></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="cap" aria-live="polite" aria-atomic="true">
+    <h1 id="title"></h1>
+    <p id="caption"></p>
+  </div>
+  <nav class="controls ctl" aria-label="Steuerung">
+    <button id="prev" type="button" title="Zurück (linke Pfeiltaste)" aria-label="Zurück">←</button>
+    <div class="dots" id="dots" role="group" aria-label="Teile"></div>
+    <button id="reset" type="button" title="Teil neu (R)" aria-label="Teil neu">↺</button>
+    <button id="again" type="button" title="Letzte Animation wiederholen (W)">Nochmal</button>
+    <button id="next" type="button" title="Weiter (rechte Pfeiltaste oder Leertaste)">Weiter →</button>
+  </nav>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const $ = id => document.getElementById(id);
+  const stage = $("stage");
+  const scenes = [...stage.querySelectorAll("[data-scene]")];
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+  /* ---------- CPU-Kerne aufbauen ---------- */
+  const OPS = [
+    { key: "lock", text: "call pthread_mutex_lock", mutex: true },
+    { key: "load", text: "mov eax, [counter]", hint: "laden", crit: true },
+    { key: "add", text: "add eax, 1", hint: "rechnen", crit: true },
+    { key: "store", text: "mov [counter], eax", hint: "schreiben", crit: true },
+    { key: "unlock", text: "call pthread_mutex_unlock", mutex: true }
+  ];
+  const cores = [0, 1].map(index => {
+    const node = document.createElement("div");
+    node.className = "core c" + index;
+    node.innerHTML = `<div class="core-h"><span class="kern">KERN ${index + 1}</span><span class="who"></span></div>
+      <div class="core-b"><ol class="prog"></ol>
+      <div class="regbox"><small>Register</small><b>eax</b><span class="rv">–</span></div></div>
+      <div class="chains" aria-hidden="true"><svg viewBox="0 0 368 133">
+        <defs>
+          <pattern id="chainpat${index}" width="30" height="16" patternUnits="userSpaceOnUse">
+            <rect x="2" y="2" width="19" height="12" rx="6" fill="none" stroke="#dfe3ea" stroke-width="3.4"/>
+            <rect x="2" y="2" width="19" height="12" rx="6" fill="none" stroke="#7d8594" stroke-width="1" />
+            <rect x="17" y="6.3" width="15" height="3.4" rx="1.7" fill="#aab1bd"/>
+          </pattern>
+          <linearGradient id="brass${index}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1c84b"/><stop offset=".55" stop-color="#c99a1e"/><stop offset="1" stop-color="#8f6a0c"/></linearGradient>
+        </defs>
+        <g class="ch ca"><rect x="-60" y="58" width="488" height="16" fill="url(#chainpat${index})" transform="rotate(17 184 66)"/></g>
+        <g class="ch cb"><rect x="-60" y="58" width="488" height="16" fill="url(#chainpat${index})" transform="rotate(-17 184 66)"/></g>
+        <g class="lk">
+          <path class="shk" d="M168 66V52a16 16 0 0 1 32 0v14" fill="none" stroke="#c3c9d3" stroke-width="7" stroke-linecap="round"/>
+          <rect x="154" y="62" width="60" height="46" rx="8" fill="url(#brass${index})" stroke="#5e4508" stroke-width="2"/>
+          <circle cx="184" cy="80" r="5.5" fill="#2b1f04"/><rect x="181.5" y="82" width="5" height="13" rx="2" fill="#2b1f04"/>
+        </g>
+      </svg></div>`;
+    const lines = {};
+    for (const op of OPS) {
+      const line = document.createElement("li");
+      line.innerHTML = `<span>${op.text}</span><em>${op.hint || ""}</em>`;
+      node.querySelector(".prog").append(line);
+      lines[op.key] = line;
+    }
+    $("cpu").append(node);
+    return { node, lines, prog: node.querySelector(".prog"), who: node.querySelector(".who"),
+      value: node.querySelector(".rv"), wait: lines.lock.querySelector("em") };
+  });
+
+  /* ---------- Inhalt ---------- */
+  const cpuStart = { regs: [null, null], ram: 0, active: null, owner: null, waiting: false, note: null,
+    mutex: false, progs: [false, false], done: [[], []] };
+  const lost = { title: "1 statt 2", detail: "Zweimal erhöht, aber eine Erhöhung ist verloren." };
+  const correct = { title: "2", detail: "Beide Erhöhungen sind im RAM angekommen.", good: true };
+  const single = { title: "1", detail: "Ein Thread allein: richtig.", good: true };
+
+  function cpu(thread, op, label, say, note = null) {
+    return { say, motion: { type: "cpu", op, thread, label }, command: { thread, op }, note };
+  }
+
+  const parts = [
+    {
+      title: "Die Ausgangslage",
+      scene: "sit",
+      initial: { k: 0 },
+      intro: "Unser Programm beginnt mit einer globalen Variable: <code>counter</code>, Startwert 0. Globale Variablen liegen im gemeinsamen Speicher des Prozesses.",
+      steps: [
+        { patch: { k: 1 }, say: "Dazu kommt eine Funktion. Sie führt 1 000 000-mal <code>counter++</code> aus, erhöht <code>counter</code> also 1 000 000-mal um 1." },
+        { patch: { k: 2 }, say: "<code>main</code> startet zwei Threads, und beide führen diese Funktion aus. Jeder Thread hat seinen eigenen Stack und eigene Register. Aber <code>counter</code> gibt es nur einmal: Beide arbeiten auf derselben Variable." },
+        { patch: { k: 3 }, say: "Danach wartet <code>main</code> auf beide Threads und gibt <code>counter</code> aus. Die Frage: Welche Zahl steht am Ende in <code>counter</code>?" },
+        { patch: { k: 4 }, say: "Die naheliegende Antwort: Jeder Thread erhöht 1 000 000-mal, also 1 000 000 + 1 000 000 = <b>2 000 000</b>. Ob das stimmt, lässt sich ausprobieren." },
+        { patch: { k: 5 }, say: "Probieren wir es aus. Kopiere das Programm, übersetze es mit <code>-O0</code> und starte es ein paar Mal. Kommt bei dir 2 000 000 heraus?" }
+      ]
+    },
+    {
+      title: "Das Experiment",
+      scene: "exp",
+      initial: { runs: 0, concl: false },
+      intro: "Das Experiment: Wir haben genau dieses Programm wirklich ausgeführt, auf einem MacBook, dreimal hintereinander. Der oberste Balken zeigt, was wir erwarten: 2 000 000.",
+      steps: [
+        { patch: { runs: 1 }, motion: { type: "sweep", label: "Lauf 1 zeigen", ms: 1500 },
+          say: "Lauf 1: Am Ende steht <b>1 015 201</b> in <code>counter</code>, nicht 2 000 000. Der rot schraffierte Teil fehlt: 984 799 Erhöhungen sind verloren gegangen." },
+        { patch: { runs: 2 }, motion: { type: "sweep", label: "Lauf 2 zeigen", ms: 1500 },
+          say: "Lauf 2: <b>1 023 518</b>. Wieder viel zu wenig. Und es ist eine andere Zahl als in Lauf 1, obwohl es dasselbe Programm ist." },
+        { patch: { runs: 3 }, motion: { type: "sweep", label: "Lauf 3 zeigen", ms: 1500 },
+          say: "Lauf 3: <b>1 031 171</b>. Wieder zu wenig, wieder eine andere Zahl." },
+        { patch: { concl: true }, say: "Fast jede zweite Erhöhung fehlt, und jedes Mal kommt etwas anderes heraus. Wie kann <code>counter++</code> eine Erhöhung verlieren? Dafür musst du wissen, was die CPU bei <code>counter++</code> tut." }
+      ]
+    },
+    {
+      title: "Was die CPU bei counter++ tut",
+      scene: "cpu",
+      initial: cpuStart,
+      intro: "Das ist die Hardware, auf der das Programm läuft: eine CPU mit zwei Kernen. Jeder Kern hat eigene Register, hier <code>eax</code>. Darunter der RAM. Dort liegt <code>counter</code>, im Moment mit dem Wert 0.",
+      steps: [
+        { patch: { progs: [true, false] }, say: "Zuerst nur ein Thread, auf Kern 1. Ein Kern rechnet nicht direkt im RAM, sondern in seinen Registern. Deshalb ist <code>counter++</code> für die CPU nicht ein Schritt, sondern drei Befehle (x86, vereinfacht)." },
+        cpu(0, "load", "Befehl 1: laden", "Befehl 1, laden: Der Wert 0 wird aus dem RAM in das Register <code>eax</code> kopiert. Im RAM ändert sich nichts."),
+        cpu(0, "add", "Befehl 2: rechnen", "Befehl 2, rechnen: Der Kern addiert 1, aber nur im Register. Im RAM steht immer noch 0."),
+        cpu(0, "store", "Befehl 3: schreiben", "Befehl 3, zurückschreiben: Der Wert aus <code>eax</code> wird in den RAM kopiert. Jetzt steht dort 1. Mit einem Thread allein geht alles gut.", single)
+      ]
+    },
+    {
+      title: "Zwei Threads gleichzeitig",
+      scene: "cpu",
+      initial: { ...cpuStart, progs: [true, true] },
+      intro: "Jetzt wie im Programm: zwei Threads gleichzeitig, jeder auf einem eigenen Kern, jeder mit denselben drei Befehlen. <code>counter</code> steht auf 0. Nach zwei Erhöhungen müsste dort 2 stehen.",
+      steps: [
+        cpu(0, "load", "Thread 1 lädt", "Thread 1 lädt: In seinem <code>eax</code> steht jetzt 0."),
+        cpu(1, "load", "Thread 2 lädt", "Thread 2 lädt direkt danach. Im RAM steht immer noch 0, also hat auch Thread 2 eine 0 in seinem <code>eax</code>. Hier beginnt das Problem."),
+        cpu(0, "add", "Thread 1 rechnet", "Thread 1 rechnet in seinem Register: 0 + 1 = 1."),
+        cpu(1, "add", "Thread 2 rechnet", "Thread 2 rechnet in seinem eigenen Register: auch 0 + 1 = 1. Von der 1 im anderen Kern weiß er nichts."),
+        cpu(0, "store", "Thread 1 schreibt", "Thread 1 schreibt seine 1 in den RAM."),
+        cpu(1, "store", "Thread 2 schreibt", "Thread 2 schreibt seine 1 darüber. Es wurde zweimal erhöht, aber im RAM steht <b>1 statt 2</b>. Eine Erhöhung ist verloren.", lost),
+        { patch: {}, say: "Im Experiment passiert genau das, nur sehr oft: Beide Threads laufen wirklich gleichzeitig auf zwei Kernen, jeder 1 000 000-mal durch diese drei Befehle. Wie oft sie sich dabei überschneiden, ist Zufall. Deshalb fehlt jedes Mal eine andere Anzahl." }
+      ]
+    },
+    {
+      title: "Wie das Problem heißt",
+      scene: "terms",
+      initial: { k: 0 },
+      intro: "Dieses Problem hat einen Namen: <b>Race Condition</b>, auf Deutsch Wettlaufsituation. Die Threads laufen um die Wette, und das Ergebnis hängt davon ab, wer wann zugreift.",
+      steps: [
+        { patch: { k: 1 }, say: "Der Teil des Codes, in dem das passieren kann, heißt <b>kritischer Abschnitt</b>. In C ist das die Zeile <code>counter++</code>, auf der CPU sind das ihre drei Befehle. Solange ein Thread dort ist, darf kein zweiter hinein." }
+      ]
+    },
+    {
+      title: "Die Lösung: ein Mutex",
+      scene: "idea",
+      initial: { x: 0 },
+      intro: "Die Idee: Vor dem kritischen Abschnitt hängt ein Schloss, der <b>Mutex</b>. Wer hinein will, schließt ab (<code>lock</code>). Wer fertig ist, schließt wieder auf (<code>unlock</code>). Die Zeitleiste darunter ist noch leer.",
+      steps: [
+        { patch: { x: 250 }, motion: { type: "sweep", label: "Thread 1 schließt ab", ms: 1500 },
+          say: "Thread 1 ruft <code>lock</code> auf. Der Mutex war frei, also gehört er jetzt Thread 1. Thread 1 ist im kritischen Abschnitt." },
+        { patch: { x: 390 }, motion: { type: "sweep", label: "Thread 2 versucht es", ms: 1200 },
+          say: "Thread 2 ruft auch <code>lock</code> auf. Der Mutex gehört aber Thread 1, also muss Thread 2 warten. Er kann nicht dazwischenkommen." },
+        { patch: { x: 820 }, motion: { type: "sweep", label: "Thread 1 schließt auf", ms: 2600 },
+          say: "Thread 1 ruft <code>unlock</code> auf. Erst jetzt bekommt Thread 2 den Mutex und führt seinen kritischen Abschnitt aus. Nie sind beide gleichzeitig drin: Das ist der gegenseitige Ausschluss." }
+      ]
+    },
+    {
+      title: "Der Mutex in C",
+      scene: "cmx",
+      initial: { k: 0, line: null },
+      intro: "So sieht das im Code aus: dasselbe Programm, jetzt mit Mutex. Neu sind die fünf Zeilen mit dem blauen Strich am Rand.",
+      steps: [
+        { patch: { k: 1, line: "decl" }, say: "Der Mutex ist selbst eine globale Variable vom Typ <code>pthread_mutex_t</code>. Er ist global, damit beide Threads dasselbe Schloss benutzen." },
+        { patch: { k: 2, line: "init" }, say: "<code>pthread_mutex_init</code> richtet den Mutex ein, bevor die Threads starten. Danach ist er frei. <code>NULL</code> bedeutet: Standardeinstellungen." },
+        { patch: { k: 3, line: "lock" }, say: "<code>pthread_mutex_lock</code> schließt ab. Ist der Mutex schon gesperrt, kehrt der Aufruf nicht zurück: Der Thread wartet in dieser Zeile, bis der Mutex frei wird." },
+        { patch: { k: 4, line: "unlock" }, say: "<code>pthread_mutex_unlock</code> schließt wieder auf. Zwischen lock und unlock steht nur <code>counter++</code>: Das ist der kritische Abschnitt." },
+        { patch: { k: 5, line: "destroy" }, say: "<code>pthread_mutex_destroy</code> räumt den Mutex am Ende auf, wenn beide Threads fertig sind und ihn niemand mehr braucht." },
+        { patch: { k: 6, line: "decl" }, say: "Es gibt auch eine Kurzform: Du richtest den Mutex gleich bei der Deklaration mit <code>PTHREAD_MUTEX_INITIALIZER</code> ein. Dann brauchst du kein <code>pthread_mutex_init</code>." }
+      ]
+    },
+    {
+      title: "Dasselbe Szenario mit Mutex",
+      scene: "cpu",
+      initial: { ...cpuStart, progs: [true, true], mutex: true },
+      intro: "Zurück zur CPU, <code>counter</code> steht wieder auf 0. Jeder Thread ruft jetzt vor den drei Befehlen <code>lock</code> und danach <code>unlock</code> auf. Der Mutex liegt als Variable im RAM, direkt neben <code>counter</code>, und ist frei.",
+      steps: [
+        cpu(0, "lock", "Thread 1: lock", "Thread 1 ruft <code>lock</code> auf. Der Mutex war frei, jetzt gehört er Thread 1."),
+        cpu(1, "wait", "Thread 2: lock", "Thread 2 ruft auch <code>lock</code> auf. Der Mutex ist gesperrt, also wartet Thread 2 in dieser Zeile. Er kann <code>counter</code> jetzt nicht laden."),
+        cpu(0, "load", "Thread 1 lädt", "Thread 1 lädt die 0."),
+        cpu(0, "add", "Thread 1 rechnet", "Thread 1 rechnet: 0 + 1 = 1."),
+        cpu(0, "store", "Thread 1 schreibt", "Thread 1 schreibt die 1 in den RAM. Thread 2 wartet immer noch."),
+        cpu(0, "unlock", "Thread 1: unlock", "Thread 1 ruft <code>unlock</code> auf. Der Mutex wird frei, und Thread 2 bekommt ihn: Sein <code>lock</code> ist jetzt durch."),
+        cpu(1, "load", "Thread 2 lädt", "Thread 2 lädt, und zwar die 1, die Thread 1 schon geschrieben hat. Das ist der Unterschied zu vorhin."),
+        cpu(1, "add", "Thread 2 rechnet", "Thread 2 rechnet: 1 + 1 = 2."),
+        cpu(1, "store", "Thread 2 schreibt", "Thread 2 schreibt die 2 in den RAM."),
+        cpu(1, "unlock", "Thread 2: unlock", "Thread 2 gibt den Mutex wieder frei. Im RAM steht <b>2</b>: Beide Erhöhungen sind angekommen.", correct),
+        { patch: { scene: "exp", runs: 0, concl: false, withMutex: true }, say: "Und die echte Messung? Dasselbe Programm wie im Experiment, diesmal mit Mutex, wieder dreimal ausgeführt." },
+        { patch: { runs: 3, concl: true }, motion: { type: "sweep", label: "Messung zeigen", ms: 1500 },
+          say: "In jedem der drei Läufe steht am Ende genau <b>2 000 000</b> in <code>counter</code>. Keine Erhöhung geht mehr verloren." }
+      ]
+    },
+    {
+      title: "Merke",
+      scene: "summary",
+      initial: { k: 0 },
+      intro: "Drei Dinge zum Mitnehmen. Erstens die <b>Race Condition</b>. Dieser Satz ist auch die Antwort auf Aufgabe 1a.",
+      steps: [
+        { patch: { k: 1 }, say: "Zweitens der <b>Mutex</b>: Er sorgt dafür, dass immer nur ein Thread im kritischen Abschnitt ist." },
+        { patch: { k: 2 }, say: "Drittens der Preis: Wer wartet, rechnet nicht. Schließe deshalb nur das ab, was wirklich geschützt werden muss." }
+      ]
+    }
+  ];
+
+  function execute(state, { thread, op }, note) {
+    const next = { ...state, regs: [...state.regs], done: state.done.map(list => [...list]),
+      active: { thread, op: op === "wait" ? "lock" : op }, note };
+    if (op !== "wait") next.done[thread].push(op);
+    switch (op) {
+      case "load": next.regs[thread] = state.ram; break;
+      case "add": next.regs[thread] += 1; break;
+      case "store": next.ram = state.regs[thread]; break;
+      case "lock": next.owner = thread; break;
+      case "wait": next.waiting = true; break;
+      case "unlock":
+        next.owner = state.waiting ? 1 : null;
+        if (state.waiting) next.done[1].push("lock");
+        next.waiting = false;
+        break;
+    }
+    return next;
+  }
+
+  function makeFrames(part) {
+    let state = part.initial;
+    const frames = [{ say: part.intro, state }];
+    for (const beat of part.steps) {
+      state = beat.command ? execute(state, beat.command, beat.note) : { ...state, ...beat.patch };
+      frames.push({ ...beat, state });
+    }
+    return { ...part, frames };
+  }
+  const lesson = parts.map(makeFrames);
+
+  /* ---------- Zeichnen ---------- */
+  function reveal(node, visible) {
+    node.classList.toggle("on", visible);
+    node.setAttribute("aria-hidden", String(!visible));
+  }
+
+  function renderSteps(scene, k) {
+    scene.querySelectorAll("[data-from]").forEach(node => {
+      const visible = k >= +node.dataset.from;
+      if (node.classList.contains("reveal")) reveal(node, visible);
+      else node.classList.toggle("hid", !visible);
+    });
+    scene.querySelectorAll("[data-only]").forEach(node => reveal(node, k === +node.dataset.only));
+    scene.querySelectorAll("[data-hl]").forEach(node => node.classList.toggle("active", k === +node.dataset.hl));
+  }
+
+  const runs = [...document.querySelectorAll(".run:not(.expect)")];
+  function renderExp(state) {
+    $("exp").classList.toggle("withmutex", !!state.withMutex);
+    $("exp-mode").textContent = state.withMutex ? "mit Mutex" : "ohne Mutex";
+    runs.forEach((run, index) => run.classList.toggle("on", index < state.runs));
+    reveal($("concl-bad"), !!state.concl && !state.withMutex);
+    reveal($("concl-good"), !!state.concl && !!state.withMutex);
+  }
+
+  function renderCPU(state) {
+    for (const [index, core] of cores.entries()) {
+      const waiting = index === 1 && state.waiting;
+      const busy = state.progs[index];
+      core.node.classList.toggle("busy", busy);
+      core.node.classList.toggle("waiting", waiting);
+      core.who.textContent = !busy ? "frei" : waiting ? "Thread 2 wartet" : "Thread " + (index + 1);
+      core.prog.classList.toggle("off", !busy);
+      core.value.textContent = state.regs[index] ?? "–";
+      core.wait.textContent = "";
+      for (const op of OPS) {
+        const line = core.lines[op.key];
+        line.hidden = !state.mutex && !!op.mutex;
+        line.classList.toggle("crit", !!state.mutex && !!op.crit);
+        const active = state.active?.thread === index && state.active.op === op.key;
+        const waitline = waiting && op.key === "lock";
+        line.classList.toggle("waitline", waitline);
+        line.classList.toggle("active", active && !waitline);
+        line.classList.toggle("done", state.done[index].includes(op.key) && !active);
+      }
+    }
+    $("ram-value").textContent = state.ram;
+    $("ram-mutex-row").hidden = !state.mutex;
+    $("sticker").classList.toggle("single", !state.mutex);
+    const cell = $("ram-mutex");
+    cell.classList.toggle("held", state.owner !== null);
+    cell.classList.toggle("h0", state.owner === 0);
+    cell.classList.toggle("h1", state.owner === 1);
+    $("ram-mutex-text").textContent = state.owner === null ? "frei" : "Thread " + (state.owner + 1);
+    reveal($("legend"), !!state.mutex);
+    const note = $("cpu-note");
+    reveal(note, !!state.note);
+    if (state.note) {
+      note.classList.toggle("good", !!state.note.good);
+      note.querySelector("strong").textContent = state.note.title;
+      note.querySelector("span").textContent = state.note.detail;
+    }
+  }
+
+  const cmxLines = [...document.querySelectorAll(".cmx [data-line]")];
+  const cmxCards = [...document.querySelectorAll(".cmx [data-card]")];
+  const cardOrder = ["init", "lock", "unlock", "destroy"];
+  function renderCmx(state) {
+    cmxLines.forEach(line => line.classList.toggle("active", line.dataset.line === state.line));
+    cmxCards.forEach(card => {
+      const position = cardOrder.indexOf(card.dataset.card) + 2;
+      reveal(card, state.k >= position && state.k < 6);
+      card.classList.toggle("current", state.k === position);
+    });
+    reveal($("short"), state.k === 6);
+    cmxLines.forEach(line => line.classList.toggle("struck", line.dataset.line === "init" && state.k === 6));
+  }
+
+  let sweepMs = 0;
+  function draw(part, state, instant = false) {
+    if (instant) stage.classList.add("instant");
+    const name = state.scene || part.scene;
+    scenes.forEach(scene => reveal(scene, scene.dataset.scene === name));
+    const scene = scenes.find(item => item.dataset.scene === name);
+    switch (name) {
+      case "sit": case "terms": case "summary": renderSteps(scene, state.k); break;
+      case "exp": renderExp(state); break;
+      case "cpu": renderCPU(state); break;
+      case "idea":
+        $("sweep").style.setProperty("--dur", sweepMs + "ms");
+        $("sweep").style.width = state.x + "px";
+        break;
+      case "cmx": renderCmx(state); break;
+    }
+    if (instant) {
+      void stage.offsetWidth;
+      stage.classList.remove("instant");
+    }
+  }
+
+  /* ---------- Engine ---------- */
+  let partIndex = 0;
+  let frameIndex = 0;
+  let playback = null;
+  const dots = lesson.map((part, index) => {
+    const dot = document.createElement("button");
+    dot.type = "button";
+    dot.className = "dot";
+    dot.textContent = index + 1;
+    dot.title = part.title;
+    dot.setAttribute("aria-label", "Teil " + (index + 1) + " · " + part.title);
+    dot.addEventListener("click", () => jump(index, 0));
+    $("dots").append(dot);
+    return dot;
+  });
+
+  function lastMotion() {
+    const { frames } = lesson[partIndex];
+    for (let index = frameIndex; index >= 0; index--) {
+      if (frames[index].motion) return index;
+    }
+    return -1;
+  }
+
+  function updateUI(textFrame) {
+    const part = lesson[partIndex];
+    const frame = part.frames[frameIndex];
+    const nextFrame = part.frames[frameIndex + 1];
+    const button = $("next");
+    $("title").textContent = part.title;
+    $("progress").textContent = `Teil ${partIndex + 1} / ${lesson.length} · Schritt ${frameIndex + 1} / ${part.frames.length}`;
+    $("caption").innerHTML = (textFrame || frame).say;
+    $("prev").disabled = partIndex === 0 && frameIndex === 0;
+    $("again").disabled = lastMotion() < 0;
+    button.disabled = !playback && !nextFrame && partIndex === lesson.length - 1;
+    button.classList.toggle("play", !playback && !!nextFrame?.motion);
+    button.textContent = playback ? "Animation läuft …" :
+      nextFrame?.motion ? nextFrame.motion.label + " →" :
+      !nextFrame && partIndex < lesson.length - 1 ? "Nächster Teil →" : "Weiter →";
+    dots.forEach((dot, index) => {
+      if (index === partIndex) dot.setAttribute("aria-current", "step");
+      else dot.removeAttribute("aria-current");
+    });
+  }
+
+  function stop() {
+    if (!playback) return;
+    playback.timers.forEach(clearTimeout);
+    playback.animations.forEach(animation => animation.cancel());
+    playback = null;
+    $("sweep").classList.remove("moving");
+  }
+
+  function settle(instant = false) {
+    stop();
+    const part = lesson[partIndex];
+    draw(part, part.frames[frameIndex].state, instant);
+    updateUI();
+  }
+
+  function later(ms, fn) {
+    playback.timers.push(setTimeout(fn, ms));
+  }
+
+  function animate(node, frames, options) {
+    playback.animations.push(node.animate(frames, options));
+  }
+
+  function point(node) {
+    const box = stage.getBoundingClientRect();
+    const rect = node.getBoundingClientRect();
+    const scale = box.width / stage.offsetWidth;
+    return { x: (rect.left + rect.width / 2 - box.left) / scale, y: (rect.top + rect.height / 2 - box.top) / scale };
+  }
+
+  // Der Wert wandert über den Bus zwischen RAM und Register.
+  function fly(from, to, value, loading) {
+    const start = point(from);
+    const end = point(to);
+    const busRam = { x: 500, y: 282 };
+    const busCpu = { x: 500, y: 232 };
+    const path = loading ? [start, busRam, busCpu, end] : [start, busCpu, busRam, end];
+    const position = ({ x, y }) => `translate(${x - 22}px, ${y - 19}px)`;
+    $("flight").textContent = value;
+    animate($("flight"), [
+      { transform: position(path[0]), opacity: 0 },
+      { transform: position(path[0]), opacity: 1, offset: .1 },
+      { transform: position(path[1]), opacity: 1, offset: loading ? .3 : .55 },
+      { transform: position(path[2]), opacity: 1, offset: loading ? .45 : .7 },
+      { transform: position(path[3]), opacity: 1, offset: .9 },
+      { transform: position(path[3]), opacity: 0 }
+    ], { duration: 1150, easing: "ease-in-out" });
+  }
+
+  function pulse(cell, base) {
+    animate(cell, [{ backgroundColor: "#ffd400", color: "#16181d" }, { backgroundColor: "#fff1a8", color: "#16181d", offset: .5 }, { backgroundColor: base }],
+      { duration: 700, easing: "ease-out" });
+  }
+
+  function playCPU(part, before, frame) {
+    const { op, thread } = frame.motion;
+    const after = frame.state;
+    const cell = cores[thread].value;
+    const ram = $("ram-value");
+    draw(part, { ...before, active: { thread, op: op === "wait" ? "lock" : op } });
+
+    switch (op) {
+      case "load":
+      case "store": {
+        const loading = op === "load";
+        const receiver = loading ? cell : ram;
+        later(250, () => fly(loading ? ram : cell, receiver, loading ? before.ram : before.regs[thread], loading));
+        later(1300, () => {
+          draw(part, after);
+          pulse(receiver, loading ? "#20242c" : "#fff");
+        });
+        later(2000, settle);
+        break;
+      }
+      case "add":
+        later(350, () => {
+          draw(part, after);
+          pulse(cell, "#20242c");
+        });
+        later(1050, settle);
+        break;
+      case "unlock":
+        later(350, () => draw(part, { ...before, owner: null, active: { thread, op } }));
+        later(1000, () => draw(part, after));
+        later(1500, settle);
+        break;
+      default:
+        later(350, () => draw(part, after));
+        later(900, settle);
+    }
+  }
+
+  function play(index, repeat = false) {
+    stop();
+    const part = lesson[partIndex];
+    const frame = part.frames[index];
+    const previous = part.frames[index - 1];
+    if (!repeat) frameIndex = index;
+    if (reduceMotion.matches) return settle(true);
+    playback = { timers: [], animations: [] };
+    sweepMs = 0;
+    draw(part, previous.state, true);
+    updateUI(previous);
+
+    if (frame.motion.type === "cpu") return playCPU(part, previous.state, frame);
+    // "sweep": Der Zielzustand wird gesetzt, die CSS-Übergänge zeigen den Weg dorthin.
+    sweepMs = frame.motion.ms - 300;
+    later(30, () => {
+      if ((frame.state.scene || part.scene) === "idea") $("sweep").classList.add("moving");
+      draw(part, frame.state);
+    });
+    later(frame.motion.ms, settle);
+  }
+
+  function jump(part, frame, instant = false) {
+    stop();
+    sweepMs = 0;
+    partIndex = part;
+    frameIndex = frame;
+    settle(instant);
+  }
+
+  function next() {
+    if (playback) return settle(true);
+    const part = lesson[partIndex];
+    const upcoming = part.frames[frameIndex + 1];
+    if (upcoming?.motion) play(frameIndex + 1);
+    else if (upcoming) jump(partIndex, frameIndex + 1);
+    else if (partIndex < lesson.length - 1) jump(partIndex + 1, 0);
+  }
+
+  function prev() {
+    if (frameIndex > 0) jump(partIndex, frameIndex - 1, true);
+    else if (partIndex > 0) jump(partIndex - 1, lesson[partIndex - 1].frames.length - 1, true);
+  }
+
+  function again() {
+    const index = lastMotion();
+    if (index >= 0) play(index, true);
+  }
+
+  function fit() {
+    const box = $("stagebox");
+    const width = box.clientWidth;
+    const scale = (window.__mScale && window.__mScale(width, 400)) || Math.min(1, width / 1000, Math.max(.25, (innerHeight - 226) / 400));
+    stage.style.left = (width - scale * 1000) / 2 + "px";
+    stage.style.transform = `scale(${scale})`;
+    box.style.height = scale * 400 + "px";
+  }
+
+  // Kopier-Knöpfe (Teil 1, selbst ausführen)
+  const ZAEHLER_C = '#include <stdio.h>\n#include <pthread.h>\n\nint counter = 0;\n\nvoid* increment_counter(void* arg) {\n    for (int i = 0; i < 1000000; i++)\n        counter++;\n    return NULL;\n}\n\nint main() {\n    pthread_t thread1, thread2;\n    pthread_create(&thread1, NULL, increment_counter, NULL);\n    pthread_create(&thread2, NULL, increment_counter, NULL);\n    pthread_join(thread1, NULL);\n    pthread_join(thread2, NULL);\n    printf("Final counter value: %d\\n", counter);\n}\n';
+  document.querySelectorAll("[data-copy]").forEach(btn => btn.addEventListener("click", async event => {
+    event.stopPropagation();
+    const text = btn.dataset.copy === "code" ? ZAEHLER_C : btn.dataset.copy;
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (_) {
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.append(ta); ta.select();
+      try { ok = document.execCommand("copy"); } catch (_) {}
+      ta.remove();
+    }
+    const label = btn.querySelector("span") || btn;
+    const old = label.textContent;
+    label.textContent = ok ? "kopiert" : "markieren und kopieren";
+    btn.classList.toggle("ok", ok);
+    setTimeout(() => { label.textContent = old; btn.classList.remove("ok"); }, 1600);
+    btn.blur();
+  }));
+  $("next").addEventListener("click", next);
+  $("prev").addEventListener("click", prev);
+  $("reset").addEventListener("click", () => jump(partIndex, 0, true));
+  $("again").addEventListener("click", again);
+  document.addEventListener("keydown", event => {
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    const key = event.key.toLowerCase();
+    if (key === "arrowright" || key === " " || key === "pagedown") {
+      event.preventDefault();
+      if (!event.repeat) next();
+    } else if (key === "arrowleft" || key === "pageup") {
+      event.preventDefault();
+      if (!event.repeat) prev();
+    } else if (key === "r") {
+      jump(partIndex, 0, true);
+    } else if (key === "w" && !event.repeat) {
+      again();
+    }
+  });
+  window.addEventListener("resize", fit);
+  // Teil und Schritt zählen ab null; Schritt 0 ist das Ausgangsbild des Teils.
+  window.__go = (teil, schritt = 0) => {
+    if (!Number.isInteger(teil) || !lesson[teil] || !Number.isInteger(schritt)) return;
+    jump(teil, Math.max(0, Math.min(schritt, lesson[teil].frames.length - 1)), true);
+  };
+  fit();
+  jump(0, 0, true);
+})();
+</script>
+<script src="../start/z.js" defer></script>
+</body>
+</html>
