@@ -289,9 +289,9 @@ body.instant-view #ueb,body.instant-view #labels,body.instant-view #fx,body.inst
 <div id="labels"></div>
 <div class="foc-bar" id="focBar" hidden><button class="btn" id="unfocus" type="button"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2 4 7l5 5"/></svg>Alle Schichten</button></div>
 
-<script src="start/art-apps.js"></script>
-<script src="start/art-os.js"></script>
-<script src="start/art-hw.js"></script>
+<script src="start/art-apps.js?v=20261126b"></script>
+<script src="start/art-os.js?v=20261126b"></script>
+<script src="start/art-hw.js?v=20261126b"></script>
 <script>
 (function () {
 'use strict';
@@ -523,7 +523,7 @@ for (var k = 1; k <= 6; k++) (function (k) {
     svg.setAttribute('class', 'art art-' + s.l); svg.removeAttribute('id');
     svg.setAttribute('viewBox', [r[0] - 8, r[1] - 8, r[2] + 16, r[3] + 16].join(' '));
     svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.setAttribute('aria-hidden', 'true');
-    var clone = s.g.cloneNode(true); clone.classList.remove('act');
+    var clone = s.g ? s.g.cloneNode(true) : document.createElementNS('http://www.w3.org/2000/svg', 'g'); clone.classList.remove('act');
     clone.querySelectorAll('.hit').forEach(function (hit) { hit.remove(); });
     svg.appendChild(clone); card.querySelector('.kart').appendChild(svg);
     card.onmouseenter = function () { if (!small.matches) clone.classList.add('act'); };
